@@ -12,6 +12,9 @@ app_license = "mit"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/cclms/css/cclms.css"
 # app_include_js = "/assets/cclms/js/cclms.js"
+app_include_css = "/assets/cclms/css/leaflet.css"
+app_include_js = "/assets/cclms/js/leaflet.js"
+
 
 # include js, css files in header of web template
 # web_include_css = "/assets/cclms/css/cclms.css"
@@ -227,3 +230,8 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+doc_events = {
+    "Calling Leads": {
+        "on_submit": "cclms.call_centre_lead_management_system.doctype.calling_leads.calling_leads.create_address_and_contact"
+    }
+}

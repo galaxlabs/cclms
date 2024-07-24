@@ -1,0 +1,232 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:Lead-{DD}-{MM}-{YYYY}-{########}",
+ "creation": "2024-07-11 20:53:01.193087",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "executive_name",
+  "owner_name",
+  "column_break_tybr",
+  "lead_status",
+  "business_type",
+  "column_break_htyh",
+  "base_rent",
+  "business_name",
+  "section_break_luoi",
+  "country",
+  "city",
+  "address",
+  "column_break_sfwl",
+  "state",
+  "zippostal_code",
+  "section_break_huaw",
+  "additional_notes",
+  "section_break_iuxf",
+  "email_address",
+  "phone_number"
+ ],
+ "fields": [
+  {
+   "fieldname": "executive_name",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Executive Name",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "owner_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Owner Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_tybr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lead_status",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Lead Status",
+   "options": "Installed\nAgreement Sent !\nSigned\u00a0for\u00a0LC\nSigned for ICB\nSigned for IB\nSigned for CW\nSigned for RC\nSigned for CB\nSigned for UB\nSigned for BD\nSigned\nSigned / Rejected\nPending Review\nRejected\nApproved\nPending"
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Business Type",
+   "options": "Business Types"
+  },
+  {
+   "fieldname": "column_break_htyh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "base_rent",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Base Rent"
+  },
+  {
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Business Name"
+  },
+  {
+   "fieldname": "section_break_luoi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "State"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "City"
+  },
+  {
+   "fieldname": "zippostal_code",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Zip/Postal Code"
+  },
+  {
+   "fieldname": "section_break_iuxf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "email_address",
+   "fieldtype": "Table",
+   "label": "Email Address",
+   "options": "Contact Email"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Table",
+   "label": "Phone Number",
+   "options": "Contact Phone"
+  },
+  {
+   "fetch_from": "state.country_name",
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Country",
+   "link_filters": "[[\"Country\",\"country_name\",\"in\",[\"United States\",\"Canada\",\"Australia\",null]]]",
+   "options": "Country"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Address"
+  },
+  {
+   "fieldname": "column_break_sfwl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_huaw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "additional_notes",
+   "fieldtype": "Text Editor",
+   "label": "Additional Notes "
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-07-23 19:58:19.644507",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Calling Leads",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Green",
+   "title": "Approved"
+  }
+ ]
+}
