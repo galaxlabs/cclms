@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format:Lead-{DD}-{MM}-{YYYY}-{########}",
@@ -22,8 +23,6 @@
   "column_break_sfwl",
   "state",
   "zippostal_code",
-  "section_break_huaw",
-  "additional_notes",
   "section_break_iuxf",
   "email_address",
   "phone_number"
@@ -58,7 +57,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Lead Status",
-   "options": "Installed\nAgreement Sent !\nSigned\u00a0for\u00a0LC\nSigned for ICB\nSigned for IB\nSigned for CW\nSigned for RC\nSigned for CB\nSigned for UB\nSigned for BD\nSigned\nSigned / Rejected\nPending Review\nRejected\nApproved\nPending"
+   "options": "Installed\nAgreement Sent\nSigned\u00a0for\u00a0LC\nSigned for ICB\nSigned for IB\nSigned for CW\nSigned for RC\nSigned for CB\nSigned for UB\nSigned for BD\nSigned\nSigned / Rejected\nPending Review\nRejected\nApproved\nPending\nRe-send approval request\nApproved by CB\nRequest for approval\nin Review"
   },
   {
    "fieldname": "business_type",
@@ -154,20 +153,11 @@
   {
    "fieldname": "column_break_sfwl",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_huaw",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "additional_notes",
-   "fieldtype": "Text Editor",
-   "label": "Additional Notes "
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-23 19:58:19.644507",
+ "modified": "2024-08-05 00:35:25.008270",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Calling Leads",
