@@ -8,7 +8,9 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "geolocation_ctor",
+  "map_tab",
+  "geolocation",
+  "details_tab",
   "section_break_ezwr",
   "executive_name",
   "owner_name",
@@ -155,17 +157,28 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "geolocation_ctor",
-   "fieldtype": "Geolocation"
-  },
-  {
    "fieldname": "section_break_ezwr",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "geolocation",
+   "fieldtype": "Geolocation",
+   "label": "Geolocation"
+  },
+  {
+   "fieldname": "map_tab",
+   "fieldtype": "Tab Break",
+   "label": "Map"
+  },
+  {
+   "fieldname": "details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-07 00:33:21.591774",
+ "modified": "2024-08-07 23:00:34.405067",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Calling Leads",
