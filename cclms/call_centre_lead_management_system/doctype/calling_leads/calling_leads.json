@@ -15,6 +15,7 @@
   "column_break_tybr",
   "lead_status",
   "business_type",
+  "operator",
   "column_break_htyh",
   "base_rent",
   "business_name",
@@ -174,11 +175,16 @@
   {
    "fieldname": "column_break_uvpa",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Data",
+   "label": "Operator"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-16 11:33:32.527661",
+ "modified": "2024-08-16 12:43:47.481563",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Calling Leads",
