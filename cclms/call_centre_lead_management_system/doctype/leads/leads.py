@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class OperatorRestrictions(Document):
+class Leads(Document):
 	pass

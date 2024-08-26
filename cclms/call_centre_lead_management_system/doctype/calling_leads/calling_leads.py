@@ -1,8 +1,16 @@
 import frappe
 from frappe.model.document import Document
+from frappe import _
 
 class CallingLeads(Document):
     pass
+    # def before_insert(doc, method):
+    #     for operator in doc.operator_companies:
+    #         restrictions = frappe.get_all('Restricted States', filters={'parent': operator.operator_name}, fields=['restricted_state', 'state_code'])
+    #         for restriction in restrictions:
+    #             if doc.state == restriction.restricted_state or doc.state_code == restriction.state_code:
+    #                 frappe.throw(_('This state {0} is restricted for operator {1}').format(doc.state, operator.operator_name))
+
 #     def on_update(self):
 #         # Create or Update CRM Lead
 #         crm_lead = self.create_or_update_crm_lead()

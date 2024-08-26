@@ -1,0 +1,20 @@
+{
+ "cards": [],
+ "charts": [
+  {
+   "width": "Half"
+  }
+ ],
+ "creation": "2024-08-26 10:27:57.213594",
+ "dashboard_name": "Lead Dashboard",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 1,
+ "is_standard": 1,
+ "modified": "2024-08-26 10:27:57.213594",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Lead Dashboard",
+ "owner": "Administrator"
+}

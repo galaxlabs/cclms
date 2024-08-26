@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "PW",
  "links": [],
- "modified": "2024-08-06 23:46:07.384722",
+ "modified": "2024-08-22 16:28:07.502998",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
@@ -24,7 +24,7 @@
  "quick_lists": [],
  "roles": [
   {
-   "role": "dev"
+   "role": "Sales Manager"
   }
  ],
  "sequence_id": 39.0,

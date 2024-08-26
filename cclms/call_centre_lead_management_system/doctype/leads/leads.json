@@ -1,0 +1,303 @@
+{
+ "actions": [],
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:Lead-{DD}-{MM}-{YYYY}-{########}",
+ "creation": "2024-08-22 08:35:28.698501",
+ "default_view": "Report",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lead_owner",
+  "location",
+  "column_break_ufkk",
+  "executive_name",
+  "column_break_yhnl",
+  "post_date",
+  "section_break_pkus",
+  "owner_name",
+  "business_type",
+  "column_break_ubwk",
+  "business_name",
+  "status",
+  "address_section",
+  "business_street_address",
+  "stateproviance",
+  "column_break_fhhq",
+  "zippostal_code",
+  "city",
+  "column_break_nfyk",
+  "country",
+  "contact_information_section",
+  "email",
+  "column_break_ttbv",
+  "business_phone_number",
+  "column_break_sayc",
+  "cell_phone",
+  "column_break_gryc",
+  "whatsapp_no",
+  "section_break_vzyg",
+  "contract_length",
+  "column_break_ffuq",
+  "base_rent",
+  "column_break_ukac",
+  "hours",
+  "section_break_gcqh",
+  "table_fpul"
+ ],
+ "fields": [
+  {
+   "default": "__user",
+   "fieldname": "lead_owner",
+   "fieldtype": "Link",
+   "label": "Lead Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_ufkk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "executive_name",
+   "fieldtype": "Link",
+   "label": "Executive Name",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "column_break_yhnl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "post_date",
+   "fieldtype": "Date",
+   "label": "Post Date"
+  },
+  {
+   "fieldname": "section_break_pkus",
+   "fieldtype": "Section Break",
+   "label": "Business Information"
+  },
+  {
+   "fieldname": "owner_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Owner Name",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Link",
+   "label": "Business Type",
+   "options": "Business Types"
+  },
+  {
+   "fieldname": "column_break_ubwk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "label": "Business Name"
+  },
+  {
+   "fieldname": "business_street_address",
+   "fieldtype": "Data",
+   "label": "Business Street Address"
+  },
+  {
+   "fieldname": "column_break_fhhq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "zippostal_code",
+   "fieldtype": "Data",
+   "label": "Zip/Postal Code"
+  },
+  {
+   "fieldname": "column_break_nfyk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "stateproviance",
+   "fieldtype": "Data",
+   "label": "State/Proviance"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "address_section",
+   "fieldtype": "Section Break",
+   "label": "Address"
+  },
+  {
+   "fieldname": "contact_information_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "column_break_ttbv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_phone_number",
+   "fieldtype": "Data",
+   "label": "Business Phone Number"
+  },
+  {
+   "fieldname": "column_break_sayc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cell_phone",
+   "fieldtype": "Data",
+   "label": "Cell Phone"
+  },
+  {
+   "fieldname": "column_break_gryc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "whatsapp_no",
+   "fieldtype": "Data",
+   "label": "WhatsApp No"
+  },
+  {
+   "fieldname": "section_break_vzyg",
+   "fieldtype": "Section Break",
+   "label": "Contract Information"
+  },
+  {
+   "default": "Years",
+   "fieldname": "contract_length",
+   "fieldtype": "Data",
+   "label": "Contract Length"
+  },
+  {
+   "fieldname": "column_break_ffuq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "base_rent",
+   "fieldtype": "Data",
+   "label": "Base Rent"
+  },
+  {
+   "fieldname": "column_break_ukac",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Hours",
+   "fieldname": "hours",
+   "fieldtype": "Data",
+   "label": "Hours"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nApproved"
+  },
+  {
+   "fieldname": "section_break_gcqh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_fpul",
+   "fieldtype": "Table",
+   "options": "Operator"
+  },
+  {
+   "bold": 1,
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Location",
+   "read_only": 1,
+   "show_on_timeline": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-22 13:26:02.645786",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Leads",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

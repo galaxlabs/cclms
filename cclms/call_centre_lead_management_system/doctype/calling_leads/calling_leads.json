@@ -8,37 +8,51 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_pu6a",
+  "section_break_k4jw",
+  "post_date",
+  "column_break_fzkv",
   "executive_name",
+  "column_break_nuog",
+  "lead_owner",
+  "section_break_zqll",
   "owner_name",
-  "contract_lenth",
-  "column_break_tybr",
-  "lead_status",
+  "column_break_gvne",
   "business_type",
-  "operator",
-  "column_break_htyh",
-  "base_rent",
+  "column_break_jjxs",
   "business_name",
-  "per_transection",
-  "section_break_luoi",
-  "country",
-  "city",
+  "section_break_l0wf",
+  "section_break_dx4g",
+  "hours_count",
+  "base_rent",
+  "contract_lenth",
   "address",
-  "column_break_sfwl",
-  "state",
-  "zippostal_code",
-  "section_break_dekk",
+  "per_transection",
+  "lead_status",
+  "section_break_eq79",
   "business_phone_number",
+  "column_break_pnel",
+  "cell_phone",
+  "column_break_bdve",
   "email_address",
-  "column_break_uvpa",
-  "cell_phone"
+  "section_break_tjwn",
+  "city",
+  "column_break_fxec",
+  "zippostal_code",
+  "state",
+  "column_break_eris",
+  "country"
  ],
  "fields": [
   {
    "fieldname": "executive_name",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Executive Name"
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Executive Name",
+   "options": "Employee",
+   "search_index": 1
   },
   {
    "fieldname": "owner_name",
@@ -50,28 +64,30 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_tybr",
-   "fieldtype": "Column Break"
-  },
+    "fieldname": "business_type",
+    "fieldtype": "Link",
+    "in_filter": 1,
+    "in_list_view": 1,
+    "in_standard_filter": 1,
+    "label": "Business Type",
+    "options": "Business Types"
+   },
+   {
+    "fieldname": "business_name",
+    "fieldtype": "Data",
+    "in_filter": 1,
+    "in_list_view": 1,
+    "in_standard_filter": 1,
+    "label": "Business Name"
+   },
   {
    "fieldname": "lead_status",
-   "fieldtype": "Data",
+   "fieldtype": "Select",
    "in_filter": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Lead Status"
-  },
-  {
-   "fieldname": "business_type",
-   "fieldtype": "Data",
-   "in_filter": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Business Type"
-  },
-  {
-   "fieldname": "column_break_htyh",
-   "fieldtype": "Column Break"
+   "label": "Lead Status",
+   "options": "\nApproved\nInstalled\nPending Review\nSigned/Rejected\nRejected"
   },
   {
    "fieldname": "base_rent",
@@ -80,18 +96,7 @@
    "in_standard_filter": 1,
    "label": "Base Rent"
   },
-  {
-   "fieldname": "business_name",
-   "fieldtype": "Data",
-   "in_filter": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Business Name"
-  },
-  {
-   "fieldname": "section_break_luoi",
-   "fieldtype": "Section Break"
-  },
+  
   {
    "fieldname": "state",
    "fieldtype": "Data",
@@ -117,11 +122,6 @@
    "label": "Zip/Postal Code"
   },
   {
-   "fieldname": "email_address",
-   "fieldtype": "Data",
-   "label": "Email Address"
-  },
-  {
    "fetch_from": "state.country_name",
    "fieldname": "country",
    "fieldtype": "Link",
@@ -141,23 +141,25 @@
    "label": "Business Street Address"
   },
   {
-   "fieldname": "column_break_sfwl",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_pu6a",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "per_transection",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Per Transection"
   },
   {
-   "fieldname": "contract_lenth",
-   "fieldtype": "Data",
-   "label": "Contract Length"
-  },
+    "fieldname": "contract_lenth",
+    "fieldtype": "Data",
+    "in_filter": 1,
+    "in_list_view": 1,
+    "label": "Contract Length"
+   },
+  {
+    "fieldname": "email_address",
+    "fieldtype": "Data",
+    "label": "Email Address",
+    "options": "Email"
+   },
+
   {
    "fieldname": "business_phone_number",
    "fieldtype": "Data",
@@ -169,22 +171,92 @@
    "label": "Cell Phone"
   },
   {
-   "fieldname": "section_break_dekk",
-   "fieldtype": "Section Break"
+   "default": "Hours",
+   "fieldname": "hours_count",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Hours"
   },
   {
-   "fieldname": "column_break_uvpa",
+   "default": "Today",
+   "fieldname": "post_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Post Date"
+  },
+  {
+   "default": "__user",
+   "fieldname": "lead_owner",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Lead Owner",
+   "options": "User",
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_fzkv",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "operator",
-   "fieldtype": "Data",
-   "label": "Operator"
+   "fieldname": "column_break_nuog",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_zqll",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_fxec",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_eq79",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_tjwn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_eris",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_gvne",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jjxs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_pnel",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_bdve",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_dx4g",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_k4jw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_l0wf",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-16 12:43:47.481563",
+ "modified": "2024-08-22 08:27:48.261106",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Calling Leads",

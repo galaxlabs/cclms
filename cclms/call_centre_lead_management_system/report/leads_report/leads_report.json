@@ -1,0 +1,37 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2024-08-22 15:11:55.945729",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{}",
+ "letterhead": null,
+ "modified": "2024-08-26 10:11:09.160372",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Leads Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\r\n    l.name AS lead_name,\r\n    l.lead_owner,\r\n    l.location,\r\n    l.executive_name,\r\n    l.post_date,\r\n    o.company,\r\n    o.status_by_company,\r\n    o.action_date\r\nFROM\r\n    `tabLeads` l\r\nLEFT JOIN\r\n    `tabOperator` o\r\nON\r\n    l.name = o.lead_id  -- Ensure 'lead_id' is the correct column in the `Operator` table\r\nWHERE\r\n    l.docstatus < 2\r\nORDER BY\r\n    l.creation DESC;\r\n",
+ "ref_doctype": "Leads",
+ "report_name": "Leads Report",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Sales User"
+  }
+ ]
+}
