@@ -44,7 +44,8 @@
   "column_break_ukac",
   "hours",
   "section_break_gcqh",
-  "table_fpul"
+  "table_fpul",
+  "amended_from"
  ],
  "fields": [
   {
@@ -235,11 +236,21 @@
    "label": "Location",
    "read_only": 1,
    "show_on_timeline": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Leads",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-22 13:26:02.645786",
+ "modified": "2024-08-26 12:30:51.958589",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads",
@@ -293,7 +304,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
