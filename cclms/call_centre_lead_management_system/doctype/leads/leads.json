@@ -3,9 +3,9 @@
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:Lead-{DD}-{MM}-{YYYY}-{########}",
+ "autoname": "format:Lead-{company}-{DD}-{MM}-{YY}-{######}",
  "creation": "2024-08-22 08:35:28.698501",
- "default_view": "Report",
+ "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -13,6 +13,7 @@
   "location",
   "column_break_ufkk",
   "executive_name",
+  "company",
   "column_break_yhnl",
   "post_date",
   "section_break_pkus",
@@ -44,8 +45,8 @@
   "column_break_ukac",
   "hours",
   "section_break_gcqh",
-  "table_fpul",
-  "amended_from"
+  "amended_from",
+  "region"
  ],
  "fields": [
   {
@@ -221,11 +222,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "table_fpul",
-   "fieldtype": "Table",
-   "options": "Operator"
-  },
-  {
    "bold": 1,
    "fieldname": "location",
    "fieldtype": "Data",
@@ -246,11 +242,31 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Region",
+   "options": "Territory"
+  },
+  {
+   "bold": 1,
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Operator Companies"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-26 12:30:51.958589",
+ "modified": "2024-08-28 09:52:56.031620",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads",
