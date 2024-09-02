@@ -214,10 +214,10 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "  Hours",
    "fieldname": "hours",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "label": "Hours",
-   "options": "12 Hours\n13 Hours\n14 Hours\n15 Hours\n16 Hours\n17 Hours\n18 Hours\n19 Hours\n20 Hours\n21 Hours\n22 Hours\n23 Hours\n24 Hours",
    "sort_options": 1
   },
   {
@@ -380,7 +380,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-01 22:29:54.679263",
+ "modified": "2024-09-02 08:37:01.913085",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads",
