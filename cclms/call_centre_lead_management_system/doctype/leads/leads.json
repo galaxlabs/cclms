@@ -16,20 +16,21 @@
   "company",
   "column_break_yhnl",
   "post_date",
+  "region",
   "section_break_pkus",
   "owner_name",
   "business_type",
   "column_break_ubwk",
   "business_name",
-  "status",
   "address_section",
   "business_street_address",
-  "stateproviance",
+  "state",
   "column_break_fhhq",
   "zippostal_code",
   "city",
   "column_break_nfyk",
   "country",
+  "state_code",
   "contact_information_section",
   "email",
   "column_break_ttbv",
@@ -44,9 +45,21 @@
   "base_rent",
   "column_break_ukac",
   "hours",
-  "section_break_gcqh",
-  "amended_from",
-  "region"
+  "section_break_mhii",
+  "submit_date",
+  "sign_date",
+  "column_break_ngqa",
+  "approve_date",
+  "install_date",
+  "column_break_hujd",
+  "agreement_sent_date",
+  "section_break_luak",
+  "agreement_sent_days",
+  "install_days",
+  "column_break_yohv",
+  "approved_days",
+  "column_break_yuzl",
+  "signed_days"
  ],
  "fields": [
   {
@@ -129,11 +142,6 @@
    "options": "Country"
   },
   {
-   "fieldname": "stateproviance",
-   "fieldtype": "Data",
-   "label": "State/Proviance"
-  },
-  {
    "fieldname": "city",
    "fieldtype": "Data",
    "label": "City"
@@ -187,10 +195,10 @@
    "label": "Contract Information"
   },
   {
-   "default": "Years",
    "fieldname": "contract_length",
-   "fieldtype": "Data",
-   "label": "Contract Length"
+   "fieldtype": "Select",
+   "label": "Contract Length",
+   "options": "1 Year\n2 Years\n3 Years\n4 Years\n5 Years\n6 Years\n7 Years\n8 Years\n9 Years\n10 Years\n11 Years\n12 Years\n13 Years\n14 Years\n15 Years"
   },
   {
    "fieldname": "column_break_ffuq",
@@ -206,20 +214,11 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Hours",
    "fieldname": "hours",
-   "fieldtype": "Data",
-   "label": "Hours"
-  },
-  {
-   "fieldname": "status",
    "fieldtype": "Select",
-   "label": "Status",
-   "options": "\nApproved"
-  },
-  {
-   "fieldname": "section_break_gcqh",
-   "fieldtype": "Section Break"
+   "label": "Hours",
+   "options": "12 Hours\n13 Hours\n14 Hours\n15 Hours\n16 Hours\n17 Hours\n18 Hours\n19 Hours\n20 Hours\n21 Hours\n22 Hours\n23 Hours\n24 Hours",
+   "sort_options": 1
   },
   {
    "bold": 1,
@@ -234,26 +233,8 @@
    "show_on_timeline": 1
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Leads",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "region",
-   "fieldtype": "Link",
-   "in_filter": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Region",
-   "options": "Territory"
-  },
-  {
    "bold": 1,
+   "default": "Bitcoin Depot",
    "fieldname": "company",
    "fieldtype": "Link",
    "in_filter": 1,
@@ -262,11 +243,144 @@
    "in_standard_filter": 1,
    "label": "Company",
    "options": "Operator Companies"
+  },
+  {
+   "fieldname": "section_break_mhii",
+   "fieldtype": "Section Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "sign_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Sign Date",
+   "show_on_timeline": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "agreement_sent_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Agreement Sent Date",
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "column_break_ngqa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "approve_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "in_filter": 1,
+   "in_list_view": 1,
+   "label": "Approve Date",
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "column_break_hujd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "install_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Install Date",
+   "show_on_timeline": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "submit_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Submit Date",
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "section_break_luak",
+   "fieldtype": "Section Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "agreement_sent_days",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Agreement Sent Days",
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "column_break_yohv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "approved_days",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Approved Days",
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "column_break_yuzl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "install_days",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Install Days",
+   "show_on_timeline": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "signed_days",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Sign Days",
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State/Proviance"
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "label": "Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-28 09:52:56.031620",
+ "modified": "2024-09-01 22:29:54.679263",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads",

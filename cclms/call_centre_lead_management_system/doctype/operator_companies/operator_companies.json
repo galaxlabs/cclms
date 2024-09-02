@@ -22,13 +22,13 @@
   {
    "fieldname": "state_name",
    "fieldtype": "Table",
-   "label": "State Name",
+   "label": "Permitted States",
    "options": "Permitted States"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-26 19:00:34.021824",
+ "modified": "2024-08-31 10:06:12.710781",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Operator Companies",

@@ -245,3 +245,18 @@ doc_events = {
         "on_submit": "cclms.call_centre_lead_management_system.doctype.calling_leads.calling_leads.create_address_and_contact"
     }
 }
+
+# hooks.py
+
+# doc_events = {
+#     "Leads": {
+#         "validate": "cclms.call_centre_lead_management_system.doctype.leads.leads.validate_lead_state"
+#     }
+# }
+
+
+# doc_events = {
+#     "Leads": {
+#         "on_update": "cclms.call_centre_lead_management_system.doctype.leads.leads.update_days"
+#     }
+# }
