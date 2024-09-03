@@ -9,13 +9,12 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "lead_owner",
-  "location",
-  "column_break_ufkk",
-  "executive_name",
   "company",
-  "column_break_yhnl",
+  "section_break_ucch",
+  "executive_name",
+  "column_break_ufkk",
   "post_date",
+  "column_break_yhnl",
   "region",
   "section_break_pkus",
   "owner_name",
@@ -62,13 +61,6 @@
   "signed_days"
  ],
  "fields": [
-  {
-   "default": "__user",
-   "fieldname": "lead_owner",
-   "fieldtype": "Link",
-   "label": "Lead Owner",
-   "options": "User"
-  },
   {
    "fieldname": "column_break_ufkk",
    "fieldtype": "Column Break"
@@ -222,18 +214,6 @@
   },
   {
    "bold": 1,
-   "fieldname": "location",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "in_filter": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Location",
-   "read_only": 1,
-   "show_on_timeline": 1
-  },
-  {
-   "bold": 1,
    "default": "Bitcoin Depot",
    "fieldname": "company",
    "fieldtype": "Link",
@@ -377,11 +357,15 @@
    "fieldtype": "Link",
    "label": "Branch",
    "options": "Branch"
+  },
+  {
+   "fieldname": "section_break_ucch",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-03 08:13:04.008644",
+ "modified": "2024-09-03 11:36:57.001351",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads",
