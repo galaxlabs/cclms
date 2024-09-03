@@ -13,13 +13,10 @@ app_license = "mit"
 # app_include_css = "/assets/cclms/css/cclms.css"
 # app_include_js = "/assets/cclms/js/cclms.js"
 app_include_css = [
-    "/assets/cclms/css/leaflet.css",
-    "/assets/cclms/css/geosearch.css"
+
 ]
 
 app_include_js = [
-    "/assets/cclms/js/leaflet.js",
-    "/assets/cclms/js/leaflet-geosearch.js"
 ]
 
 
@@ -37,7 +34,6 @@ app_include_js = [
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 page_js = {
-     "bitcoin_atm_map" : "public/js/bitcoin_atm_map.js"
 }
 
 # include js in doctype views

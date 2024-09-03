@@ -374,13 +374,14 @@
   },
   {
    "fieldname": "region",
-   "fieldtype": "Data",
-   "label": "Branch"
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-02 08:37:01.913085",
+ "modified": "2024-09-03 08:13:04.008644",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads",
