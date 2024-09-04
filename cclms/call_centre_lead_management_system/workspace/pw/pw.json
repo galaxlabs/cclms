@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"jGSkQNX3sH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calling Leads\",\"col\":3}},{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calling Leads \",\"col\":3}},{\"id\":\"yLKZLqLajX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contacts\",\"col\":3}},{\"id\":\"yjX5tXaIbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Address\",\"col\":3}}]",
+ "content": "[{\"id\":\"jGSkQNX3sH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"yLKZLqLajX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contacts\",\"col\":3}},{\"id\":\"yjX5tXaIbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Address\",\"col\":3}}]",
  "creation": "2024-07-17 09:32:26.293533",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "PW",
  "links": [],
- "modified": "2024-08-22 16:28:07.502998",
+ "modified": "2024-09-03 15:08:45.875298",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
@@ -27,38 +27,20 @@
    "role": "Sales Manager"
   }
  ],
- "sequence_id": 39.0,
+ "sequence_id": 31.0,
  "shortcuts": [
   {
-   "color": "Grey",
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Leads",
+   "link_to": "ATM Leads",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
    "doc_view": "New",
-   "label": "Calling Leads",
-   "link_to": "Calling Leads",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Contacts",
-   "link_to": "Contact",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Address",
-   "link_to": "Address",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Calling Leads ",
-   "link_to": "Calling Leads",
-   "stats_filter": "[]",
+   "label": "Leads",
+   "link_to": "ATM Leads",
    "type": "DocType"
   }
  ],
