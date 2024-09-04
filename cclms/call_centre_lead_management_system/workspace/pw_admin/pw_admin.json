@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"35f69iPaHZ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">PW Admin</span>\",\"col\":12}},{\"id\":\"HXRcvHiJ3E\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Application\",\"col\":3}},{\"id\":\"CpX9T4G74N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Allocation\",\"col\":3}},{\"id\":\"K1pk2ViWYR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Control Panel\",\"col\":3}},{\"id\":\"tbLQmknzRz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Assignment\",\"col\":3}},{\"id\":\"_niRsnPtPv\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Assignment Tool\",\"col\":3}},{\"id\":\"PTMLDPVA2p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Type\",\"col\":3}},{\"id\":\"M7OOJueI6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"wjjhmwAi0-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"User\",\"col\":3}},{\"id\":\"DvvqdjfXfU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"39crixBMVz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"ZNqr30bhLx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contact\",\"col\":3}},{\"id\":\"Re4AWxehsX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"ATM Leads\",\"col\":3}},{\"id\":\"KWXi_G7HeM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Address\",\"col\":3}},{\"id\":\"-QogCBHb8U\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Note\",\"col\":3}}]",
+ "content": "[{\"id\":\"NxID82hQka\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads</b></span>\",\"col\":12}},{\"id\":\"DvvqdjfXfU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"Re4AWxehsX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"3ExRthLI-i\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Employees</b></span>\",\"col\":12}},{\"id\":\"M7OOJueI6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"K1pk2ViWYR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Control Panel\",\"col\":3}},{\"id\":\"tbLQmknzRz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Assignment\",\"col\":3}},{\"id\":\"CpX9T4G74N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Allocation\",\"col\":3}},{\"id\":\"PTMLDPVA2p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Type\",\"col\":3}},{\"id\":\"39crixBMVz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"XeNtRvoLyl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tools</b></span>\",\"col\":12}},{\"id\":\"wjjhmwAi0-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"User\",\"col\":3}},{\"id\":\"ZNqr30bhLx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contact\",\"col\":3}},{\"id\":\"KWXi_G7HeM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Address\",\"col\":3}},{\"id\":\"-QogCBHb8U\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Note\",\"col\":3}}]",
  "creation": "2024-07-18 18:01:53.044444",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "PW Admin",
  "links": [],
- "modified": "2024-09-03 15:21:26.993565",
+ "modified": "2024-09-04 06:50:46.728496",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW Admin",
@@ -35,8 +35,8 @@
  "sequence_id": 32.0,
  "shortcuts": [
   {
-   "color": "Green",
-   "doc_view": "List",
+   "color": "Grey",
+   "doc_view": "New",
    "label": "Leads",
    "link_to": "ATM Leads",
    "stats_filter": "[]",
@@ -52,25 +52,9 @@
   },
   {
    "color": "Grey",
-   "doc_view": "New",
-   "label": "ATM Leads",
-   "link_to": "ATM Leads",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
    "doc_view": "List",
    "label": "Leave Control Panel",
    "link_to": "Leave Control Panel",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Leave Application",
-   "link_to": "Leave Application",
-   "stats_filter": "[]",
    "type": "DocType"
   },
   {
@@ -103,13 +87,6 @@
    "label": "Leave Allocation",
    "link_to": "Leave Allocation",
    "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Shift Assignment Tool",
-   "link_to": "Shift Assignment Tool",
    "type": "DocType"
   },
   {

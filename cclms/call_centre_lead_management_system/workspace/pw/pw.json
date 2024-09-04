@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"jGSkQNX3sH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"yLKZLqLajX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contacts\",\"col\":3}},{\"id\":\"yjX5tXaIbY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Address\",\"col\":3}}]",
+ "content": "[{\"id\":\"jGSkQNX3sH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"xwcDxf0sIT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Approved</b></span>\",\"col\":12}},{\"id\":\"eeSAHkQnt9\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Approved\",\"col\":3}},{\"id\":\"WuO1j-bmn5\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Submitted</b></span>\",\"col\":12}},{\"id\":\"1KMOILb77i\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Submitted\",\"col\":3}},{\"id\":\"WYUew_WeXX\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Submitted For Bit Stop\",\"col\":3}},{\"id\":\"bqwc4kutaF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Submitted For Bitcoin Depot\",\"col\":3}},{\"id\":\"jf1PpH3BU9\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Submitted For Budget Coinz\",\"col\":3}},{\"id\":\"as2Sh1Akyn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Agreement Sign</b></span>\",\"col\":12}},{\"id\":\"HIto1IfltJ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Agreement Sent\",\"col\":3}},{\"id\":\"mkThGCkpV7\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Signed</b></span>\",\"col\":12}},{\"id\":\"JR_aQnZZQg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Signed\",\"col\":3}}]",
  "creation": "2024-07-17 09:32:26.293533",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,11 +13,40 @@
  "is_hidden": 0,
  "label": "PW",
  "links": [],
- "modified": "2024-09-03 15:08:45.875298",
+ "modified": "2024-09-04 07:41:04.862298",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Total Approved",
+   "number_card_name": "Approved"
+  },
+  {
+   "label": "Submitted For Bit Stop",
+   "number_card_name": "Submitted For Bit Stop"
+  },
+  {
+   "label": "Total Agreement Sent",
+   "number_card_name": "Agreement Sent"
+  },
+  {
+   "label": "Submitted For Bitcoin Depot",
+   "number_card_name": "Submitted For Bitcoin Depot"
+  },
+  {
+   "label": "Total Signed",
+   "number_card_name": "Signed"
+  },
+  {
+   "label": "Submitted For Budget Coinz",
+   "number_card_name": "Submitted For Budget Coinz"
+  },
+  {
+   "label": "Total Submitted",
+   "number_card_name": "Submitted For Budget Coinz"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -29,14 +58,6 @@
  ],
  "sequence_id": 31.0,
  "shortcuts": [
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Leads",
-   "link_to": "ATM Leads",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
   {
    "doc_view": "New",
    "label": "Leads",
