@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "PW",
  "links": [],
- "modified": "2024-09-04 08:39:00.687875",
+ "modified": "2024-09-04 09:12:40.902627",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
@@ -31,6 +31,10 @@
    "number_card_name": "Agreement Sent"
   },
   {
+   "label": "Total Submitted",
+   "number_card_name": "Submitted"
+  },
+  {
    "label": "Submitted For Bitcoin Depot",
    "number_card_name": "Submitted For Bitcoin Depot"
   },
@@ -40,10 +44,6 @@
   },
   {
    "label": "Submitted For Budget Coinz",
-   "number_card_name": "Submitted For Budget Coinz"
-  },
-  {
-   "label": "Total Submitted",
    "number_card_name": "Submitted For Budget Coinz"
   }
  ],
