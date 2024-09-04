@@ -13,13 +13,15 @@
   {
    "fieldname": "business_type",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Business Type",
+   "reqd": 1,
    "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-26 19:03:01.258177",
+ "modified": "2024-09-04 10:01:32.705910",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Business Types",
@@ -72,7 +74,12 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "business_type",
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
 }
