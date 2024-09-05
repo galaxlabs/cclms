@@ -7,63 +7,140 @@
 // 	},
 // });
 
+// frappe.ui.form.on('ATM Leads', {
+//     validate: function(frm) {
+//         // Check if the company field is selected
+//         if (frm.doc.company) {
+//             // Fetch permitted states from the child table of the selected company
+//             frappe.call({
+//                 method: "frappe.client.get_list",
+//                 args: {
+//                     doctype: "Permitted States", // Child Doctype name
+//                     filters: {
+//                         'parent': frm.doc.company // Parent field linking to the selected company
+//                     },
+//                     fields: ['state', 'state_code'] // Fields to retrieve for validation
+//                 },
+//                 async: false, // Ensure call completes before continuing
+//                 callback: function(r) {
+//                     if (r.message && r.message.length > 0) {
+//                         // List of permitted states retrieved from the operator's child table
+//                         let permitted_states = r.message;
+
+//                         // Check if lead's state or state code matches any permitted state
+//                         let is_permitted = permitted_states.some(function(d) {
+//                             return (d.state === frm.doc.state) ||
+//                                    (d.state_code === frm.doc.state_code);
+//                         });
+
+//                         // If no match found, block the save/submit
+//                         if (!is_permitted) {
+//                             frappe.validated = false; // Prevent form submission
+//                             frappe.msgprint({
+//                                 title: __('Not Qualified'),
+//                                 message: __('This lead is not qualified for the selected operator because the state or state code is not permitted.'),
+//                                 indicator: 'red'
+//                             });
+//                         }
+//                     } else {
+//                         // If no permitted states are found for the company, prevent form submission
+//                         frappe.validated = false;
+//                         frappe.msgprint({
+//                             title: __('Validation Error'),
+//                             message: __(),
+//                             indicator: 'red'
+//                         });
+//                     }
+//                 }
+//             });
+//         } else {
+//             // If company is not selected, also prevent form submission
+//             frappe.validated = false;
+//             frappe.msgprint({
+//                 title: __('Company Not Selected'),
+//                 message: __('Please select a company before saving the lead.'),
+//                 indicator: 'red'
+//             });
+//         }
+//     }
+// });
+// Client script to add a button and handle lead duplication
 frappe.ui.form.on('ATM Leads', {
-    validate: function(frm) {
-        // Check if the company field is selected
-        if (frm.doc.company) {
-            // Fetch permitted states from the child table of the selected company
+    refresh: function(frm) {
+        // Add a button to open the company selection dialog
+        frm.add_custom_button(__('Duplicate for Companies'), function() {
+            // Fetch all operator companies
             frappe.call({
-                method: "frappe.client.get_list",
+                method: 'frappe.client.get_list',
                 args: {
-                    doctype: "Permitted States", // Child Doctype name
-                    filters: {
-                        'parent': frm.doc.company // Parent field linking to the selected company
-                    },
-                    fields: ['state', 'state_code'] // Fields to retrieve for validation
+                    doctype: 'Operator Companies',
+                    fields: ['name', 'operator_name']
                 },
-                async: false, // Ensure call completes before continuing
-                callback: function(r) {
-                    if (r.message && r.message.length > 0) {
-                        // List of permitted states retrieved from the operator's child table
-                        let permitted_states = r.message;
-
-                        // Check if lead's state or state code matches any permitted state
-                        let is_permitted = permitted_states.some(function(d) {
-                            return (d.state === frm.doc.state) ||
-                                   (d.state_code === frm.doc.state_code);
-                        });
-
-                        // If no match found, block the save/submit
-                        if (!is_permitted) {
-                            frappe.validated = false; // Prevent form submission
-                            frappe.msgprint({
-                                title: __('Not Qualified'),
-                                message: __('This lead is not qualified for the selected operator because the state or state code is not permitted.'),
-                                indicator: 'red'
-                            });
-                        }
-                    } else {
-                        // If no permitted states are found for the company, prevent form submission
-                        frappe.validated = false;
-                        frappe.msgprint({
-                            title: __('Validation Error'),
-                            message: __(),
-                            indicator: 'red'
-                        });
-                    }
+                callback: function(response) {
+                    // Open the dialog with checkboxes for each company
+                    let companies = response.message;
+                    open_company_selection_dialog(frm, companies);
                 }
             });
-        } else {
-            // If company is not selected, also prevent form submission
-            frappe.validated = false;
-            frappe.msgprint({
-                title: __('Company Not Selected'),
-                message: __('Please select a company before saving the lead.'),
-                indicator: 'red'
-            });
-        }
+        });
     }
 });
+
+// Function to open the dialog box with company checkboxes
+function open_company_selection_dialog(frm, companies) {
+    let fields = companies.map(company => {
+        return {
+            fieldtype: 'Check',
+            label: company.operator_name,
+            fieldname: company.name
+        };
+    });
+
+    let dialog = new frappe.ui.Dialog({
+        title: __('Select Companies to Duplicate Lead'),
+        fields: fields,
+        primary_action_label: __('Duplicate'),
+        primary_action(values) {
+            // Filter selected companies
+            let selected_companies = companies.filter(company => values[company.name]);
+
+            // Duplicate lead for each selected company
+            duplicate_lead_for_selected_companies(frm, selected_companies);
+            dialog.hide();
+        }
+    });
+
+    dialog.show();
+}
+
+// Function to duplicate the lead for the selected companies
+function duplicate_lead_for_selected_companies(frm, selected_companies) {
+    selected_companies.forEach(company => {
+        // Duplicate the lead record for each selected company
+        frappe.call({
+            method: 'frappe.client.insert',
+            args: {
+                doc: {
+                    doctype: 'ATM Leads',
+                    // Copy all fields from the current lead
+                    ...frm.doc,
+                    name: null, // Clear the name field to create a new record
+                    company: company.name, // Set the selected company
+                    status: 'Draft' // Set the status to Draft for the new record
+                }
+            },
+            callback: function(response) {
+                if (response && response.message) {
+                    frappe.show_alert({
+                        message: __('Lead duplicated for {0}', [company.operator_name]),
+                        indicator: 'green'
+                    });
+                }
+            }
+        });
+    });
+}
+
 frappe.ui.form.on('ATM Leads', {
     address: function(frm) {
         // Mapping of state codes to state names
