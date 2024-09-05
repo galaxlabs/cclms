@@ -1,10 +1,13 @@
 # Copyright (c) 2024, Galaxy and contributors
 # For license information, please see license.txt
 
-from frappe.model.document import Document
+
 import frappe
 from frappe import _
 from frappe.utils import now
+import frappe
+from frappe.utils import date_diff, nowdate
+from frappe.model.document import Document
 
 class ATMLeads(Document):
     def validate(self):
@@ -51,6 +54,56 @@ class ATMLeads(Document):
                 _("Please select a company before saving the lead."),
                 title=_("Company Not Selected")
             )
+
+    def update_days(doc, method):
+    # Check if Approved Date is set and calculate Approved Days
+        if doc.approve_date:
+            # Calculate days from Approved Date to Agreement Sent Date or today's date
+            if doc.agreement_sent_date:
+                doc.approved_days = date_diff(doc.agreement_sent_date, doc.approve_date)
+            else:
+                doc.approved_days = date_diff(nowdate(), doc.approve_date)
+        else:
+            doc.approved_days = 0  # No approval date set
+
+        # Check if Agreement Sent Date is set and calculate Agreement Sent Days
+        if doc.agreement_sent_date:
+            # Calculate days from Agreement Sent Date to Sign Date or today's date
+            if doc.sign_date:
+                doc.agreement_sent_days = date_diff(doc.sign_date, doc.agreement_sent_date)
+            else:
+                doc.agreement_sent_days = date_diff(nowdate(), doc.agreement_sent_date)
+        else:
+            doc.agreement_sent_days = 0  # No agreement sent date set
+
+        # Check if Sign Date is set and calculate Sign Days
+        if doc.sign_date:
+            doc.sign_days = date_diff(nowdate(), doc.sign_date)
+        else:
+            doc.sign_days = 0  # No sign date set
+
+        # Stop counting days once next action is taken
+        # For each count, if the next action is taken, the count should be kept static.
+        # For Approved Days:
+        if doc.agreement_sent_date and doc.approve_date:
+            doc.approved_days = date_diff(doc.agreement_sent_date, doc.approve_date)
+
+        # For Agreement Sent Days:
+        if doc.sign_date and doc.agreement_sent_date:
+            doc.agreement_sent_days = date_diff(doc.sign_date, doc.agreement_sent_date)
+
+        # For Sign Days:
+        # Sign days count continuously from sign date until stopped manually or by another business logic.
+
+        # Save the document to reflect the updated days count
+        doc.save()
+
+# Hook this function in your Doctype's validate or on_update event
+frappe.whitelist()
+def on_update(doc, method):
+    update_days(doc, method)
+
+
 
 # def validate(doc, method):
 #     # Fetch the logged-in user's location

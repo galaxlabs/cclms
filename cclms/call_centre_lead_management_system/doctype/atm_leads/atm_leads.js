@@ -63,3 +63,59 @@ frappe.ui.form.on('ATM Leads', {
         }
     }
 });
+frappe.ui.form.on('ATM Leads', {
+    address: function(frm) {
+        // Mapping of state codes to state names
+        const stateMap = {
+            'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+            'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+            'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+            'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+            'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+            'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+            'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+            'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+            'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+            'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+            'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+            'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+            'WI': 'Wisconsin', 'WY': 'Wyoming'
+        };
+
+        // Function to parse address into components
+        function parseAddress(address) {
+            // Example input: "27252 Katy Fwy #700, Katy, TX 77494"
+            let addressPattern = /(.+),\s*([^,]+),\s*([A-Z]{2})\s*(\d{5})/;
+            let match = address.match(addressPattern);
+
+            if (match) {
+                let streetAddress = match[1]; // Street Address
+                let city = match[2];          // City
+                let stateCode = match[3];     // State Code
+                let zip = match[4];           // Zip Code
+                let country = "United States"; // Default to US
+
+                // Set parsed values to the form fields
+                frm.set_value('address', streetAddress);
+                frm.set_value('city', city);
+                frm.set_value('state_code', stateCode); // State Code
+                frm.set_value('zippostal_code', zip);
+                frm.set_value('country', country);
+
+                // Set the state name based on state code if state name is not available
+                let stateName = frm.doc.state || stateMap[stateCode] || "";
+                frm.set_value('state', stateName);
+            } else {
+                frappe.msgprint(__('Address format is not recognized. Please ensure the format is "Street, City, State Zip".'));
+            }
+        }
+
+        // Get the address value and parse it
+        let address = frm.doc.address;
+        if (address) {
+            parseAddress(address);
+        }
+    }
+});
+
+

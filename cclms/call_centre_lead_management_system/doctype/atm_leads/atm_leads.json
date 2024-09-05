@@ -30,7 +30,7 @@
   "state",
   "city",
   "column_break_tonb",
-  "data_ovxt",
+  "state_code",
   "country",
   "section_break_zeru",
   "email",
@@ -52,9 +52,9 @@
   "column_break_aznw",
   "sign_date",
   "section_break_pawd",
-  "agreement_sent_days",
-  "column_break_lchj",
   "approved_days",
+  "column_break_lchj",
+  "agreement_sent_days",
   "column_break_zkia",
   "sign_days"
  ],
@@ -158,11 +158,6 @@
   {
    "fieldname": "column_break_tonb",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "data_ovxt",
-   "fieldtype": "Data",
-   "label": "State Code"
   },
   {
    "fieldname": "city",
@@ -297,11 +292,16 @@
    "fieldname": "percentage",
    "fieldtype": "Data",
    "label": "Percentage"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-04 12:12:12.927440",
+ "modified": "2024-09-04 14:55:19.819667",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
