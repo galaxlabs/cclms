@@ -6,6 +6,7 @@
 
 // 	},
 // });
+
 frappe.ui.form.on('ATM Leads', {
     validate: function(frm) {
         // Check if the company field is selected
