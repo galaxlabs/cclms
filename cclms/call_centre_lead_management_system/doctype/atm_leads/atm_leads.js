@@ -195,5 +195,232 @@ frappe.ui.form.on('ATM Leads', {
         }
     }
 });
+frappe.ui.form.on('ATM Leads', {
+    refresh: function(frm) {
+        // Add button to copy data for Excel
+        frm.add_custom_button(__('Copy For Excel'), function() {
+            // Prepare the data in a tab-separated format for Excel columns
+            let excelData = [
+                frm.doc.company || '',
+                frm.doc.post_date || '',                  // Date (Post Date)
+                frm.doc.executive_name || '',             // Executive Name
+                frm.doc.workflow_status || 'In Review',            // Lead Status
+                frm.doc.contract_length || 'TBD',         // Contract Length
+                frm.doc.fixed || 'TBD',                   // Fixed (Base Rent)
+                frm.doc.per_transaction || 'TBD',         // Per Transaction
+                frm.doc.owner_name || '',                 // Owner Name
+                frm.doc.business_type || 'N/A',           // Business Type
+                frm.doc.business_name || 'N/A',           // Business Name
+                frm.doc.address || 'N/A',                 // Business Street Address
+                frm.doc.city || 'N/A',                    // City
+                frm.doc.state_code || 'N/A',              // State/Province
+                frm.doc.zippostal_code || 'N/A',          // ZIP/Postal Code
+                frm.doc.business_phone_number || 'N/A',   // Business Phone
+                frm.doc.personal_cell_phone || '',        // Personal Phone
+                frm.doc.email || '',                      // Email Address
+                frm.doc.sign_date || '',
+                frm.doc.agreement_sent_date || '',// Signed Date
+                frm.doc.approve_date || ''              // Installed Date
+            ];
+
+            // Join the array with tab characters to separate into columns
+            let tabSeparatedData = excelData.join('\t');
+
+            // Create a temporary textarea element to hold the tab-separated text
+            let tempTextArea = document.createElement('textarea');
+            tempTextArea.value = tabSeparatedData;
+            document.body.appendChild(tempTextArea);
+
+            // Select the text inside the textarea and copy it
+            tempTextArea.select();
+            tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                // Execute the copy command
+                document.execCommand('copy');
+                frappe.msgprint(__('Copied to clipboard!'));
+            } catch (err) {
+                frappe.msgprint(__('Failed to copy: ' + err));
+            }
+
+            // Remove the temporary textarea
+            document.body.removeChild(tempTextArea);
+        });
+    }
+});
+frappe.ui.form.on('ATM Leads', {
+    refresh: function(frm) {
+        // Add button to copy data for Skype
+        frm.add_custom_button(__('Copy for Skype'), function() {
+            // Define the formatted text for Skype
+            let skypeText = `
+Approval Send Request:
+
+Owner Name: ${frm.doc.owner_name || 'N/A'}
+
+Owner Mail: mailto:${frm.doc.email || 'N/A'}
+
+Personal Phone: ${frm.doc.personal_cell_phone || 'N/A'}
+
+Business Name: ${frm.doc.business_name || 'N/A'}
+
+Business Address: ${frm.doc.address || 'N/A'}, ${frm.doc.city || 'N/A'}, ${frm.doc.state || 'N/A'}, ${frm.doc.zippostal_code || 'N/A'},${frm.doc.state_code || 'N/A'}
+
+Business Phone: ${frm.doc.business_phone_number || 'N/A'}
+
+Operations Hours: ${frm.doc.hours || 'N/A'}
+
+Location Type: ${frm.doc.business_type || 'N/A'}
+
+Offer Details:
+
+Fixed: ${frm.doc.fixed || 'TBD'}
+
+Per Trans: ${frm.doc.per_transaction || 'TBD'}
+
+Term: ${frm.doc.contract_length || 'TBD'} Years
+
+Additional Notes: Please Send This Location For Approval. Thanks
+`;
+
+            // Create a temporary textarea element to hold the text
+            let tempTextArea = document.createElement('textarea');
+            tempTextArea.value = skypeText;
+            document.body.appendChild(tempTextArea);
+
+            // Select the text inside the textarea and copy it
+            tempTextArea.select();
+            tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                // Execute the copy command
+                document.execCommand('copy');
+                frappe.msgprint(__('Copied to clipboard!'));
+            } catch (err) {
+                frappe.msgprint(__('Failed to copy: ' + err));
+            }
+
+            // Remove the temporary textarea
+            document.body.removeChild(tempTextArea);
+        });
+    }
+});
+frappe.ui.form.on('ATM Leads', {
+    refresh: function(frm) {
+        // Function to check if the user has the "Data Executive" role
+        function hasRole(role) {
+            return frappe.user_roles.includes(role);
+        }
+
+        // Only show the buttons if the user has the "Data Executive" role
+        if (hasRole('Data Executive')) {
+            // Create a wrapper for grouped buttons
+            frm.add_custom_button(__('Crypto Base'), function() {
+                copyToClipboard([
+                    frm.doc.business_name || '',
+                    frm.doc.address || 'N/A',
+                    frm.doc.city || 'N/A',
+                    frm.doc.state_code || 'N/A',
+                    frm.doc.zippostal_code || 'N/A',
+                    frm.doc.hours || '',
+                    frm.doc.fixed || 'TBD'
+                ]);
+            }, __('External')); // Add to a group labeled "Data for Excel"
+            
+            frm.add_custom_button(__('Un Bank'), function() {
+                copyToClipboard([
+                    frm.doc.post_date || '',
+                    frm.doc.workflow_status || 'Pending Review',
+                    frm.doc.contract_length || 'TBD',
+                    frm.doc.fixed || 'TBD',
+                    frm.doc.percentage || 'TBD',
+                    frm.doc.business_type || '',
+                    frm.doc.business_name || '',
+                    frm.doc.address || 'N/A',
+                    frm.doc.city || 'N/A',
+                    frm.doc.state_code || 'N/A',
+                    frm.doc.zippostal_code || 'N/A',
+                    frm.doc.hours || ''
+                ]);
+            }, __('External')); // Add to the same group
+
+            frm.add_custom_button(__('Coin Works'), function() {
+                copyToClipboard([
+                    frm.doc.post_date || '',
+                    frm.doc.workflow_status || 'Pending Review',
+                    frm.doc.contract_length || 'TBD',
+                    frm.doc.fixed || 'TBD',
+                    frm.doc.business_type || '',
+                    frm.doc.business_name || '',
+                    frm.doc.address || 'N/A',
+                    frm.doc.city || 'N/A',
+                    frm.doc.state_code || 'N/A',
+                    frm.doc.zippostal_code || 'N/A',
+                    frm.doc.hours || ''
+                ]);
+            }, __('External')); // Add to the same group
+
+            frm.add_custom_button(__('Budget Coinz'), function() {
+                copyToClipboard([
+                    frm.doc.post_date || '',
+                    frm.doc.workflow_status || 'Pending Review',
+                    frm.doc.contract_length || 'TBD',
+                    frm.doc.fixed || 'TBD',
+                    frm.doc.percentage || 'TBD',
+                    frm.doc.business_type || '',
+                    frm.doc.business_name || '',
+                    frm.doc.address || 'N/A',
+                    frm.doc.city || 'N/A',
+                    frm.doc.state_code || 'N/A',
+                    frm.doc.zippostal_code || 'N/A',
+                    frm.doc.hours || ''
+                ]);
+            }, __('External')); // Add to the same group
+
+            frm.add_custom_button(__('Instant Coin Bank'), function() {
+                copyToClipboard([
+                    frm.doc.post_date || '',
+                    frm.doc.workflow_status || 'Pending Review',
+                    frm.doc.contract_length || 'TBD',
+                    frm.doc.fixed || 'TBD',
+                    frm.doc.per_transaction || 'TBD',
+                    frm.doc.business_type || '',
+                    frm.doc.business_name || '',
+                    frm.doc.address || 'N/A',
+                    frm.doc.city || 'N/A',
+                    frm.doc.state_code || 'N/A',
+                    frm.doc.zippostal_code || 'N/A',
+                    frm.doc.hours || ''
+                ]);
+            }, __('External')); // Add to the same group
+        }
+    }
+});
+
+// Function to copy data to clipboard
+function copyToClipboard(dataArray) {
+    // Join the array with tab characters to separate into columns
+    let tabSeparatedData = dataArray.join('\t');
+
+    // Create a temporary textarea element to hold the tab-separated text
+    let tempTextArea = document.createElement('textarea');
+    tempTextArea.value = tabSeparatedData;
+    document.body.appendChild(tempTextArea);
+
+    // Select the text inside the textarea and copy it
+    tempTextArea.select();
+    tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+
+    try {
+        // Execute the copy command
+        document.execCommand('copy');
+        frappe.msgprint(__('Copied to clipboard!'));
+    } catch (err) {
+        frappe.msgprint(__('Failed to copy: ' + err));
+    }
+
+    // Remove the temporary textarea
+    document.body.removeChild(tempTextArea);
+}
 
 
