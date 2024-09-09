@@ -344,6 +344,23 @@ frappe.ui.form.on('ATM Leads', {
                 ]);
             }, __('External')); // Add to the same group
 
+            frm.add_custom_button(__('Rockit Coin'), function() {
+                copyToClipboard([
+                    frm.doc.post_date || '',
+                    frm.doc.workflow_status || 'In Review',
+                    frm.doc.contract_length || 'TBD',
+                    frm.doc.fixed || 'TBD',
+                    frm.doc.business_type || '',
+                    frm.doc.business_name || '',
+                    frm.doc.address || 'N/A',
+                    frm.doc.city || 'N/A',
+                    frm.doc.state_code || 'N/A',
+                    frm.doc.zippostal_code || 'N/A',
+                    frm.doc.hours || ''
+                ]);
+            }, __('External')); // Add to the same group
+
+
             frm.add_custom_button(__('Coin Works'), function() {
                 copyToClipboard([
                     frm.doc.post_date || '',
@@ -380,7 +397,7 @@ frappe.ui.form.on('ATM Leads', {
             frm.add_custom_button(__('Instant Coin Bank'), function() {
                 copyToClipboard([
                     frm.doc.post_date || '',
-                    frm.doc.workflow_status || 'Pending Review',
+                    frm.doc.workflow_status || 'In Review',
                     frm.doc.contract_length || 'TBD',
                     frm.doc.fixed || 'TBD',
                     frm.doc.per_transaction || 'TBD',

@@ -256,3 +256,4 @@ doc_events = {
 #         "on_update": "cclms.call_centre_lead_management_system.doctype.leads.leads.update_days"
 #     }
 # }
+# hooks.py
