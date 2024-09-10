@@ -8,302 +8,303 @@ from frappe.utils import date_diff, nowdate
 from frappe.model.document import Document
 
 class ATMLeads(Document):
-    def on_update(self):
-        try:
-            # Check for existing Lead and Address, then decide to create or update
-            crm_lead = self.create_or_update_crm_lead()
-            address = self.create_or_update_address(crm_lead.name)
-            contact = self.create_or_update_contact(crm_lead.name)
+    pass
+    # def on_update(self):
+    #     try:
+    #         # Check for existing Lead and Address, then decide to create or update
+    #         crm_lead = self.create_or_update_crm_lead()
+    #         address = self.create_or_update_address(crm_lead.name)
+    #         contact = self.create_or_update_contact(crm_lead.name)
             
-            # Handle duplication
-            if self.is_duplicate_lead():
-                self.handle_duplicate_lead()
-                return
+    #         # Handle duplication
+    #         if self.is_duplicate_lead():
+    #             self.handle_duplicate_lead()
+    #             return
 
-            # Link ATM Leads to Contact and Address
-            self.link_lead_with_contact_and_address(self.name, contact.name, address.name)
+    #         # Link ATM Leads to Contact and Address
+    #         self.link_lead_with_contact_and_address(self.name, contact.name, address.name)
 
-            # Link to Employee, Sales Person, Branch, and User
-            self.link_to_employee()
-            self.link_to_sales_person()
-            self.link_to_branch()
-            self.link_to_user()
+    #         # Link to Employee, Sales Person, Branch, and User
+    #         self.link_to_employee()
+    #         self.link_to_sales_person()
+    #         self.link_to_branch()
+    #         self.link_to_user()
 
-        except Exception as e:
-            frappe.log_error(f"Error updating ATM Leads: {str(e)}", "ATM Leads Update Error")
-            frappe.msgprint(f"An error occurred while updating the ATM Leads. Please check logs for details.")
+    #     except Exception as e:
+    #         frappe.log_error(f"Error updating ATM Leads: {str(e)}", "ATM Leads Update Error")
+    #         frappe.msgprint(f"An error occurred while updating the ATM Leads. Please check logs for details.")
 
-    def is_duplicate_lead(self):
-        # Check for duplicate leads based on address, email, phone, etc.
-        existing_leads = frappe.get_all('Lead', filters={
-            'address_line1': self.address,
-            'city': self.city,
-            'state': self.state,
-            'country': self.country,
-            'pincode': self.zippostal_code,
-            'email_id': self.email,
-            'mobile_no': self.personal_cell_phone or self.business_phone_number
-        })
-        return len(existing_leads) > 0
+    # def is_duplicate_lead(self):
+    #     # Check for duplicate leads based on address, email, phone, etc.
+    #     existing_leads = frappe.get_all('Lead', filters={
+    #         'address_line1': self.address,
+    #         'city': self.city,
+    #         'state': self.state,
+    #         'country': self.country,
+    #         'pincode': self.zippostal_code,
+    #         'email_id': self.email,
+    #         'mobile_no': self.personal_cell_phone or self.business_phone_number
+    #     })
+    #     return len(existing_leads) > 0
 
-    def handle_duplicate_lead(self):
-        # Handle duplicate leads (e.g., move to queue, log message, etc.)
-        frappe.msgprint("This lead is a duplicate and has been moved to the queue.")
-        self.add_to_queue()  # Implement this method to handle queue logic
+    # def handle_duplicate_lead(self):
+    #     # Handle duplicate leads (e.g., move to queue, log message, etc.)
+    #     frappe.msgprint("This lead is a duplicate and has been moved to the queue.")
+    #     self.add_to_queue()  # Implement this method to handle queue logic
 
-    def add_to_queue(self):
-        # Implement logic to add the lead to a queue for further review
-        pass
+    # def add_to_queue(self):
+    #     # Implement logic to add the lead to a queue for further review
+    #     pass
 
-    def create_or_update_crm_lead(self):
-        try:
-            lead_exists = frappe.db.exists('Lead', {'lead_name': self.owner_name, 'email_id': self.email})
-            primary_phone, whatsapp_phone = self.get_contact_phones()
+    # def create_or_update_crm_lead(self):
+    #     try:
+    #         lead_exists = frappe.db.exists('Lead', {'lead_name': self.owner_name, 'email_id': self.email})
+    #         primary_phone, whatsapp_phone = self.get_contact_phones()
 
-            if lead_exists:
-                lead_doc = frappe.get_doc('Lead', {'lead_name': self.owner_name, 'email_id': self.email})
-                if self.address_has_changed(lead_doc):
-                    lead_doc.address_line1 = self.address
-                    lead_doc.city = self.city
-                    lead_doc.state = self.state
-                    lead_doc.country = self.country
-                    lead_doc.pincode = self.zippostal_code
-                    lead_doc.save(ignore_permissions=True)
-                    frappe.msgprint(f'Lead {lead_doc.name} updated successfully!')
-            else:
-                lead_doc = frappe.get_doc({
-                    'doctype': 'Lead',
-                    'lead_name': self.owner_name,
-                    'company_name': self.business_name,
-                    'email_id': self.email,
-                    'mobile_no': primary_phone,
-                    'whatsapp_no': whatsapp_phone,
-                    'status': 'Lead',
-                    'lead_owner': self.owner
-                })
-                lead_doc.insert(ignore_permissions=True)
-                frappe.msgprint(f'Lead {lead_doc.name} created successfully!')
+    #         if lead_exists:
+    #             lead_doc = frappe.get_doc('Lead', {'lead_name': self.owner_name, 'email_id': self.email})
+    #             if self.address_has_changed(lead_doc):
+    #                 lead_doc.address_line1 = self.address
+    #                 lead_doc.city = self.city
+    #                 lead_doc.state = self.state
+    #                 lead_doc.country = self.country
+    #                 lead_doc.pincode = self.zippostal_code
+    #                 lead_doc.save(ignore_permissions=True)
+    #                 frappe.msgprint(f'Lead {lead_doc.name} updated successfully!')
+    #         else:
+    #             lead_doc = frappe.get_doc({
+    #                 'doctype': 'Lead',
+    #                 'lead_name': self.owner_name,
+    #                 'company_name': self.business_name,
+    #                 'email_id': self.email,
+    #                 'mobile_no': primary_phone,
+    #                 'whatsapp_no': whatsapp_phone,
+    #                 'status': 'Lead',
+    #                 'lead_owner': self.owner
+    #             })
+    #             lead_doc.insert(ignore_permissions=True)
+    #             frappe.msgprint(f'Lead {lead_doc.name} created successfully!')
 
-            return lead_doc
-        except Exception as e:
-            frappe.log_error(f"Error creating or updating CRM Lead: {str(e)}", "CRM Lead Error")
-            frappe.msgprint(f"An error occurred while processing the CRM Lead. Please check logs for details.")
+    #         return lead_doc
+    #     except Exception as e:
+    #         frappe.log_error(f"Error creating or updating CRM Lead: {str(e)}", "CRM Lead Error")
+    #         frappe.msgprint(f"An error occurred while processing the CRM Lead. Please check logs for details.")
 
-    def create_or_update_address(self, lead_name):
-        try:
-            address_exists = frappe.db.exists('Address', {
-                'address_title': self.business_name,
-                'address_type': 'Office'
-            })
+    # def create_or_update_address(self, lead_name):
+    #     try:
+    #         address_exists = frappe.db.exists('Address', {
+    #             'address_title': self.business_name,
+    #             'address_type': 'Office'
+    #         })
 
-            if address_exists:
-                address_doc = frappe.get_doc('Address', {
-                    'address_title': self.business_name,
-                    'address_type': 'Office'
-                })
+    #         if address_exists:
+    #             address_doc = frappe.get_doc('Address', {
+    #                 'address_title': self.business_name,
+    #                 'address_type': 'Office'
+    #             })
 
-                if self.address_has_changed(address_doc):
-                    address_doc.city = self.city
-                    address_doc.state = self.state
-                    address_doc.save(ignore_permissions=True)
-                    frappe.msgprint(f'Address {address_doc.name} updated successfully!')
-            else:
-                address_doc = frappe.get_doc({
-                    'doctype': 'Address',
-                    'address_title': self.business_name,
-                    'address_type': 'Office',
-                    'address_line1': self.address,
-                    'city': self.city,
-                    'state': self.state,
-                    'country': self.country,
-                    'pincode': self.zippostal_code,
-                    'email_id': self.email,
-                    'phone': self.get_primary_phone(),
-                    'links': [{
-                        'link_doctype': 'Lead',
-                        'link_name': lead_name
-                    }]
-                })
-                address_doc.insert(ignore_permissions=True)
-                frappe.msgprint(f'Address {address_doc.name} created successfully!')
+    #             if self.address_has_changed(address_doc):
+    #                 address_doc.city = self.city
+    #                 address_doc.state = self.state
+    #                 address_doc.save(ignore_permissions=True)
+    #                 frappe.msgprint(f'Address {address_doc.name} updated successfully!')
+    #         else:
+    #             address_doc = frappe.get_doc({
+    #                 'doctype': 'Address',
+    #                 'address_title': self.business_name,
+    #                 'address_type': 'Office',
+    #                 'address_line1': self.address,
+    #                 'city': self.city,
+    #                 'state': self.state,
+    #                 'country': self.country,
+    #                 'pincode': self.zippostal_code,
+    #                 'email_id': self.email,
+    #                 'phone': self.get_primary_phone(),
+    #                 'links': [{
+    #                     'link_doctype': 'Lead',
+    #                     'link_name': lead_name
+    #                 }]
+    #             })
+    #             address_doc.insert(ignore_permissions=True)
+    #             frappe.msgprint(f'Address {address_doc.name} created successfully!')
 
-            return address_doc
-        except Exception as e:
-            frappe.log_error(f"Error creating or updating Address: {str(e)}", "Address Error")
-            frappe.msgprint(f"An error occurred while processing the Address. Please check logs for details.")
+    #         return address_doc
+    #     except Exception as e:
+    #         frappe.log_error(f"Error creating or updating Address: {str(e)}", "Address Error")
+    #         frappe.msgprint(f"An error occurred while processing the Address. Please check logs for details.")
 
-    def create_or_update_contact(self, lead_name):
-        try:
-            contact_exists = frappe.db.exists('Contact', {
-                'first_name': self.owner_name.split()[0],
-                'last_name': self.owner_name.split()[-1]
-            })
+    # def create_or_update_contact(self, lead_name):
+    #     try:
+    #         contact_exists = frappe.db.exists('Contact', {
+    #             'first_name': self.owner_name.split()[0],
+    #             'last_name': self.owner_name.split()[-1]
+    #         })
 
-            if contact_exists:
-                contact_doc = frappe.get_doc('Contact', {
-                    'first_name': self.owner_name.split()[0],
-                    'last_name': self.owner_name.split()[-1]
-                })
+    #         if contact_exists:
+    #             contact_doc = frappe.get_doc('Contact', {
+    #                 'first_name': self.owner_name.split()[0],
+    #                 'last_name': self.owner_name.split()[-1]
+    #             })
 
-                self.add_or_update_email(contact_doc)
-                self.add_or_update_phone(contact_doc)
+    #             self.add_or_update_email(contact_doc)
+    #             self.add_or_update_phone(contact_doc)
 
-                contact_doc.job_title = 'Owner'
-                contact_doc.designation = self.business_type
-                contact_doc.save(ignore_permissions=True)
-                frappe.msgprint(f'Contact {contact_doc.name} updated successfully!')
-            else:
-                contact_doc = frappe.get_doc({
-                    'doctype': 'Contact',
-                    'first_name': self.owner_name.split()[0],
-                    'last_name': self.owner_name.split()[-1],
-                    'company_name': self.business_name,
-                    'job_title': 'Owner',
-                    'designation': self.business_type,
-                    'links': [{
-                        'link_doctype': 'Lead',
-                        'link_name': lead_name
-                    }]
-                })
+    #             contact_doc.job_title = 'Owner'
+    #             contact_doc.designation = self.business_type
+    #             contact_doc.save(ignore_permissions=True)
+    #             frappe.msgprint(f'Contact {contact_doc.name} updated successfully!')
+    #         else:
+    #             contact_doc = frappe.get_doc({
+    #                 'doctype': 'Contact',
+    #                 'first_name': self.owner_name.split()[0],
+    #                 'last_name': self.owner_name.split()[-1],
+    #                 'company_name': self.business_name,
+    #                 'job_title': 'Owner',
+    #                 'designation': self.business_type,
+    #                 'links': [{
+    #                     'link_doctype': 'Lead',
+    #                     'link_name': lead_name
+    #                 }]
+    #             })
 
-                self.add_or_update_email(contact_doc)
-                self.add_or_update_phone(contact_doc)
+    #             self.add_or_update_email(contact_doc)
+    #             self.add_or_update_phone(contact_doc)
 
-                contact_doc.insert(ignore_permissions=True)
-                frappe.msgprint(f'Contact {contact_doc.name} created successfully!')
+    #             contact_doc.insert(ignore_permissions=True)
+    #             frappe.msgprint(f'Contact {contact_doc.name} created successfully!')
 
-            return contact_doc
-        except Exception as e:
-            frappe.log_error(f"Error creating or updating Contact: {str(e)}", "Contact Error")
-            frappe.msgprint(f"An error occurred while processing the Contact. Please check logs for details.")
+    #         return contact_doc
+    #     except Exception as e:
+    #         frappe.log_error(f"Error creating or updating Contact: {str(e)}", "Contact Error")
+    #         frappe.msgprint(f"An error occurred while processing the Contact. Please check logs for details.")
 
-    def add_or_update_email(self, contact_doc):
-        try:
-            existing_emails = [email.email_id for email in contact_doc.email_ids]
+    # def add_or_update_email(self, contact_doc):
+    #     try:
+    #         existing_emails = [email.email_id for email in contact_doc.email_ids]
 
-            if self.email and self.email not in existing_emails:
-                contact_doc.append('email_ids', {
-                    'email_id': self.email,
-                    'is_primary': 1
-                })
-        except Exception as e:
-            frappe.log_error(f"Error adding or updating email for Contact: {str(e)}", "Contact Email Error")
+    #         if self.email and self.email not in existing_emails:
+    #             contact_doc.append('email_ids', {
+    #                 'email_id': self.email,
+    #                 'is_primary': 1
+    #             })
+    #     except Exception as e:
+    #         frappe.log_error(f"Error adding or updating email for Contact: {str(e)}", "Contact Email Error")
 
-    def add_or_update_phone(self, contact_doc):
-        try:
-            existing_phones = [phone.phone for phone in contact_doc.phone_nos]
+    # def add_or_update_phone(self, contact_doc):
+    #     try:
+    #         existing_phones = [phone.phone for phone in contact_doc.phone_nos]
 
-            primary_phone = self.personal_cell_phone if self.personal_cell_phone else self.business_phone_number
+    #         primary_phone = self.personal_cell_phone if self.personal_cell_phone else self.business_phone_number
 
-            if primary_phone and primary_phone not in existing_phones:
-                contact_doc.append('phone_nos', {
-                    'phone': primary_phone,
-                    'is_primary_mobile_no': 1 if self.personal_cell_phone else 0,
-                    'is_primary_phone': 1 if not self.personal_cell_phone else 0
-                })
+    #         if primary_phone and primary_phone not in existing_phones:
+    #             contact_doc.append('phone_nos', {
+    #                 'phone': primary_phone,
+    #                 'is_primary_mobile_no': 1 if self.personal_cell_phone else 0,
+    #                 'is_primary_phone': 1 if not self.personal_cell_phone else 0
+    #             })
 
-            secondary_phone = self.business_phone_number if self.personal_cell_phone else None
-            if secondary_phone and secondary_phone not in existing_phones:
-                contact_doc.append('phone_nos', {
-                    'phone': secondary_phone,
-                    'is_primary_phone': 0
-                })
-        except Exception as e:
-            frappe.log_error(f"Error adding or updating phone for Contact: {str(e)}", "Contact Phone Error")
+    #         secondary_phone = self.business_phone_number if self.personal_cell_phone else None
+    #         if secondary_phone and secondary_phone not in existing_phones:
+    #             contact_doc.append('phone_nos', {
+    #                 'phone': secondary_phone,
+    #                 'is_primary_phone': 0
+    #             })
+    #     except Exception as e:
+    #         frappe.log_error(f"Error adding or updating phone for Contact: {str(e)}", "Contact Phone Error")
 
-    def link_lead_with_contact_and_address(self, atm_lead_name, contact_name, address_name):
-        try:
-            if not frappe.db.exists('Dynamic Link', {'parent': atm_lead_name, 'link_name': contact_name, 'link_doctype': 'Contact'}):
-                frappe.get_doc({
-                    'doctype': 'Dynamic Link',
-                    'parenttype': 'ATM Leads',
-                    'parent': atm_lead_name,
-                    'link_doctype': 'Contact',
-                    'link_name': contact_name
-                }).insert(ignore_permissions=True)
+    # def link_lead_with_contact_and_address(self, atm_lead_name, contact_name, address_name):
+    #     try:
+    #         if not frappe.db.exists('Dynamic Link', {'parent': atm_lead_name, 'link_name': contact_name, 'link_doctype': 'Contact'}):
+    #             frappe.get_doc({
+    #                 'doctype': 'Dynamic Link',
+    #                 'parenttype': 'ATM Leads',
+    #                 'parent': atm_lead_name,
+    #                 'link_doctype': 'Contact',
+    #                 'link_name': contact_name
+    #             }).insert(ignore_permissions=True)
 
-            if not frappe.db.exists('Dynamic Link', {'parent': atm_lead_name, 'link_name': address_name, 'link_doctype': 'Address'}):
-                frappe.get_doc({
-                    'doctype': 'Dynamic Link',
-                    'parenttype': 'ATM Leads',
-                    'parent': atm_lead_name,
-                    'link_doctype': 'Address',
-                    'link_name': address_name
-                }).insert(ignore_permissions=True)
-        except Exception as e:
-            frappe.log_error(f"Error linking Lead with Contact and Address: {str(e)}", "Link Error")
+    #         if not frappe.db.exists('Dynamic Link', {'parent': atm_lead_name, 'link_name': address_name, 'link_doctype': 'Address'}):
+    #             frappe.get_doc({
+    #                 'doctype': 'Dynamic Link',
+    #                 'parenttype': 'ATM Leads',
+    #                 'parent': atm_lead_name,
+    #                 'link_doctype': 'Address',
+    #                 'link_name': address_name
+    #             }).insert(ignore_permissions=True)
+    #     except Exception as e:
+    #         frappe.log_error(f"Error linking Lead with Contact and Address: {str(e)}", "Link Error")
 
-    def link_to_employee(self):
-        try:
-            if self.employee:
-                if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.employee, 'link_doctype': 'Employee'}):
-                    frappe.get_doc({
-                        'doctype': 'Dynamic Link',
-                        'parenttype': 'ATM Leads',
-                        'parent': self.name,
-                        'link_doctype': 'Employee',
-                        'link_name': self.employee
-                    }).insert(ignore_permissions=True)
-        except Exception as e:
-            frappe.log_error(f"Error linking Lead with Employee: {str(e)}", "Employee Link Error")
+    # def link_to_employee(self):
+    #     try:
+    #         if self.employee:
+    #             if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.employee, 'link_doctype': 'Employee'}):
+    #                 frappe.get_doc({
+    #                     'doctype': 'Dynamic Link',
+    #                     'parenttype': 'ATM Leads',
+    #                     'parent': self.name,
+    #                     'link_doctype': 'Employee',
+    #                     'link_name': self.employee
+    #                 }).insert(ignore_permissions=True)
+    #     except Exception as e:
+    #         frappe.log_error(f"Error linking Lead with Employee: {str(e)}", "Employee Link Error")
 
-    def link_to_sales_person(self):
-        try:
-            if self.sales_person:
-                if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.sales_person, 'link_doctype': 'Sales Person'}):
-                    frappe.get_doc({
-                        'doctype': 'Dynamic Link',
-                        'parenttype': 'ATM Leads',
-                        'parent': self.name,
-                        'link_doctype': 'Sales Person',
-                        'link_name': self.sales_person
-                    }).insert(ignore_permissions=True)
-        except Exception as e:
-            frappe.log_error(f"Error linking Lead with Sales Person: {str(e)}", "Sales Person Link Error")
+    # def link_to_sales_person(self):
+    #     try:
+    #         if self.sales_person:
+    #             if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.sales_person, 'link_doctype': 'Sales Person'}):
+    #                 frappe.get_doc({
+    #                     'doctype': 'Dynamic Link',
+    #                     'parenttype': 'ATM Leads',
+    #                     'parent': self.name,
+    #                     'link_doctype': 'Sales Person',
+    #                     'link_name': self.sales_person
+    #                 }).insert(ignore_permissions=True)
+    #     except Exception as e:
+    #         frappe.log_error(f"Error linking Lead with Sales Person: {str(e)}", "Sales Person Link Error")
 
-    def link_to_branch(self):
-        try:
-            if self.branch:
-                if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.branch, 'link_doctype': 'Branch'}):
-                    frappe.get_doc({
-                        'doctype': 'Dynamic Link',
-                        'parenttype': 'ATM Leads',
-                        'parent': self.name,
-                        'link_doctype': 'Branch',
-                        'link_name': self.branch
-                    }).insert(ignore_permissions=True)
-        except Exception as e:
-            frappe.log_error(f"Error linking Lead with Branch: {str(e)}", "Branch Link Error")
+    # def link_to_branch(self):
+    #     try:
+    #         if self.branch:
+    #             if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.branch, 'link_doctype': 'Branch'}):
+    #                 frappe.get_doc({
+    #                     'doctype': 'Dynamic Link',
+    #                     'parenttype': 'ATM Leads',
+    #                     'parent': self.name,
+    #                     'link_doctype': 'Branch',
+    #                     'link_name': self.branch
+    #                 }).insert(ignore_permissions=True)
+    #     except Exception as e:
+    #         frappe.log_error(f"Error linking Lead with Branch: {str(e)}", "Branch Link Error")
 
-    def link_to_user(self):
-        try:
-            if self.user:
-                if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.user, 'link_doctype': 'User'}):
-                    frappe.get_doc({
-                        'doctype': 'Dynamic Link',
-                        'parenttype': 'ATM Leads',
-                        'parent': self.name,
-                        'link_doctype': 'User',
-                        'link_name': self.user
-                    }).insert(ignore_permissions=True)
-        except Exception as e:
-            frappe.log_error(f"Error linking Lead with User: {str(e)}", "User Link Error")
+    # def link_to_user(self):
+    #     try:
+    #         if self.user:
+    #             if not frappe.db.exists('Dynamic Link', {'parent': self.name, 'link_name': self.user, 'link_doctype': 'User'}):
+    #                 frappe.get_doc({
+    #                     'doctype': 'Dynamic Link',
+    #                     'parenttype': 'ATM Leads',
+    #                     'parent': self.name,
+    #                     'link_doctype': 'User',
+    #                     'link_name': self.user
+    #                 }).insert(ignore_permissions=True)
+    #     except Exception as e:
+    #         frappe.log_error(f"Error linking Lead with User: {str(e)}", "User Link Error")
 
-    def address_has_changed(self, doc):
-        return (
-            doc.address_line1 != self.address or
-            doc.city != self.city or
-            doc.state != self.state or
-            doc.country != self.country or
-            doc.pincode != self.zippostal_code
-        )
+    # def address_has_changed(self, doc):
+    #     return (
+    #         doc.address_line1 != self.address or
+    #         doc.city != self.city or
+    #         doc.state != self.state or
+    #         doc.country != self.country or
+    #         doc.pincode != self.zippostal_code
+    #     )
 
-    def get_contact_phones(self):
-        primary_phone = self.personal_cell_phone if self.personal_cell_phone else self.business_phone_number
-        return primary_phone, None
+    # def get_contact_phones(self):
+    #     primary_phone = self.personal_cell_phone if self.personal_cell_phone else self.business_phone_number
+    #     return primary_phone, None
 
-    def get_primary_phone(self):
-        return self.get_contact_phones()[0]
+    # def get_primary_phone(self):
+    #     return self.get_contact_phones()[0]
 
 
     # def validate(self):
