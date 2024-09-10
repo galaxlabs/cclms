@@ -100,7 +100,8 @@
   {
    "fieldname": "post_date",
    "fieldtype": "Date",
-   "label": "Post Date"
+   "label": "Post Date",
+   "reqd": 1
   },
   {
    "fieldname": "branch",
@@ -354,7 +355,7 @@
    "link_fieldname": "sales_person_name"
   }
  ],
- "modified": "2024-09-09 13:35:50.876380",
+ "modified": "2024-09-10 10:06:16.838674",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
