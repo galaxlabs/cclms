@@ -57,7 +57,9 @@
   "column_break_lchj",
   "agreement_sent_days",
   "column_break_zkia",
-  "sign_days"
+  "sign_days",
+  "section_break_utay",
+  "opening_hours"
  ],
  "fields": [
   {
@@ -318,6 +320,16 @@
    "in_standard_filter": 1,
    "label": "Sales Person",
    "options": "Sales Person"
+  },
+  {
+   "fieldname": "section_break_utay",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "opening_hours",
+   "fieldtype": "Table",
+   "label": "Opening Hours",
+   "options": "Opening Hours"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -343,7 +355,7 @@
    "link_fieldname": "sales_person_name"
   }
  ],
- "modified": "2024-09-10 11:01:41.625836",
+ "modified": "2024-09-10 11:14:29.240179",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
