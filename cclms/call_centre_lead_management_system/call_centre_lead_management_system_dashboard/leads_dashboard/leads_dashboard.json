@@ -1,26 +1,49 @@
 {
  "cards": [
   {
-   "card": "Approved"
+   "card": "Agreement Sent"
   },
   {
    "card": "Approved"
+  },
+  {
+   "card": "Signed"
+  },
+  {
+   "card": "Pending"
+  },
+  {
+   "card": "Submitted"
+  },
+  {
+   "card": "Pending Installation"
+  },
+  {
+   "card": "Rejected"
   }
  ],
  "charts": [
   {
-   "chart": "Leads By Region",
+   "chart": "Leads by Company",
+   "width": "Full"
+  },
+  {
+   "chart": "Leads by Executive",
+   "width": "Full"
+  },
+  {
+   "chart": "Branch Count",
    "width": "Half"
   }
  ],
- "creation": "2024-07-17 11:06:46.501603",
+ "creation": "2024-09-10 05:56:21.288757",
  "dashboard_name": "Leads Dashboard",
  "docstatus": 0,
  "doctype": "Dashboard",
  "idx": 0,
  "is_default": 1,
  "is_standard": 1,
- "modified": "2024-08-26 10:33:44.379225",
+ "modified": "2024-09-10 06:50:20.042406",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads Dashboard",

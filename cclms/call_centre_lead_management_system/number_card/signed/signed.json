@@ -1,5 +1,6 @@
 {
  "aggregate_function_based_on": "",
+ "color": "#038216",
  "creation": "2024-09-04 07:38:08.465620",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -11,7 +12,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Signed",
- "modified": "2024-09-04 07:38:08.465620",
+ "modified": "2024-09-10 06:16:53.127689",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Signed",

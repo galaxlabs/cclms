@@ -1,5 +1,6 @@
 {
  "aggregate_function_based_on": "",
+ "color": "#026311",
  "creation": "2024-08-26 10:27:07.434445",
  "docstatus": 0,
  "doctype": "Number Card",
@@ -11,7 +12,7 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Approved",
- "modified": "2024-09-04 08:34:50.355452",
+ "modified": "2024-09-10 06:18:33.793128",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Approved",
