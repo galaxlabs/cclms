@@ -251,7 +251,7 @@ frappe.ui.form.on('ATM Leads', {
 frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
         // Add button to copy data for Skype
-        frm.add_custom_button(__('Copy for Skype'), function() {
+        frm.add_custom_button(__('Skype Approval'), function() {
             // Define the formatted text for Skype
             let skypeText = `
 Approval Send Request:
