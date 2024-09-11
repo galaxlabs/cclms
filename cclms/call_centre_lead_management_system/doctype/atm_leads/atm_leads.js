@@ -455,46 +455,96 @@ frappe.ui.form.on('ATM Leads', {
         }
     }
 });
-frappe.ui.form.on('Opening Hours', {
-    opening_time: function(frm, cdt, cdn) {
-        calculate_total_hours(frm, cdt, cdn);
+frappe.ui.form.on('ATM Leads', {
+    refresh: function(frm) {
+        calculate_all_rows(frm); // Calculate total hours for all rows on load
+        update_average_hours(frm); // Update average hours on load
     },
-    closing_time: function(frm, cdt, cdn) {
-        calculate_total_hours(frm, cdt, cdn);
+    onload: function(frm) {
+        calculate_all_rows(frm); // Calculate total hours for all rows on load
+        update_average_hours(frm); // Update average hours on load
     }
 });
 
+frappe.ui.form.on('Opening Hours', {
+    opening_time: function(frm, cdt, cdn) {
+        sync_times_if_first_row(frm, cdt, cdn);
+        update_average_hours(frm); // Update average hours when times change
+    },
+    closing_time: function(frm, cdt, cdn) {
+        sync_times_if_first_row(frm, cdt, cdn);
+        update_average_hours(frm); // Update average hours when times change
+    }
+});
+
+function calculate_all_rows(frm) {
+    frm.doc.opening_hours.forEach(row => {
+        calculate_total_hours(frm, row.doctype, row.name);
+    });
+}
+
 function calculate_total_hours(frm, cdt, cdn) {
-    // Get the current row
     var row = frappe.get_doc(cdt, cdn);
 
-    // Convert time strings to date objects
     let opening = parseTime(row.opening_time);
     let closing = parseTime(row.closing_time);
 
-    // Calculate total hours, considering overnight shifts
     let duration = (closing - opening) / (1000 * 60 * 60); // Convert milliseconds to hours
 
     if (duration < 0) {
         duration += 24; // Adjust for overnight (e.g., 7:00 PM to 7:00 AM)
     }
 
-    // Set the total hours field
     frappe.model.set_value(cdt, cdn, 'total_hours', duration.toFixed(2));
 }
 
+function sync_times_if_first_row(frm, cdt, cdn) {
+    var row = frappe.get_doc(cdt, cdn);
+
+    if (row.idx === 1) {
+        calculate_total_hours(frm, cdt, cdn);
+
+        frm.doc.opening_hours.forEach(other_row => {
+            if (other_row.name !== row.name) {
+                frappe.model.set_value(other_row.doctype, other_row.name, 'opening_time', row.opening_time);
+                frappe.model.set_value(other_row.doctype, other_row.name, 'closing_time', row.closing_time);
+                calculate_total_hours(frm, other_row.doctype, other_row.name);
+            }
+        });
+    } else {
+        calculate_total_hours(frm, cdt, cdn);
+    }
+}
+
 function parseTime(timeStr) {
-    // Parse the time string (e.g., "7:00 AM") into a Date object
     let [time, period] = timeStr.split(' ');
     let [hours, minutes] = time.split(':').map(Number);
 
-    if (period === 'PM' && hours !== 12) hours += 12; // Convert PM hours, except for 12 PM
-    if (period === 'AM' && hours === 12) hours = 0;   // Adjust 12 AM to 0 hours
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
 
-    // Return a Date object with the time set
     let date = new Date();
     date.setHours(hours, minutes, 0, 0);
     return date;
 }
 
+// Function to calculate and update average hours
+function update_average_hours(frm) {
+    let totalHours = 0;
+    let rowCount = frm.doc.opening_hours.length;
+
+    // Sum all total hours from the child table
+    frm.doc.opening_hours.forEach(row => {
+        totalHours += parseFloat(row.total_hours || 0);
+    });
+
+    // Calculate average hours
+    let averageHours = rowCount ? totalHours / rowCount : 0;
+
+    // Round to the nearest whole number
+    let roundedAverage = Math.round(averageHours);
+
+    // Update the 'hours' field in the ATM Leads Doctype
+    frm.set_value('hours', `${roundedAverage} Hours`);
+}
 
