@@ -9,7 +9,8 @@
  "engine": "InnoDB",
  "field_order": [
   "operator_name",
-  "state_name"
+  "state_name",
+  "restricted__type"
  ],
  "fields": [
   {
@@ -24,11 +25,17 @@
    "fieldtype": "Table",
    "label": "Permitted States",
    "options": "Permitted States"
+  },
+  {
+   "fieldname": "restricted__type",
+   "fieldtype": "Table",
+   "label": "Restricted  Type",
+   "options": "Restricted  Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-31 10:06:12.710781",
+ "modified": "2024-09-11 12:08:37.760917",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Operator Companies",
