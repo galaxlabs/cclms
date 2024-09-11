@@ -439,5 +439,62 @@ function copyToClipboard(dataArray) {
     // Remove the temporary textarea
     document.body.removeChild(tempTextArea);
 }
+frappe.ui.form.on('ATM Leads', {
+    onload: function(frm) {
+        // Check if the child table is empty, then fill with default values
+        if (!frm.doc.opening_hours || frm.doc.opening_hours.length === 0) {
+            const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            weekdays.forEach(weekday => {
+                frm.add_child('opening_hours', {
+                    'weekday': weekday,
+                    'opening_time': '7:00 AM',
+                    'closing_time': '8:00 PM'
+                });
+            });
+            frm.refresh_field('opening_hours');
+        }
+    }
+});
+frappe.ui.form.on('Opening Hours', {
+    opening_time: function(frm, cdt, cdn) {
+        calculate_total_hours(frm, cdt, cdn);
+    },
+    closing_time: function(frm, cdt, cdn) {
+        calculate_total_hours(frm, cdt, cdn);
+    }
+});
+
+function calculate_total_hours(frm, cdt, cdn) {
+    // Get the current row
+    var row = frappe.get_doc(cdt, cdn);
+
+    // Convert time strings to date objects
+    let opening = parseTime(row.opening_time);
+    let closing = parseTime(row.closing_time);
+
+    // Calculate total hours, considering overnight shifts
+    let duration = (closing - opening) / (1000 * 60 * 60); // Convert milliseconds to hours
+
+    if (duration < 0) {
+        duration += 24; // Adjust for overnight (e.g., 7:00 PM to 7:00 AM)
+    }
+
+    // Set the total hours field
+    frappe.model.set_value(cdt, cdn, 'total_hours', duration.toFixed(2));
+}
+
+function parseTime(timeStr) {
+    // Parse the time string (e.g., "7:00 AM") into a Date object
+    let [time, period] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+
+    if (period === 'PM' && hours !== 12) hours += 12; // Convert PM hours, except for 12 PM
+    if (period === 'AM' && hours === 12) hours = 0;   // Adjust 12 AM to 0 hours
+
+    // Return a Date object with the time set
+    let date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+}
 
 

@@ -86,6 +86,10 @@
   {
    "fieldname": "executive_name",
    "fieldtype": "Link",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Executive Name",
    "options": "Employee"
   },
@@ -98,6 +102,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "Today",
    "fieldname": "post_date",
    "fieldtype": "Date",
    "label": "Post Date",
@@ -116,7 +121,12 @@
   {
    "fieldname": "owner_name",
    "fieldtype": "Data",
-   "label": "Owner Name"
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Owner Name",
+   "options": "Name"
   },
   {
    "fieldname": "column_break_dcwb",
@@ -226,7 +236,8 @@
   {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "Email"
+   "label": "Email",
+   "options": "Email"
   },
   {
    "fieldname": "column_break_ioei",
@@ -235,7 +246,8 @@
   {
    "fieldname": "business_phone_number",
    "fieldtype": "Data",
-   "label": "Business Phone Number"
+   "label": "Business Phone Number",
+   "options": "Phone"
   },
   {
    "fieldname": "column_break_gdnv",
@@ -244,7 +256,8 @@
   {
    "fieldname": "personal_cell_phone",
    "fieldtype": "Data",
-   "label": "Personal Cell Phone"
+   "label": "Personal Cell Phone",
+   "options": "Phone"
   },
   {
    "fieldname": "section_break_nmmj",
@@ -333,29 +346,8 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "group": "Leads",
-   "link_doctype": "User",
-   "link_fieldname": "owner"
-  },
-  {
-   "group": "Leads",
-   "link_doctype": "Employee",
-   "link_fieldname": "employee"
-  },
-  {
-   "group": "Leads",
-   "link_doctype": "Branch",
-   "link_fieldname": "branch"
-  },
-  {
-   "group": "Leads",
-   "link_doctype": "Sales Person",
-   "link_fieldname": "sales_person_name"
-  }
- ],
- "modified": "2024-09-10 11:14:29.240179",
+ "links": [],
+ "modified": "2024-09-11 10:00:02.800577",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
