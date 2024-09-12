@@ -3,7 +3,6 @@
 import frappe
 from frappe import _
 from frappe.utils import now
-import frappe
 from frappe.utils import date_diff, nowdate
 from frappe.model.document import Document
 
@@ -17,19 +16,21 @@ class ATMLeads(Document):
             address = self.create_or_update_address()
 
             # Create or update lead
-            lead = self.create_or_update_lead(contact.name, address.name)
+            self.create_or_update_lead(contact.name, address.name)
 
-            # Link ATM Leads to Contact and Address
-            self.link_lead_with_contact_and_address(lead.name, contact.name, address.name)
-            
         except Exception as e:
-            frappe.msgprint(f"An error occurred while updating the ATM Leads. Please check logs for details.")
+            frappe.msgprint(f"This Contact Already Exist.")
 
     def create_or_update_contact(self):
-        contact_exists = frappe.db.exists('Contact', {'email_ids': self.email})
+        # Check for existing contact by email or phone
+        contact_exists = frappe.get_all('Contact', filters={
+            'email_ids.email_id': self.email,
+            'phone_nos.phone': self.personal_cell_phone
+        }, fields=['name'])
 
         if contact_exists:
-            contact_doc = frappe.get_doc('Contact', contact_exists)
+            # Update existing contact
+            contact_doc = frappe.get_doc('Contact', contact_exists[0]['name'])
             contact_doc.first_name = self.owner_name.split()[0]
             contact_doc.last_name = self.owner_name.split()[-1]
             self.add_or_update_email(contact_doc)
@@ -37,13 +38,13 @@ class ATMLeads(Document):
             contact_doc.save(ignore_permissions=True)
             frappe.msgprint(f'Contact {contact_doc.name} updated successfully!')
         else:
+            # Create new contact
             contact_doc = frappe.get_doc({
                 'doctype': 'Contact',
                 'first_name': self.owner_name.split()[0],
                 'last_name': self.owner_name.split()[-1],
                 'email_ids': [{'email_id': self.email}],
-                'phone_nos': [{'phone': self.personal_cell_phone, 'is_primary_mobile_no': 1}] if self.personal_cell_phone else [],
-                'links': [{'link_doctype': 'ATM Leads', 'link_name': self.name}]
+                'phone_nos': [{'phone': self.personal_cell_phone, 'is_primary_mobile_no': 1}] if self.personal_cell_phone else []
             })
             contact_doc.insert(ignore_permissions=True)
             frappe.msgprint(f'Contact {contact_doc.name} created successfully!')
@@ -77,7 +78,6 @@ class ATMLeads(Document):
                 'pincode': self.zippostal_code,
                 'address_type': 'Office',
                 'is_shipping_address': 1,  # Set as default shipping address
-                'links': [{'link_doctype': 'ATM Leads', 'link_name': self.name}]
             })
             address_doc.insert(ignore_permissions=True)
             frappe.msgprint(f'Address {address_doc.name} created successfully!')
@@ -100,39 +100,12 @@ class ATMLeads(Document):
                 'company_name': self.business_name,
                 'email_id': self.email,
                 'status': 'Lead',
-                'lead_owner': self.owner,
-                'links': [
-                    {'link_doctype': 'Contact', 'link_name': contact_name},
-                    {'link_doctype': 'Address', 'link_name': address_name}
-                ]
+                'lead_owner': self.owner
             })
             lead_doc.insert(ignore_permissions=True)
             frappe.msgprint(f'Lead {lead_doc.name} created successfully!')
 
         return lead_doc
-
-    def link_lead_with_contact_and_address(self, lead_name, contact_name, address_name):
-        # Ensure linkage in Dynamic Link table
-        self.link_doctype_with_dynamic_link(lead_name, contact_name, 'Contact')
-        self.link_doctype_with_dynamic_link(lead_name, address_name, 'Address')
-
-    def link_doctype_with_dynamic_link(self, parent_name, link_name, link_doctype):
-        existing_links = frappe.get_all('Dynamic Link', filters={
-            'link_doctype': link_doctype,
-            'link_name': link_name,
-            'parenttype': 'Lead',
-            'parent': parent_name
-        })
-
-        if len(existing_links) == 0:
-            link_doc = frappe.get_doc({
-                'doctype': 'Dynamic Link',
-                'parent': parent_name,
-                'parenttype': 'Lead',
-                'link_doctype': link_doctype,
-                'link_name': link_name
-            })
-            link_doc.insert(ignore_permissions=True)
 
     def validate(self):
         self.validate_lead_state()
@@ -183,9 +156,9 @@ class ATMLeads(Document):
             frappe.throw(_("You do not have permission to access Permitted States: {0}").format(str(e)))
         except Exception as e:
             frappe.throw(_("An unexpected error occurred: {0}").format(str(e)))
-    
+
     def update_days(doc, method):
-    # Check if Approved Date is set and calculate Approved Days
+        # Check if Approved Date is set and calculate Approved Days
         if doc.approve_date:
             # Calculate days from Approved Date to Agreement Sent Date or today's date
             if doc.agreement_sent_date:
