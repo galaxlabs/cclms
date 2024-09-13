@@ -278,7 +278,7 @@ Fixed: ${frm.doc.fixed || 'TBD'}
 
 Per Trans: ${frm.doc.per_transaction || 'TBD'}
 
-Term: ${frm.doc.contract_length || 'TBD'} Years
+Term: ${frm.doc.contract_length || 'TBD'}
 
 Additional Notes: Please Send This Location For Approval. Thanks
 `;
