@@ -264,7 +264,7 @@ Personal Phone: ${frm.doc.personal_cell_phone || 'N/A'}
 
 Business Name: ${frm.doc.business_name || 'N/A'}
 
-Business Address: ${frm.doc.address || 'N/A'}, ${frm.doc.city || 'N/A'}, ${frm.doc.state || 'N/A'}, ${frm.doc.state_code || 'N/A'}, ${frm.doc.zippostal_code || 'N/A'}
+Business Address: ${frm.doc.address || 'N/A'}, ${frm.doc.city || 'N/A'}, ${frm.doc.state_code || 'N/A'}, ${frm.doc.zippostal_code || 'N/A'}
 
 Business Phone: ${frm.doc.business_phone_number || 'N/A'}
 
