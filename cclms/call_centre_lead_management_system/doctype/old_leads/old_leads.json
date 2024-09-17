@@ -1,0 +1,454 @@
+{
+ "actions": [],
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:OLead-{company}-{DD}-{MM}-{YY}-{######}",
+ "creation": "2024-09-17 06:31:56.527893",
+ "default_view": "List",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_fk0q",
+  "company",
+  "lead_status",
+  "section_break_hmqm",
+  "executive_name",
+  "sales_person",
+  "column_break_rdkf",
+  "post_date",
+  "column_break_qxgi",
+  "branch",
+  "section_break_dxas",
+  "owner_name",
+  "column_break_dcwb",
+  "business_name",
+  "column_break_rujd",
+  "business_type",
+  "address_section",
+  "address",
+  "zippostal_code",
+  "column_break_ovkd",
+  "state",
+  "city",
+  "column_break_tonb",
+  "state_code",
+  "country",
+  "section_break_zeru",
+  "email",
+  "column_break_ioei",
+  "business_phone_number",
+  "column_break_gdnv",
+  "personal_cell_phone",
+  "contract_information_section",
+  "contract_length",
+  "percentage",
+  "column_break_dxoa",
+  "base_rent",
+  "column_break_wpzf",
+  "hours",
+  "section_break_nmmj",
+  "approve_date",
+  "column_break_cbgz",
+  "agreement_sent_date",
+  "agreement_signed_date",
+  "column_break_aznw",
+  "sign_date",
+  "install_date",
+  "section_break_pawd",
+  "approved_days",
+  "column_break_lchj",
+  "agreement_sent_days",
+  "column_break_zkia",
+  "sign_days",
+  "section_break_utay",
+  "opening_hours",
+  "table_bxyf",
+  "comments"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_fk0q",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "bold": 1,
+   "default": "Bitcoin Depot",
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company"
+  },
+  {
+   "fieldname": "section_break_hmqm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "executive_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Executive Name"
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Sales Person"
+  },
+  {
+   "fieldname": "column_break_rdkf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "post_date",
+   "fieldtype": "Date",
+   "label": "Post Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qxgi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "label": "Branch"
+  },
+  {
+   "fieldname": "section_break_dxas",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "owner_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Owner Name",
+   "options": "Name"
+  },
+  {
+   "fieldname": "column_break_dcwb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "label": "Business Name"
+  },
+  {
+   "fieldname": "column_break_rujd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Business Type",
+   "options": "Business Types"
+  },
+  {
+   "fieldname": "address_section",
+   "fieldtype": "Section Break",
+   "label": "Address"
+  },
+  {
+   "bold": 1,
+   "fieldname": "address",
+   "fieldtype": "Autocomplete",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Address"
+  },
+  {
+   "fieldname": "zippostal_code",
+   "fieldtype": "Data",
+   "label": "Zip/Postal Code"
+  },
+  {
+   "fieldname": "column_break_ovkd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Autocomplete",
+   "label": "State/Proviance"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "column_break_tonb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "section_break_zeru",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "column_break_ioei",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_phone_number",
+   "fieldtype": "Data",
+   "label": "Business Phone Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "column_break_gdnv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "personal_cell_phone",
+   "fieldtype": "Data",
+   "label": "Personal Cell Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "contract_information_section",
+   "fieldtype": "Section Break",
+   "label": "Agreement Information  "
+  },
+  {
+   "default": "5 Years",
+   "fieldname": "contract_length",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Contract Length",
+   "options": "1 Year\n2 Years\n3 Years\n4 Years\n5 Years\n6 Years\n7 Years\n8 Years\n9 Years\n10 Years\n11 Years\n12 Years\n13 Years\n14 Years\n15 Years",
+   "reqd": 1
+  },
+  {
+   "default": " TBD",
+   "fieldname": "percentage",
+   "fieldtype": "Data",
+   "label": "Percentage",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_dxoa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "base_rent",
+   "fieldtype": "Data",
+   "label": "Base Rent"
+  },
+  {
+   "fieldname": "column_break_wpzf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "12 Hours",
+   "fieldname": "hours",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Hours",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_nmmj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "approve_date",
+   "fieldtype": "Date",
+   "label": "Approve Date"
+  },
+  {
+   "fieldname": "column_break_cbgz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agreement_sent_date",
+   "fieldtype": "Date",
+   "label": "Agreement Sent Date"
+  },
+  {
+   "fieldname": "column_break_aznw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sign_date",
+   "fieldtype": "Date",
+   "label": "Sign Date"
+  },
+  {
+   "fieldname": "section_break_pawd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "approved_days",
+   "fieldtype": "Data",
+   "label": "Approved Days"
+  },
+  {
+   "fieldname": "column_break_lchj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agreement_sent_days",
+   "fieldtype": "Data",
+   "label": "Agreement Sent Days"
+  },
+  {
+   "fieldname": "column_break_zkia",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sign_days",
+   "fieldtype": "Data",
+   "label": "Sign Days"
+  },
+  {
+   "fieldname": "section_break_utay",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "opening_hours",
+   "fieldtype": "Table",
+   "label": "Opening Hours",
+   "options": "Opening Hours"
+  },
+  {
+   "fieldname": "table_bxyf",
+   "fieldtype": "Table",
+   "options": "Call Back Recrd"
+  },
+  {
+   "fieldname": "lead_status",
+   "fieldtype": "Data",
+   "label": "Lead Status"
+  },
+  {
+   "fieldname": "comments",
+   "fieldtype": "Small Text",
+   "label": "Comments"
+  },
+  {
+   "fieldname": "agreement_signed_date",
+   "fieldtype": "Date",
+   "label": "Agreement Signed Date"
+  },
+  {
+   "fieldname": "install_date",
+   "fieldtype": "Date",
+   "label": "Install Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-17 10:46:49.237258",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Old Leads",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Data Executive",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "business_name",
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}
