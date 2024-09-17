@@ -153,11 +153,10 @@
   },
   {
    "fieldname": "business_type",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Business Type",
-   "options": "Business Types"
+   "label": "Business Type"
   },
   {
    "fieldname": "address_section",
@@ -372,7 +371,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-17 10:46:49.237258",
+ "modified": "2024-09-17 11:06:18.870947",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Old Leads",
