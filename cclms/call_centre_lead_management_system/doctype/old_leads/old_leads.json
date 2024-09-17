@@ -213,8 +213,7 @@
   {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "Email",
-   "options": "Email"
+   "label": "Email"
   },
   {
    "fieldname": "column_break_ioei",
@@ -223,8 +222,7 @@
   {
    "fieldname": "business_phone_number",
    "fieldtype": "Data",
-   "label": "Business Phone Number",
-   "options": "Phone"
+   "label": "Business Phone Number"
   },
   {
    "fieldname": "column_break_gdnv",
@@ -233,8 +231,7 @@
   {
    "fieldname": "personal_cell_phone",
    "fieldtype": "Data",
-   "label": "Personal Cell Phone",
-   "options": "Phone"
+   "label": "Personal Cell Phone"
   },
   {
    "fieldname": "contract_information_section",
@@ -244,10 +241,9 @@
   {
    "default": "5 Years",
    "fieldname": "contract_length",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Contract Length",
-   "options": "1 Year\n2 Years\n3 Years\n4 Years\n5 Years\n6 Years\n7 Years\n8 Years\n9 Years\n10 Years\n11 Years\n12 Years\n13 Years\n14 Years\n15 Years",
    "reqd": 1
   },
   {
@@ -371,7 +367,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-17 11:06:18.870947",
+ "modified": "2024-09-17 11:13:46.178812",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Old Leads",
