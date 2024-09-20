@@ -77,8 +77,8 @@ frappe.ui.form.on('ATM Leads', {
                     fields: ['name', 'operator_name']
                 },
                 callback: function(response) {
-                    // Open the dialog with checkboxes for each company
-                    let companies = response.message;
+                    // Filter out 'Un Bank' from the company list
+                    let companies = response.message.filter(company => company.operator_name !== 'Un Bank');
                     open_company_selection_dialog(frm, companies);
                 }
             });
@@ -140,6 +140,83 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
         });
     });
 }
+
+// frappe.ui.form.on('ATM Leads', {
+//     refresh: function(frm) {
+//         // Add a button to open the company selection dialog
+//         frm.add_custom_button(__('Duplicate for Companies'), function() {
+//             // Fetch all operator companies
+//             frappe.call({
+//                 method: 'frappe.client.get_list',
+//                 args: {
+//                     doctype: 'Operator Companies',
+//                     fields: ['name', 'operator_name']
+//                 },
+//                 callback: function(response) {
+//                     // Open the dialog with checkboxes for each company
+//                     let companies = response.message;
+//                     open_company_selection_dialog(frm, companies);
+//                 }
+//             });
+//         });
+//     }
+// });
+
+// // Function to open the dialog box with company checkboxes
+// function open_company_selection_dialog(frm, companies) {
+//     let fields = companies.map(company => {
+//         return {
+//             fieldtype: 'Check',
+//             label: company.operator_name,
+//             fieldname: company.name
+//         };
+//     });
+
+//     let dialog = new frappe.ui.Dialog({
+//         title: __('Select Companies to Duplicate Lead'),
+//         fields: fields,
+//         primary_action_label: __('Duplicate'),
+//         primary_action(values) {
+//             // Filter selected companies
+//             let selected_companies = companies.filter(company => values[company.name]);
+
+//             // Duplicate lead for each selected company
+//             duplicate_lead_for_selected_companies(frm, selected_companies);
+//             dialog.hide();
+//         }
+//     });
+
+//     dialog.show();
+// }
+
+// // Function to duplicate the lead for the selected companies
+// function duplicate_lead_for_selected_companies(frm, selected_companies) {
+//     selected_companies.forEach(company => {
+//         // Duplicate the lead record for each selected company
+//         frappe.call({
+//             method: 'frappe.client.insert',
+//             args: {
+//                 doc: {
+//                     doctype: 'ATM Leads',
+//                     // Copy all fields from the current lead
+//                     ...frm.doc,
+//                     name: null, // Clear the name field to create a new record
+//                     company: company.name, // Set the selected company
+//                     status: 'Draft' // Set the status to Draft for the new record
+//                 }
+//             },
+//             callback: function(response) {
+//                 if (response && response.message) {
+//                     frappe.show_alert({
+//                         message: __('Lead duplicated for {0}', [company.operator_name]),
+//                         indicator: 'green'
+//                     });
+//                 }
+//             }
+//         });
+//     });
+// }
+
 
 frappe.ui.form.on('ATM Leads', {
     address: function(frm) {
