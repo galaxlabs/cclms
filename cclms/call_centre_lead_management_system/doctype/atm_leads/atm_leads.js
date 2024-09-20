@@ -625,3 +625,155 @@ function update_average_hours(frm) {
     frm.set_value('hours', `${roundedAverage} Hours`);
 }
 
+frappe.ui.form.on('ATM Leads', {
+    refresh: function(frm) {
+        // Function to check if the user has the "Data Executive" role
+        function hasRole(role) {
+            return frappe.user_roles.includes(role);
+        }
+
+        // Only show the buttons if the user has the "Data Executive" role
+        if (hasRole('Sales User')) {
+            // Create a wrapper for grouped buttons
+            frm.add_custom_button(__('Call Back'), function() {
+                copyToClipboard([
+                    frm.doc.field ||'',
+                    frm.doc.business_name || '',
+                    frm.doc.field ||'',
+                    frm.doc.business_type || '',
+                    frm.doc.owner_name || '',
+                    frm.doc.address || 'N/A',
+                    frm.doc.business_phone_number || 'N/A',
+                    frm.doc.personal_cell_phone || 'N/A',
+                    frm.doc.email || 'N/A'
+                ]);
+            }, __('Personal')); // Add to a group labeled "Data for Excel"
+            
+            frm.add_custom_button(__('Approval Sent'), function() {
+                copyToClipboard([
+                    frm.doc.field ||'',
+                    frm.doc.field ||'',
+                    frm.doc.business_name || '',
+                    frm.doc.business_type || '',
+                    frm.doc.owner_name || '',
+                    frm.doc.company ||'',
+                    frm.doc.field ||'',
+                    frm.doc.address || 'N/A',
+                    frm.doc.business_phone_number || 'N/A',
+                    frm.doc.personal_cell_phone || 'N/A',
+                    frm.doc.email || 'N/A'
+                ]);
+            }, __('Personal')); // Add to the same group
+
+            frm.add_custom_button(__('Approved'), function() {
+                copyToClipboard([
+                    frm.doc.field ||'',
+                    frm.doc.field ||'',
+                    frm.doc.field ||'',
+                    frm.doc.business_name || '',
+                    frm.doc.business_type || '',
+                    frm.doc.owner_name || '',
+                    frm.doc.company ||'',
+                    frm.doc.field ||'',
+                    frm.doc.address || 'N/A',
+                    frm.doc.business_phone_number || 'N/A',
+                    frm.doc.personal_cell_phone || 'N/A',
+                    frm.doc.email || 'N/A'
+                ]);
+            }, __('Personal')); // Add to the same group
+
+
+            frm.add_custom_button(__('Agreement Sent'), function() {
+                copyToClipboard([
+                    frm.doc.field ||'',
+                    frm.doc.business_name || '',
+                    frm.doc.business_type || '',
+                    frm.doc.field ||'',
+                    frm.doc.owner_name || '',
+                    frm.doc.company ||'',
+                    frm.doc.base_rent ||'',
+                    frm.doc.address || 'N/A',
+                    frm.doc.business_phone_number || 'N/A',
+                    frm.doc.personal_cell_phone || 'N/A',
+                    frm.doc.email || 'N/A'
+                ]);
+            }, __('Personal')); // Add to the same group
+
+            frm.add_custom_button(__('Signed'), function() {
+                copyToClipboard([
+                    frm.doc.field ||'',
+                    frm.doc.workflow_status || '',
+                    frm.doc.business_name || '',
+                    frm.doc.business_type || '',
+                    frm.doc.field ||'',
+                    frm.doc.owner_name || '',
+                    frm.doc.company ||'',
+                    frm.doc.base_rent ||'',
+                    frm.doc.address || 'N/A',
+                    frm.doc.business_phone_number || 'N/A',
+                    frm.doc.personal_cell_phone || 'N/A',
+                    frm.doc.email || 'N/A'
+                ]);
+            }, __('Personal')); // Add to the same group
+
+            frm.add_custom_button(__('Not Intrested'), function() {
+                copyToClipboard([
+                    frm.doc.field ||'',
+                    frm.doc.field ||'',
+                    frm.doc.business_name || '',
+                    frm.doc.business_type || '',
+                    frm.doc.owner_name || '',
+                    frm.doc.company ||'',
+                    frm.doc.base_rent ||'',
+                    frm.doc.address || 'N/A',
+                    frm.doc.business_phone_number || 'N/A',
+                    frm.doc.personal_cell_phone || 'N/A',
+                    frm.doc.email || 'N/A'
+                ]);
+            }, __('Personal')); // Add to the same group
+
+            frm.add_custom_button(__('Denied'), function() {
+                copyToClipboard([
+                    frm.doc.field ||'',
+                    frm.doc.field ||'',
+                    frm.doc.business_name || '',
+                    frm.doc.business_type || '',
+                    frm.doc.owner_name || '',
+                    frm.doc.company ||'',
+                    frm.doc.base_rent ||'',
+                    frm.doc.address || 'N/A',
+                    frm.doc.business_phone_number || 'N/A',
+                    frm.doc.personal_cell_phone || 'N/A',
+                    frm.doc.email || 'N/A'
+                ]);
+            }, __('Personal')); // Add to the same group
+
+        }
+    }
+});
+
+// Function to copy data to clipboard
+function copyToClipboard(dataArray) {
+    // Join the array with tab characters to separate into columns
+    let tabSeparatedData = dataArray.join('\t');
+
+    // Create a temporary textarea element to hold the tab-separated text
+    let tempTextArea = document.createElement('textarea');
+    tempTextArea.value = tabSeparatedData;
+    document.body.appendChild(tempTextArea);
+
+    // Select the text inside the textarea and copy it
+    tempTextArea.select();
+    tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+
+    try {
+        // Execute the copy command
+        document.execCommand('copy');
+        frappe.msgprint(__('Copied to clipboard!'));
+    } catch (err) {
+        frappe.msgprint(__('Failed to copy: ' + err));
+    }
+
+    // Remove the temporary textarea
+    document.body.removeChild(tempTextArea);
+}
