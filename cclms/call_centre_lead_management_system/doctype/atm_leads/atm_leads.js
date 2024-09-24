@@ -67,6 +67,12 @@
 // Client script to add a button and handle lead duplication
 frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
+        function hasRole(role) {
+            return frappe.user_roles.includes(role);
+        }
+
+        // Only show the buttons if the user has the "Data Executive" role
+        if (hasRole('Sales User'))
         // Add a button to open the company selection dialog
         frm.add_custom_button(__('Duplicate for Companies'), function() {
             // Fetch all operator companies
@@ -327,6 +333,12 @@ frappe.ui.form.on('ATM Leads', {
 // });
 frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
+        function hasRole(role) {
+            return frappe.user_roles.includes(role);
+        }
+
+        // Only show the buttons if the user has the "Data Executive" role
+        if (hasRole('Sales User'))
         // Add button to copy data for Skype
         frm.add_custom_button(__('Skype Approval'), function() {
             // Define the formatted text for Skype
@@ -517,124 +529,6 @@ function copyToClipboard(dataArray) {
     document.body.removeChild(tempTextArea);
 }
 
-frappe.ui.form.on('ATM Leads', {
-    refresh: function(frm) {
-        calculate_all_rows(frm);  // Recalculate total hours for all rows
-        update_average_hours(frm);  // Update average hours in the main Doctype field
-    },
-    onload: function(frm) {
-        calculate_all_rows(frm);  // Calculate total hours when form is loaded
-        update_average_hours(frm);  // Update average hours
-    }
-});
-
-frappe.ui.form.on('Opening Hours', {
-    opening_time: function(frm, cdt, cdn) {
-        calculate_total_hours(frm, cdt, cdn);  // Calculate total hours when opening time changes
-        sync_times_if_first_row(frm, cdt, cdn);  // Sync times if the first row is changed
-    },
-    closing_time: function(frm, cdt, cdn) {
-        calculate_total_hours(frm, cdt, cdn);  // Calculate total hours when closing time changes
-        sync_times_if_first_row(frm, cdt, cdn);  // Sync times if the first row is changed
-    }
-});
-
-// Function to calculate total hours based on opening and closing times
-function calculate_total_hours(frm, cdt, cdn) {
-    var row = frappe.get_doc(cdt, cdn);
-
-    // Parse opening and closing times
-    let openingTime = parseTime(row.opening_time);
-    let closingTime = parseTime(row.closing_time);
-
-    if (!openingTime || !closingTime) {
-        frappe.msgprint(__('Please enter valid times in both Opening Time and Closing Time.'));
-        return;
-    }
-
-    // If opening and closing times are the same, it's a 24-hour open period
-    if (openingTime.getTime() === closingTime.getTime()) {
-        frappe.model.set_value(cdt, cdn, 'total_hours', '24.00');
-        update_average_hours(frm);  // Update average hours after setting total hours
-        return;
-    }
-
-    // Calculate the duration in hours (including fractions)
-    let duration = (closingTime - openingTime) / (1000 * 60 * 60);  // Convert milliseconds to hours
-
-    // Handle overnight shifts (e.g., 8:00 PM to 5:00 AM)
-    if (duration < 0) {
-        duration += 24;
-    }
-
-    // Round to two decimal places for fractional hours (e.g., 13.5 hours)
-    frappe.model.set_value(cdt, cdn, 'total_hours', duration.toFixed(2));
-    update_average_hours(frm);  // Update average hours after calculating total hours
-}
-
-// Function to sync times if the first row (Monday) is updated
-function sync_times_if_first_row(frm, cdt, cdn) {
-    var row = frappe.get_doc(cdt, cdn);
-
-    if (row.idx === 1) {  // If it's the first row (Monday)
-        calculate_total_hours(frm, cdt, cdn);
-
-        // Sync opening and closing times to other rows
-        frm.doc.opening_hours.forEach(other_row => {
-            if (other_row.name !== row.name) {
-                frappe.model.set_value(other_row.doctype, other_row.name, 'opening_time', row.opening_time);
-                frappe.model.set_value(other_row.doctype, other_row.name, 'closing_time', row.closing_time);
-                calculate_total_hours(frm, other_row.doctype, other_row.name);  // Recalculate total hours
-            }
-        });
-    } else {
-        calculate_total_hours(frm, cdt, cdn);  // Only recalculate for the current row
-    }
-}
-
-// Function to parse time in HH:MM format (and handle AM/PM)
-function parseTime(timeStr) {
-    let timeParts = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);  // Extract hour, minute, and AM/PM
-
-    if (!timeParts) return null;
-
-    let hours = parseInt(timeParts[1], 10);
-    let minutes = parseInt(timeParts[2], 10);
-    let period = timeParts[3] ? timeParts[3].toUpperCase() : null;
-
-    // Convert to 24-hour format
-    if (period === 'PM' && hours < 12) hours += 12;
-    if (period === 'AM' && hours === 12) hours = 0;
-
-    let date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-
-    return date;
-}
-
-// Function to calculate the average total hours across all rows and update the 'hours' field
-function update_average_hours(frm) {
-    let totalHours = 0;
-    let rowCount = frm.doc.opening_hours.length;
-
-    // Sum all total hours
-    frm.doc.opening_hours.forEach(row => {
-        totalHours += parseFloat(row.total_hours || 0);
-    });
-
-    // Calculate the average hours
-    let averageHours = rowCount ? totalHours / rowCount : 0;
-
-    // Update the 'hours' field in the parent Doctype
-    frm.set_value('hours', averageHours.toFixed(2) + ' Hours');
-}
-
-// Function to calculate and update total hours for all rows
-function calculate_all_rows(frm) {
-    frm.doc.opening_hours.forEach(row => {
-        calculate_total_hours(frm, row.doctype, row.name);
-    });
-}
 
 // frappe.ui.form.on('ATM Leads', {
 //     onload: function(frm) {
