@@ -272,59 +272,59 @@ frappe.ui.form.on('ATM Leads', {
         }
     }
 });
-frappe.ui.form.on('ATM Leads', {
-    refresh: function(frm) {
-        // Add button to copy data for Excel
-        frm.add_custom_button(__('Copy For Excel'), function() {
-            // Prepare the data in a tab-separated format for Excel columns
-            let excelData = [
-                frm.doc.company || '',
-                frm.doc.post_date || '',                  // Date (Post Date)
-                frm.doc.executive_name || '',             // Executive Name
-                frm.doc.workflow_status || 'In Review',            // Lead Status
-                frm.doc.contract_length || 'TBD',         // Contract Length
-                frm.doc.fixed || 'TBD',                   // Fixed (Base Rent)
-                frm.doc.per_transaction || 'TBD',         // Per Transaction
-                frm.doc.owner_name || '',                 // Owner Name
-                frm.doc.business_type || 'N/A',           // Business Type
-                frm.doc.business_name || 'N/A',           // Business Name
-                frm.doc.address || 'N/A',                 // Business Street Address
-                frm.doc.city || 'N/A',                    // City
-                frm.doc.state_code || 'N/A',              // State/Province
-                frm.doc.zippostal_code || 'N/A',          // ZIP/Postal Code
-                frm.doc.business_phone_number || 'N/A',   // Business Phone
-                frm.doc.personal_cell_phone || '',        // Personal Phone
-                frm.doc.email || '',                      // Email Address
-                frm.doc.sign_date || '',
-                frm.doc.agreement_sent_date || '',// Signed Date
-                frm.doc.approve_date || ''              // Installed Date
-            ];
+// frappe.ui.form.on('ATM Leads', {
+//     refresh: function(frm) {
+//         // Add button to copy data for Excel
+//         frm.add_custom_button(__('Copy For Excel'), function() {
+//             // Prepare the data in a tab-separated format for Excel columns
+//             let excelData = [
+//                 frm.doc.company || '',
+//                 frm.doc.post_date || '',                  // Date (Post Date)
+//                 frm.doc.executive_name || '',             // Executive Name
+//                 frm.doc.workflow_status || 'In Review',            // Lead Status
+//                 frm.doc.contract_length || 'TBD',         // Contract Length
+//                 frm.doc.fixed || 'TBD',                   // Fixed (Base Rent)
+//                 frm.doc.per_transaction || 'TBD',         // Per Transaction
+//                 frm.doc.owner_name || '',                 // Owner Name
+//                 frm.doc.business_type || 'N/A',           // Business Type
+//                 frm.doc.business_name || 'N/A',           // Business Name
+//                 frm.doc.address || 'N/A',                 // Business Street Address
+//                 frm.doc.city || 'N/A',                    // City
+//                 frm.doc.state_code || 'N/A',              // State/Province
+//                 frm.doc.zippostal_code || 'N/A',          // ZIP/Postal Code
+//                 frm.doc.business_phone_number || 'N/A',   // Business Phone
+//                 frm.doc.personal_cell_phone || '',        // Personal Phone
+//                 frm.doc.email || '',                      // Email Address
+//                 frm.doc.sign_date || '',
+//                 frm.doc.agreement_sent_date || '',// Signed Date
+//                 frm.doc.approve_date || ''              // Installed Date
+//             ];
 
-            // Join the array with tab characters to separate into columns
-            let tabSeparatedData = excelData.join('\t');
+//             // Join the array with tab characters to separate into columns
+//             let tabSeparatedData = excelData.join('\t');
 
-            // Create a temporary textarea element to hold the tab-separated text
-            let tempTextArea = document.createElement('textarea');
-            tempTextArea.value = tabSeparatedData;
-            document.body.appendChild(tempTextArea);
+//             // Create a temporary textarea element to hold the tab-separated text
+//             let tempTextArea = document.createElement('textarea');
+//             tempTextArea.value = tabSeparatedData;
+//             document.body.appendChild(tempTextArea);
 
-            // Select the text inside the textarea and copy it
-            tempTextArea.select();
-            tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+//             // Select the text inside the textarea and copy it
+//             tempTextArea.select();
+//             tempTextArea.setSelectionRange(0, 99999); // For mobile devices
 
-            try {
-                // Execute the copy command
-                document.execCommand('copy');
-                frappe.msgprint(__('Copied to clipboard!'));
-            } catch (err) {
-                frappe.msgprint(__('Failed to copy: ' + err));
-            }
+//             try {
+//                 // Execute the copy command
+//                 document.execCommand('copy');
+//                 frappe.msgprint(__('Copied to clipboard!'));
+//             } catch (err) {
+//                 frappe.msgprint(__('Failed to copy: ' + err));
+//             }
 
-            // Remove the temporary textarea
-            document.body.removeChild(tempTextArea);
-        });
-    }
-});
+//             // Remove the temporary textarea
+//             document.body.removeChild(tempTextArea);
+//         });
+//     }
+// });
 frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
         // Add button to copy data for Skype
@@ -516,114 +516,234 @@ function copyToClipboard(dataArray) {
     // Remove the temporary textarea
     document.body.removeChild(tempTextArea);
 }
-frappe.ui.form.on('ATM Leads', {
-    onload: function(frm) {
-        // Check if the child table is empty, then fill with default values
-        if (!frm.doc.opening_hours || frm.doc.opening_hours.length === 0) {
-            const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            weekdays.forEach(weekday => {
-                frm.add_child('opening_hours', {
-                    'weekday': weekday,
-                    'opening_time': '7:00 AM',
-                    'closing_time': '8:00 PM'
-                });
-            });
-            frm.refresh_field('opening_hours');
-        }
-    }
-});
+
 frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
-        calculate_all_rows(frm); // Calculate total hours for all rows on load
-        update_average_hours(frm); // Update average hours on load
+        calculate_all_rows(frm);  // Recalculate total hours for all rows
+        update_average_hours(frm);  // Update average hours in the main Doctype field
     },
     onload: function(frm) {
-        calculate_all_rows(frm); // Calculate total hours for all rows on load
-        update_average_hours(frm); // Update average hours on load
+        calculate_all_rows(frm);  // Calculate total hours when form is loaded
+        update_average_hours(frm);  // Update average hours
     }
 });
 
 frappe.ui.form.on('Opening Hours', {
     opening_time: function(frm, cdt, cdn) {
-        sync_times_if_first_row(frm, cdt, cdn);
-        update_average_hours(frm); // Update average hours when times change
+        calculate_total_hours(frm, cdt, cdn);  // Calculate total hours when opening time changes
+        sync_times_if_first_row(frm, cdt, cdn);  // Sync times if the first row is changed
     },
     closing_time: function(frm, cdt, cdn) {
-        sync_times_if_first_row(frm, cdt, cdn);
-        update_average_hours(frm); // Update average hours when times change
+        calculate_total_hours(frm, cdt, cdn);  // Calculate total hours when closing time changes
+        sync_times_if_first_row(frm, cdt, cdn);  // Sync times if the first row is changed
     }
 });
 
+// Function to calculate total hours based on opening and closing times
+function calculate_total_hours(frm, cdt, cdn) {
+    var row = frappe.get_doc(cdt, cdn);
+
+    // Parse opening and closing times
+    let openingTime = parseTime(row.opening_time);
+    let closingTime = parseTime(row.closing_time);
+
+    if (!openingTime || !closingTime) {
+        frappe.msgprint(__('Please enter valid times in both Opening Time and Closing Time.'));
+        return;
+    }
+
+    // If opening and closing times are the same, it's a 24-hour open period
+    if (openingTime.getTime() === closingTime.getTime()) {
+        frappe.model.set_value(cdt, cdn, 'total_hours', '24.00');
+        update_average_hours(frm);  // Update average hours after setting total hours
+        return;
+    }
+
+    // Calculate the duration in hours (including fractions)
+    let duration = (closingTime - openingTime) / (1000 * 60 * 60);  // Convert milliseconds to hours
+
+    // Handle overnight shifts (e.g., 8:00 PM to 5:00 AM)
+    if (duration < 0) {
+        duration += 24;
+    }
+
+    // Round to two decimal places for fractional hours (e.g., 13.5 hours)
+    frappe.model.set_value(cdt, cdn, 'total_hours', duration.toFixed(2));
+    update_average_hours(frm);  // Update average hours after calculating total hours
+}
+
+// Function to sync times if the first row (Monday) is updated
+function sync_times_if_first_row(frm, cdt, cdn) {
+    var row = frappe.get_doc(cdt, cdn);
+
+    if (row.idx === 1) {  // If it's the first row (Monday)
+        calculate_total_hours(frm, cdt, cdn);
+
+        // Sync opening and closing times to other rows
+        frm.doc.opening_hours.forEach(other_row => {
+            if (other_row.name !== row.name) {
+                frappe.model.set_value(other_row.doctype, other_row.name, 'opening_time', row.opening_time);
+                frappe.model.set_value(other_row.doctype, other_row.name, 'closing_time', row.closing_time);
+                calculate_total_hours(frm, other_row.doctype, other_row.name);  // Recalculate total hours
+            }
+        });
+    } else {
+        calculate_total_hours(frm, cdt, cdn);  // Only recalculate for the current row
+    }
+}
+
+// Function to parse time in HH:MM format (and handle AM/PM)
+function parseTime(timeStr) {
+    let timeParts = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);  // Extract hour, minute, and AM/PM
+
+    if (!timeParts) return null;
+
+    let hours = parseInt(timeParts[1], 10);
+    let minutes = parseInt(timeParts[2], 10);
+    let period = timeParts[3] ? timeParts[3].toUpperCase() : null;
+
+    // Convert to 24-hour format
+    if (period === 'PM' && hours < 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+
+    let date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+
+    return date;
+}
+
+// Function to calculate the average total hours across all rows and update the 'hours' field
+function update_average_hours(frm) {
+    let totalHours = 0;
+    let rowCount = frm.doc.opening_hours.length;
+
+    // Sum all total hours
+    frm.doc.opening_hours.forEach(row => {
+        totalHours += parseFloat(row.total_hours || 0);
+    });
+
+    // Calculate the average hours
+    let averageHours = rowCount ? totalHours / rowCount : 0;
+
+    // Update the 'hours' field in the parent Doctype
+    frm.set_value('hours', averageHours.toFixed(2) + ' Hours');
+}
+
+// Function to calculate and update total hours for all rows
 function calculate_all_rows(frm) {
     frm.doc.opening_hours.forEach(row => {
         calculate_total_hours(frm, row.doctype, row.name);
     });
 }
 
-function calculate_total_hours(frm, cdt, cdn) {
-    var row = frappe.get_doc(cdt, cdn);
+// frappe.ui.form.on('ATM Leads', {
+//     onload: function(frm) {
+//         // Check if the child table is empty, then fill with default values
+//         if (!frm.doc.opening_hours || frm.doc.opening_hours.length === 0) {
+//             const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+//             weekdays.forEach(weekday => {
+//                 frm.add_child('opening_hours', {
+//                     'weekday': weekday,
+//                     'opening_time': '7:00 AM',
+//                     'closing_time': '8:00 PM'
+//                 });
+//             });
+//             frm.refresh_field('opening_hours');
+//         }
+//     }
+// });
+// frappe.ui.form.on('ATM Leads', {
+//     refresh: function(frm) {
+//         calculate_all_rows(frm); // Calculate total hours for all rows on load
+//         update_average_hours(frm); // Update average hours on load
+//     },
+//     onload: function(frm) {
+//         calculate_all_rows(frm); // Calculate total hours for all rows on load
+//         update_average_hours(frm); // Update average hours on load
+//     }
+// });
 
-    let opening = parseTime(row.opening_time);
-    let closing = parseTime(row.closing_time);
+// frappe.ui.form.on('Opening Hours', {
+//     opening_time: function(frm, cdt, cdn) {
+//         sync_times_if_first_row(frm, cdt, cdn);
+//         update_average_hours(frm); // Update average hours when times change
+//     },
+//     closing_time: function(frm, cdt, cdn) {
+//         sync_times_if_first_row(frm, cdt, cdn);
+//         update_average_hours(frm); // Update average hours when times change
+//     }
+// });
 
-    let duration = (closing - opening) / (1000 * 60 * 60); // Convert milliseconds to hours
+// function calculate_all_rows(frm) {
+//     frm.doc.opening_hours.forEach(row => {
+//         calculate_total_hours(frm, row.doctype, row.name);
+//     });
+// }
 
-    if (duration < 0) {
-        duration += 24; // Adjust for overnight (e.g., 7:00 PM to 7:00 AM)
-    }
+// function calculate_total_hours(frm, cdt, cdn) {
+//     var row = frappe.get_doc(cdt, cdn);
 
-    frappe.model.set_value(cdt, cdn, 'total_hours', duration.toFixed(2));
-}
+//     let opening = parseTime(row.opening_time);
+//     let closing = parseTime(row.closing_time);
 
-function sync_times_if_first_row(frm, cdt, cdn) {
-    var row = frappe.get_doc(cdt, cdn);
+//     let duration = (closing - opening) / (1000 * 60 * 60); // Convert milliseconds to hours
 
-    if (row.idx === 1) {
-        calculate_total_hours(frm, cdt, cdn);
+//     if (duration < 0) {
+//         duration += 24; // Adjust for overnight (e.g., 7:00 PM to 7:00 AM)
+//     }
 
-        frm.doc.opening_hours.forEach(other_row => {
-            if (other_row.name !== row.name) {
-                frappe.model.set_value(other_row.doctype, other_row.name, 'opening_time', row.opening_time);
-                frappe.model.set_value(other_row.doctype, other_row.name, 'closing_time', row.closing_time);
-                calculate_total_hours(frm, other_row.doctype, other_row.name);
-            }
-        });
-    } else {
-        calculate_total_hours(frm, cdt, cdn);
-    }
-}
+//     frappe.model.set_value(cdt, cdn, 'total_hours', duration.toFixed(2));
+// }
 
-function parseTime(timeStr) {
-    let [time, period] = timeStr.split(' ');
-    let [hours, minutes] = time.split(':').map(Number);
+// function sync_times_if_first_row(frm, cdt, cdn) {
+//     var row = frappe.get_doc(cdt, cdn);
 
-    if (period === 'PM' && hours !== 12) hours += 12;
-    if (period === 'AM' && hours === 12) hours = 0;
+//     if (row.idx === 1) {
+//         calculate_total_hours(frm, cdt, cdn);
 
-    let date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return date;
-}
+//         frm.doc.opening_hours.forEach(other_row => {
+//             if (other_row.name !== row.name) {
+//                 frappe.model.set_value(other_row.doctype, other_row.name, 'opening_time', row.opening_time);
+//                 frappe.model.set_value(other_row.doctype, other_row.name, 'closing_time', row.closing_time);
+//                 calculate_total_hours(frm, other_row.doctype, other_row.name);
+//             }
+//         });
+//     } else {
+//         calculate_total_hours(frm, cdt, cdn);
+//     }
+// }
 
-// Function to calculate and update average hours
-function update_average_hours(frm) {
-    let totalHours = 0;
-    let rowCount = frm.doc.opening_hours.length;
+// function parseTime(timeStr) {
+//     let [time, period] = timeStr.split(' ');
+//     let [hours, minutes] = time.split(':').map(Number);
 
-    // Sum all total hours from the child table
-    frm.doc.opening_hours.forEach(row => {
-        totalHours += parseFloat(row.total_hours || 0);
-    });
+//     if (period === 'PM' && hours !== 12) hours += 12;
+//     if (period === 'AM' && hours === 12) hours = 0;
 
-    // Calculate average hours
-    let averageHours = rowCount ? totalHours / rowCount : 0;
+//     let date = new Date();
+//     date.setHours(hours, minutes, 0, 0);
+//     return date;
+// }
 
-    // Round to the nearest whole number
-    let roundedAverage = Math.round(averageHours);
+// // Function to calculate and update average hours
+// function update_average_hours(frm) {
+//     let totalHours = 0;
+//     let rowCount = frm.doc.opening_hours.length;
 
-    // Update the 'hours' field in the ATM Leads Doctype
-    frm.set_value('hours', `${roundedAverage} Hours`);
-}
+//     // Sum all total hours from the child table
+//     frm.doc.opening_hours.forEach(row => {
+//         totalHours += parseFloat(row.total_hours || 0);
+//     });
+
+//     // Calculate average hours
+//     let averageHours = rowCount ? totalHours / rowCount : 0;
+
+//     // Round to the nearest whole number
+//     let roundedAverage = Math.round(averageHours);
+
+//     // Update the 'hours' field in the ATM Leads Doctype
+//     frm.set_value('hours', `${roundedAverage} Hours`);
+// }
 
 frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
