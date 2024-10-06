@@ -251,6 +251,6 @@ doc_events = {
 
 scheduler_events = {
     "hourly": [
-        "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.update_all_leads"
+        "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.update_lead_days"
     ]
 }

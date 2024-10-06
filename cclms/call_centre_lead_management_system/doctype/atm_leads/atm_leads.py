@@ -5,6 +5,7 @@ from frappe import _
 from frappe.utils import now
 from frappe.utils import date_diff, nowdate
 from frappe.model.document import Document
+from frappe.utils import date_diff, today
 
 
 class ATMLeads(Document):
@@ -58,66 +59,116 @@ class ATMLeads(Document):
         except Exception as e:
             frappe.throw(_("An unexpected error occurred: {0}").format(str(e)))
 
-
-    def update_days(doc):
-    # Check if Approved Date is set and calculate Approved Days
+    def calculate_days_for_lead(doc):
+        # Check and calculate approved_days
         if doc.approve_date:
-            if doc.agreement_sent_date:
-                doc.approved_days = date_diff(doc.agreement_sent_date, doc.approve_date)
-            else:
-                doc.approved_days = date_diff(nowdate(), doc.approve_date)
+            doc.approved_days = date_diff(today(), doc.approve_date)
         else:
             doc.approved_days = 0
 
-        # Check if Agreement Sent Date is set and calculate Agreement Sent Days
+        # Check and calculate agreement_sent_days
         if doc.agreement_sent_date:
-            if doc.sign_date:
-                doc.agreement_sent_days = date_diff(doc.sign_date, doc.agreement_sent_date)
-            else:
-                doc.agreement_sent_days = date_diff(nowdate(), doc.agreement_sent_date)
+            doc.agreement_sent_days = date_diff(today(), doc.agreement_sent_date)
         else:
             doc.agreement_sent_days = 0
 
-        # Check if Sign Date is set and calculate Sign Days
+        # Check and calculate sign_days
         if doc.sign_date:
-            doc.sign_days = date_diff(nowdate(), doc.sign_date)
+            doc.sign_days = date_diff(today(), doc.sign_date)
         else:
             doc.sign_days = 0
 
-        # Calculate Convert Days
+        # Check and calculate convert_days
         if doc.convert_date:
-            doc.convert_days = date_diff(nowdate(), doc.convert_date)
+            doc.convert_days = date_diff(today(), doc.convert_date)
         else:
             doc.convert_days = 0
 
-        # Calculate Install Days
+        # Check and calculate install_days
         if doc.install_date:
-            doc.install_days = date_diff(nowdate(), doc.install_date)
+            doc.install_days = date_diff(today(), doc.install_date)
         else:
             doc.install_days = 0
 
-        # Calculate Remove Days
+        # Check and calculate remove_days
         if doc.remove_date:
-            doc.remove_days = date_diff(nowdate(), doc.remove_date)
+            doc.remove_days = date_diff(today(), doc.remove_date)
         else:
             doc.remove_days = 0
 
-        # Save the document to persist changes
-        doc.save(ignore_permissions=True)
+        # Save the document after updating the fields
+        doc.save()
 
-def update_all_leads():
-    # Get all leads in ATMLeads Doctype
-    leads = frappe.get_all('ATM Leads', fields=['name'])
+    def update_lead_days():
+    # Get all leads that need their days fields updated
+        leads = frappe.get_all("ATM Leads", filters={}, fields=["name"])
 
-    for lead in leads:
-        # Fetch each document
-        doc = frappe.get_doc('ATM Leads', lead['name'])
+        for lead in leads:
+            # Get the document
+            doc = frappe.get_doc("ATM Leads", lead.name)
 
-        # Update the days for each document
-        update_days(doc)
+            # Calculate days for each field
+            calculate_days_for_lead(doc)
 
-    # Commit the changes to the database
-    frappe.db.commit()
+#     def update_days(doc):
+#     # Check if Approved Date is set and calculate Approved Days
+#         if doc.approve_date:
+#             if doc.agreement_sent_date:
+#                 doc.approved_days = date_diff(doc.agreement_sent_date, doc.approve_date)
+#             else:
+#                 doc.approved_days = date_diff(nowdate(), doc.approve_date)
+#         else:
+#             doc.approved_days = 0
+
+#         # Check if Agreement Sent Date is set and calculate Agreement Sent Days
+#         if doc.agreement_sent_date:
+#             if doc.sign_date:
+#                 doc.agreement_sent_days = date_diff(doc.sign_date, doc.agreement_sent_date)
+#             else:
+#                 doc.agreement_sent_days = date_diff(nowdate(), doc.agreement_sent_date)
+#         else:
+#             doc.agreement_sent_days = 0
+
+#         # Check if Sign Date is set and calculate Sign Days
+#         if doc.sign_date:
+#             doc.sign_days = date_diff(nowdate(), doc.sign_date)
+#         else:
+#             doc.sign_days = 0
+
+#         # Calculate Convert Days
+#         if doc.convert_date:
+#             doc.convert_days = date_diff(nowdate(), doc.convert_date)
+#         else:
+#             doc.convert_days = 0
+
+#         # Calculate Install Days
+#         if doc.install_date:
+#             doc.install_days = date_diff(nowdate(), doc.install_date)
+#         else:
+#             doc.install_days = 0
+
+#         # Calculate Remove Days
+#         if doc.remove_date:
+#             doc.remove_days = date_diff(nowdate(), doc.remove_date)
+#         else:
+#             doc.remove_days = 0
+
+#         # Save the document to persist changes
+#         doc.save(ignore_permissions=True)
+
+# def update_all_leads():
+#     # Get all leads in ATMLeads Doctype
+#     leads = frappe.get_all('ATM Leads', fields=['name'])
+
+#     for lead in leads:
+#         # Fetch each document
+#         doc = frappe.get_doc('ATM Leads', lead['name'])
+
+#         # Update the days for each document
+#         update_days(doc)
+
+#     # Commit the changes to the database
+#     frappe.db.commit()
 
     # def update_days(doc, method):
     #     # Check if Approved Date is set and calculate Approved Days
