@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestBTMLeads(FrappeTestCase):
+class TestATMLeads(FrappeTestCase):
 	pass

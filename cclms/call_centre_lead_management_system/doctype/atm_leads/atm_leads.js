@@ -1,13 +1,13 @@
 // Copyright (c) 2024, Galaxy and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("BTM Leads", {
+// frappe.ui.form.on("ATM Leads", {
 // 	refresh(frm) {
 
 // 	},
 // });
 
-// frappe.ui.form.on('BTM Leads', {
+// frappe.ui.form.on('ATM Leads', {
 //     validate: function(frm) {
 //         // Check if the company field is selected
 //         if (frm.doc.company) {
@@ -65,7 +65,7 @@
 //     }
 // });
 // Client script to add a button and handle lead duplication
-frappe.ui.form.on('BTM Leads', {
+frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
         function hasRole(role) {
             return frappe.user_roles.includes(role);
@@ -127,7 +127,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
             method: 'frappe.client.insert',
             args: {
                 doc: {
-                    doctype: 'BTM Leads',
+                    doctype: 'ATM Leads',
                     // Copy all fields from the current lead
                     ...frm.doc,
                     name: null, // Clear the name field to create a new record
@@ -147,7 +147,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
     });
 }
 
-// frappe.ui.form.on('BTM Leads', {
+// frappe.ui.form.on('ATM Leads', {
 //     refresh: function(frm) {
 //         // Add a button to open the company selection dialog
 //         frm.add_custom_button(__('Duplicate for Companies'), function() {
@@ -203,7 +203,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
 //             method: 'frappe.client.insert',
 //             args: {
 //                 doc: {
-//                     doctype: 'BTM Leads',
+//                     doctype: 'ATM Leads',
 //                     // Copy all fields from the current lead
 //                     ...frm.doc,
 //                     name: null, // Clear the name field to create a new record
@@ -224,7 +224,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
 // }
 
 
-// frappe.ui.form.on('BTM Leads', {
+// frappe.ui.form.on('ATM Leads', {
 //     address: function(frm) {
 //         // Mapping of state codes to state names
 //         const stateMap = {
@@ -278,7 +278,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
 //         }
 //     }
 // });
-// frappe.ui.form.on('BTM Leads', {
+// frappe.ui.form.on('ATM Leads', {
 //     refresh: function(frm) {
 //         // Add button to copy data for Excel
 //         frm.add_custom_button(__('Copy For Excel'), function() {
@@ -331,7 +331,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
 //         });
 //     }
 // });
-frappe.ui.form.on('BTM Leads', {
+frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
         function hasRole(role) {
             return frappe.user_roles.includes(role);
@@ -394,7 +394,7 @@ Additional Notes: Please Send This Location For Approval. Thanks
         });
     }
 });
-frappe.ui.form.on('BTM Leads', {
+frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
         // Function to check if the user has the "Data Executive" role
         function hasRole(role) {
@@ -530,7 +530,7 @@ function copyToClipboard(dataArray) {
 }
 
 
-// frappe.ui.form.on('BTM Leads', {
+// frappe.ui.form.on('ATM Leads', {
 //     onload: function(frm) {
 //         // Check if the child table is empty, then fill with default values
 //         if (!frm.doc.opening_hours || frm.doc.opening_hours.length === 0) {
@@ -546,7 +546,7 @@ function copyToClipboard(dataArray) {
 //         }
 //     }
 // });
-// frappe.ui.form.on('BTM Leads', {
+// frappe.ui.form.on('ATM Leads', {
 //     refresh: function(frm) {
 //         calculate_all_rows(frm); // Calculate total hours for all rows on load
 //         update_average_hours(frm); // Update average hours on load
@@ -635,11 +635,11 @@ function copyToClipboard(dataArray) {
 //     // Round to the nearest whole number
 //     let roundedAverage = Math.round(averageHours);
 
-//     // Update the 'hours' field in the BTM Leads Doctype
+//     // Update the 'hours' field in the ATM Leads Doctype
 //     frm.set_value('hours', `${roundedAverage} Hours`);
 // }
 
-frappe.ui.form.on('BTM Leads', {
+frappe.ui.form.on('ATM Leads', {
     refresh: function(frm) {
         // Function to check if the user has the "Data Executive" role
         function hasRole(role) {
