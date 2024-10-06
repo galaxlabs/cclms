@@ -59,56 +59,59 @@ class ATMLeads(Document):
         except Exception as e:
             frappe.throw(_("An unexpected error occurred: {0}").format(str(e)))
 
+# Function to calculate and update days for each lead
 def update_lead_days():
     # Get all ATM Leads that need their days fields updated
-        leads = frappe.get_all("ATM Leads", filters={}, fields=["name"])
+    leads = frappe.get_all("ATM Leads", filters={}, fields=["name"])
 
-        for lead in leads:
-            # Fetch the document
-            doc = frappe.get_doc("ATM Leads", lead['name'])
+    for lead in leads:
+        # Fetch the document
+        doc = frappe.get_doc("ATM Leads", lead['name'])
 
-            # Calculate days for each relevant field
-            calculate_days_for_lead(doc)
-        
-    def calculate_days_for_lead(doc):
-        # Check and calculate approved_days
-        if doc.approve_date:
-            doc.approved_days = date_diff(today(), doc.approve_date)
-        else:
-            doc.approved_days = 0
+        # Calculate days for each relevant field
+        calculate_days_for_lead(doc)
 
-        # Check and calculate agreement_sent_days
-        if doc.agreement_sent_date:
-            doc.agreement_sent_days = date_diff(today(), doc.agreement_sent_date)
-        else:
-            doc.agreement_sent_days = 0
+# Function to calculate days for each date field and update the document
+def calculate_days_for_lead(doc):
+    # Calculate approved_days
+    if doc.approve_date:
+        doc.approved_days = date_diff(today(), doc.approve_date)
+    else:
+        doc.approved_days = 0
 
-        # Check and calculate sign_days
-        if doc.sign_date:
-            doc.sign_days = date_diff(today(), doc.sign_date)
-        else:
-            doc.sign_days = 0
+    # Calculate agreement_sent_days
+    if doc.agreement_sent_date:
+        doc.agreement_sent_days = date_diff(today(), doc.agreement_sent_date)
+    else:
+        doc.agreement_sent_days = 0
 
-        # Check and calculate convert_days
-        if doc.convert_date:
-            doc.convert_days = date_diff(today(), doc.convert_date)
-        else:
-            doc.convert_days = 0
+    # Calculate sign_days
+    if doc.sign_date:
+        doc.sign_days = date_diff(today(), doc.sign_date)
+    else:
+        doc.sign_days = 0
 
-        # Check and calculate install_days
-        if doc.install_date:
-            doc.install_days = date_diff(today(), doc.install_date)
-        else:
-            doc.install_days = 0
+    # Calculate convert_days
+    if doc.convert_date:
+        doc.convert_days = date_diff(today(), doc.convert_date)
+    else:
+        doc.convert_days = 0
 
-        # Check and calculate remove_days
-        if doc.remove_date:
-            doc.remove_days = date_diff(today(), doc.remove_date)
-        else:
-            doc.remove_days = 0
+    # Calculate install_days
+    if doc.install_date:
+        doc.install_days = date_diff(today(), doc.install_date)
+    else:
+        doc.install_days = 0
 
-        # Save the document after updating the fields
-        doc.save()
+    # Calculate remove_days
+    if doc.remove_date:
+        doc.remove_days = date_diff(today(), doc.remove_date)
+    else:
+        doc.remove_days = 0
+
+    # Save the document
+    doc.save()
+
 
 #     def update_days(doc):
 #     # Check if Approved Date is set and calculate Approved Days
