@@ -59,6 +59,17 @@ class ATMLeads(Document):
         except Exception as e:
             frappe.throw(_("An unexpected error occurred: {0}").format(str(e)))
 
+def update_lead_days():
+    # Get all ATM Leads that need their days fields updated
+        leads = frappe.get_all("ATM Leads", filters={}, fields=["name"])
+
+        for lead in leads:
+            # Fetch the document
+            doc = frappe.get_doc("ATM Leads", lead['name'])
+
+            # Calculate days for each relevant field
+            calculate_days_for_lead(doc)
+        
     def calculate_days_for_lead(doc):
         # Check and calculate approved_days
         if doc.approve_date:
@@ -98,17 +109,6 @@ class ATMLeads(Document):
 
         # Save the document after updating the fields
         doc.save()
-
-    def update_lead_days():
-    # Get all leads that need their days fields updated
-        leads = frappe.get_all("ATM Leads", filters={}, fields=["name"])
-
-        for lead in leads:
-            # Get the document
-            doc = frappe.get_doc("ATM Leads", lead.name)
-
-            # Calculate days for each field
-            calculate_days_for_lead(doc)
 
 #     def update_days(doc):
 #     # Check if Approved Date is set and calculate Approved Days
