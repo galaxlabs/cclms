@@ -6,7 +6,7 @@ from frappe.utils import now
 from frappe.utils import date_diff, nowdate
 from frappe.model.document import Document
 
-class ATMLeads(Document):
+class BTMLeads(Document):
     def validate(self):
         self.validate_lead_state()
 

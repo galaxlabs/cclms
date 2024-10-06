@@ -1,13 +1,13 @@
 // Copyright (c) 2024, Galaxy and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("ATM Leads", {
+// frappe.ui.form.on("BTM Leads", {
 // 	refresh(frm) {
 
 // 	},
 // });
 
-// frappe.ui.form.on('ATM Leads', {
+// frappe.ui.form.on('BTM Leads', {
 //     validate: function(frm) {
 //         // Check if the company field is selected
 //         if (frm.doc.company) {
@@ -65,7 +65,7 @@
 //     }
 // });
 // Client script to add a button and handle lead duplication
-frappe.ui.form.on('ATM Leads', {
+frappe.ui.form.on('BTM Leads', {
     refresh: function(frm) {
         function hasRole(role) {
             return frappe.user_roles.includes(role);
@@ -127,7 +127,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
             method: 'frappe.client.insert',
             args: {
                 doc: {
-                    doctype: 'ATM Leads',
+                    doctype: 'BTM Leads',
                     // Copy all fields from the current lead
                     ...frm.doc,
                     name: null, // Clear the name field to create a new record
@@ -147,7 +147,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
     });
 }
 
-// frappe.ui.form.on('ATM Leads', {
+// frappe.ui.form.on('BTM Leads', {
 //     refresh: function(frm) {
 //         // Add a button to open the company selection dialog
 //         frm.add_custom_button(__('Duplicate for Companies'), function() {
@@ -203,7 +203,7 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
 //             method: 'frappe.client.insert',
 //             args: {
 //                 doc: {
-//                     doctype: 'ATM Leads',
+//                     doctype: 'BTM Leads',
 //                     // Copy all fields from the current lead
 //                     ...frm.doc,
 //                     name: null, // Clear the name field to create a new record
@@ -224,61 +224,61 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
 // }
 
 
-frappe.ui.form.on('ATM Leads', {
-    address: function(frm) {
-        // Mapping of state codes to state names
-        const stateMap = {
-            'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
-            'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
-            'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
-            'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
-            'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
-            'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
-            'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
-            'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
-            'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
-            'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
-            'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
-            'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
-            'WI': 'Wisconsin', 'WY': 'Wyoming'
-        };
+// frappe.ui.form.on('BTM Leads', {
+//     address: function(frm) {
+//         // Mapping of state codes to state names
+//         const stateMap = {
+//             'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+//             'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+//             'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+//             'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+//             'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+//             'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+//             'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+//             'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+//             'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+//             'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+//             'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+//             'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+//             'WI': 'Wisconsin', 'WY': 'Wyoming'
+//         };
 
-        // Function to parse address into components
-        function parseAddress(address) {
-            // Example input: "27252 Katy Fwy #700, Katy, TX 77494"
-            let addressPattern = /(.+),\s*([^,]+),\s*([A-Z]{2})\s*(\d{5})/;
-            let match = address.match(addressPattern);
+//         // Function to parse address into components
+//         function parseAddress(address) {
+//             // Example input: "27252 Katy Fwy #700, Katy, TX 77494"
+//             let addressPattern = /(.+),\s*([^,]+),\s*([A-Z]{2})\s*(\d{5})/;
+//             let match = address.match(addressPattern);
 
-            if (match) {
-                let streetAddress = match[1]; // Street Address
-                let city = match[2];          // City
-                let stateCode = match[3];     // State Code
-                let zip = match[4];           // Zip Code
-                let country = "United States"; // Default to US
+//             if (match) {
+//                 let streetAddress = match[1]; // Street Address
+//                 let city = match[2];          // City
+//                 let stateCode = match[3];     // State Code
+//                 let zip = match[4];           // Zip Code
+//                 let country = "United States"; // Default to US
 
-                // Set parsed values to the form fields
-                frm.set_value('address', streetAddress);
-                frm.set_value('city', city);
-                frm.set_value('state_code', stateCode); // State Code
-                frm.set_value('zippostal_code', zip);
-                frm.set_value('country', country);
+//                 // Set parsed values to the form fields
+//                 frm.set_value('address', streetAddress);
+//                 frm.set_value('city', city);
+//                 frm.set_value('state_code', stateCode); // State Code
+//                 frm.set_value('zippostal_code', zip);
+//                 frm.set_value('country', country);
 
-                // Set the state name based on state code if state name is not available
-                let stateName = frm.doc.state || stateMap[stateCode] || "";
-                frm.set_value('state', stateName);
-            } else {
-                frappe.msgprint(__('Address format is not recognized. Please ensure the format is "Street, City, State Zip".'));
-            }
-        }
+//                 // Set the state name based on state code if state name is not available
+//                 let stateName = frm.doc.state || stateMap[stateCode] || "";
+//                 frm.set_value('state', stateName);
+//             } else {
+//                 frappe.msgprint(__('Address format is not recognized. Please ensure the format is "Street, City, State Zip".'));
+//             }
+//         }
 
-        // Get the address value and parse it
-        let address = frm.doc.address;
-        if (address) {
-            parseAddress(address);
-        }
-    }
-});
-// frappe.ui.form.on('ATM Leads', {
+//         // Get the address value and parse it
+//         let address = frm.doc.address;
+//         if (address) {
+//             parseAddress(address);
+//         }
+//     }
+// });
+// frappe.ui.form.on('BTM Leads', {
 //     refresh: function(frm) {
 //         // Add button to copy data for Excel
 //         frm.add_custom_button(__('Copy For Excel'), function() {
@@ -331,7 +331,7 @@ frappe.ui.form.on('ATM Leads', {
 //         });
 //     }
 // });
-frappe.ui.form.on('ATM Leads', {
+frappe.ui.form.on('BTM Leads', {
     refresh: function(frm) {
         function hasRole(role) {
             return frappe.user_roles.includes(role);
@@ -394,7 +394,7 @@ Additional Notes: Please Send This Location For Approval. Thanks
         });
     }
 });
-frappe.ui.form.on('ATM Leads', {
+frappe.ui.form.on('BTM Leads', {
     refresh: function(frm) {
         // Function to check if the user has the "Data Executive" role
         function hasRole(role) {
@@ -530,7 +530,7 @@ function copyToClipboard(dataArray) {
 }
 
 
-// frappe.ui.form.on('ATM Leads', {
+// frappe.ui.form.on('BTM Leads', {
 //     onload: function(frm) {
 //         // Check if the child table is empty, then fill with default values
 //         if (!frm.doc.opening_hours || frm.doc.opening_hours.length === 0) {
@@ -546,7 +546,7 @@ function copyToClipboard(dataArray) {
 //         }
 //     }
 // });
-// frappe.ui.form.on('ATM Leads', {
+// frappe.ui.form.on('BTM Leads', {
 //     refresh: function(frm) {
 //         calculate_all_rows(frm); // Calculate total hours for all rows on load
 //         update_average_hours(frm); // Update average hours on load
@@ -635,11 +635,11 @@ function copyToClipboard(dataArray) {
 //     // Round to the nearest whole number
 //     let roundedAverage = Math.round(averageHours);
 
-//     // Update the 'hours' field in the ATM Leads Doctype
+//     // Update the 'hours' field in the BTM Leads Doctype
 //     frm.set_value('hours', `${roundedAverage} Hours`);
 // }
 
-frappe.ui.form.on('ATM Leads', {
+frappe.ui.form.on('BTM Leads', {
     refresh: function(frm) {
         // Function to check if the user has the "Data Executive" role
         function hasRole(role) {

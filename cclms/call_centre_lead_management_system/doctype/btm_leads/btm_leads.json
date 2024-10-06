@@ -52,12 +52,24 @@
   "agreement_sent_date",
   "column_break_aznw",
   "sign_date",
+  "column_break_mskq",
+  "convert_date",
+  "column_break_vmst",
+  "install_date",
+  "column_break_nszu",
+  "remove_date",
   "section_break_pawd",
   "approved_days",
   "column_break_lchj",
   "agreement_sent_days",
   "column_break_zkia",
   "sign_days",
+  "column_break_bnov",
+  "convert_days",
+  "column_break_sznf",
+  "install_days",
+  "column_break_mhpr",
+  "remove_days",
   "section_break_utay",
   "opening_hours"
  ],
@@ -329,8 +341,6 @@
    "fieldname": "sales_person",
    "fieldtype": "Link",
    "hidden": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Sales Person",
    "options": "Sales Person"
   },
@@ -343,14 +353,74 @@
    "fieldtype": "Table",
    "label": "Opening Hours",
    "options": "Opening Hours"
+  },
+  {
+   "fieldname": "column_break_bnov",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "convert_days",
+   "fieldtype": "Data",
+   "label": "Convert Days"
+  },
+  {
+   "fieldname": "column_break_sznf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "install_days",
+   "fieldtype": "Data",
+   "label": "Install Days"
+  },
+  {
+   "fieldname": "column_break_mhpr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "remove_days",
+   "fieldtype": "Data",
+   "label": "Remove days"
+  },
+  {
+   "fieldname": "column_break_mskq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "convert_date",
+   "fieldtype": "Date",
+   "label": "Convert Date"
+  },
+  {
+   "fieldname": "column_break_vmst",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "install_date",
+   "fieldtype": "Date",
+   "label": "Install Date "
+  },
+  {
+   "fieldname": "column_break_nszu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "remove_date",
+   "fieldtype": "Date",
+   "label": "Remove Date"
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2024-09-11 12:14:55.310469",
+ "links": [
+  {
+   "group": "Track",
+   "link_doctype": "Employee",
+   "link_fieldname": "employee_name"
+  }
+ ],
+ "modified": "2024-10-06 05:57:07.100737",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
- "name": "ATM Leads",
+ "name": "BTM Leads",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
