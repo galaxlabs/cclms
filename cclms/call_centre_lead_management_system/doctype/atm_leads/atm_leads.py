@@ -107,11 +107,11 @@ class ATMLeads(Document):
 
 def update_all_leads():
     # Get all leads in ATMLeads Doctype
-    leads = frappe.get_all('ATMLeads', fields=['name'])
+    leads = frappe.get_all('ATM Leads', fields=['name'])
 
     for lead in leads:
         # Fetch each document
-        doc = frappe.get_doc('ATMLeads', lead['name'])
+        doc = frappe.get_doc('ATM Leads', lead['name'])
 
         # Update the days for each document
         update_days(doc)

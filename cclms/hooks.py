@@ -244,7 +244,7 @@ page_js = {
 
 
 doc_events = {
-    "ATMLeads": {
+    "ATM Leads": {
         "before_save": "cclms.call_centre_lead_management_system.doctype.leads.leads.update_days"
     }
 }
