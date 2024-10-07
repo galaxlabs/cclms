@@ -103,6 +103,6 @@ class ATMLeads(Document):
     #     doc.save()
 
 # Hook this function in your Doctype's validate or on_update event
-frappe.whitelist()
-def on_update(doc, method):
-    update_days(doc, method)
+# frappe.whitelist()
+# def on_update(doc, method):
+#     update_days(doc, method)

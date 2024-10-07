@@ -243,14 +243,14 @@ page_js = {
 # }
 
 
-doc_events = {
-    "ATM Leads": {
-        "before_save": "cclms.call_centre_lead_management_system.doctype.leads.leads.update_days"
-    }
-}
+# doc_events = {
+#     "ATM Leads": {
+#         "before_save": "cclms.call_centre_lead_management_system.doctype.leads.leads.update_days"
+#     }
+# }
 
-scheduler_events = {
-    "hourly": [
-        "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.update_lead_days"
-    ]
-}
+# scheduler_events = {
+#     "hourly": [
+#         "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.update_lead_days"
+#     ]
+# }
