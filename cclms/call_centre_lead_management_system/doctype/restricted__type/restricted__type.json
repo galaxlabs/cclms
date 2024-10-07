@@ -1,22 +1,22 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:restricted_bossiness",
+ "autoname": "field:restricted_business",
  "creation": "2024-09-11 11:56:46.877821",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "restricted_bossiness"
+  "restricted_business"
  ],
  "fields": [
   {
    "bold": 1,
-   "fieldname": "restricted_bossiness",
+   "fieldname": "restricted_business",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Restricted Bossiness  ",
+   "label": "Restricted Business  ",
    "options": "Business Types",
    "unique": 1
   }
@@ -24,7 +24,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-11 12:09:13.770580",
+ "modified": "2024-10-07 12:01:01.013083",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Restricted  Type",
