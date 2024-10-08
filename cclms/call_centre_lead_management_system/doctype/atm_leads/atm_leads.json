@@ -11,6 +11,7 @@
  "field_order": [
   "section_break_fk0q",
   "company",
+  "is_duplicate",
   "section_break_hmqm",
   "executive_name",
   "sales_person",
@@ -407,6 +408,12 @@
    "fieldname": "remove_date",
    "fieldtype": "Date",
    "label": "Remove Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_duplicate",
+   "fieldtype": "Check",
+   "label": "Is Duplicate"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -417,7 +424,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-10-06 05:57:07.100737",
+ "modified": "2024-10-08 05:15:00.790936",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
