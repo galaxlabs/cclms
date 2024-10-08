@@ -419,8 +419,10 @@
   {
    "fieldname": "duplicate_lead",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Duplicate Lead",
-   "options": "ATM Leads"
+   "options": "ATM Leads",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -431,7 +433,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-10-08 05:27:09.863428",
+ "modified": "2024-10-08 05:31:47.937445",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
