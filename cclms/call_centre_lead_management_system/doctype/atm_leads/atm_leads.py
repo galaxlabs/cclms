@@ -59,6 +59,9 @@ class ATMLeads(Document):
         except Exception as e:
             frappe.throw(_("An unexpected error occurred: {0}").format(str(e)))
 
+    
+
+
     # def update_days(doc, method):
     #     # Check if Approved Date is set and calculate Approved Days
     #     if doc.approve_date:
