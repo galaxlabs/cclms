@@ -10,7 +10,7 @@
  "field_order": [
   "operator_name",
   "state_name",
-  "restricted__type"
+  "restricted_type"
  ],
  "fields": [
   {
@@ -27,15 +27,15 @@
    "options": "Permitted States"
   },
   {
-   "fieldname": "restricted__type",
+   "fieldname": "restricted_type",
    "fieldtype": "Table",
-   "label": "Restricted  Type",
+   "label": "Restricted Type",
    "options": "Restricted  Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-11 12:08:37.760917",
+ "modified": "2024-10-09 08:47:15.687841",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Operator Companies",
