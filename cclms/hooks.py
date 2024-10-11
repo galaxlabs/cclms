@@ -255,3 +255,4 @@ page_js = {
 #     ]
 # }
 on_session_creation = "cclms.attendance_check.auto_check_in"
+on_logout = "cclms.attendance_check.auto_check_out"
