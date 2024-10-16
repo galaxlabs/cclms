@@ -254,5 +254,5 @@ page_js = {
 #         "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.update_lead_days"
 #     ]
 # }
-on_session_creation = "cclms.attendance_check.auto_check_in"
-on_logout = "cclms.attendance_check.auto_check_out"
+# on_session_creation = "cclms.attendance_check.auto_check_in"
+# on_logout = "cclms.attendance_check.auto_check_out"
