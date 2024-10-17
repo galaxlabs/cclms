@@ -9,10 +9,6 @@ from frappe.utils import date_diff, today
 
 
 class ATMLeads(Document):
-    import frappe
-from frappe import _
-
-class ATMLEADS(frappe.model.document.Document):
     def validate(self):
         self.validate_lead_state()
 
