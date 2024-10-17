@@ -9,10 +9,14 @@ from frappe.utils import date_diff, today
 
 
 class ATMLeads(Document):
-    def validate(self):
-        self.validate_lead_state_and_business_type()
+    import frappe
+from frappe import _
 
-    def validate_lead_state_and_business_type(self):
+class ATMLEADS(frappe.model.document.Document):
+    def validate(self):
+        self.validate_lead_state()
+
+    def validate_lead_state(self):
         # Check if the company is selected
         if not self.company:
             frappe.throw(
@@ -20,7 +24,7 @@ class ATMLeads(Document):
                 title=_("Company Not Selected")
             )
 
-        # Fetch operator company details
+        # Fetch the operator company details
         company = frappe.get_doc('Operator Companies', self.company)
 
         # Ensure the company exists
@@ -30,29 +34,71 @@ class ATMLeads(Document):
                 title=_("Invalid Company")
             )
 
-        # Check if the state is restricted
-        if company.state_name and len(company.state_name) > 0:
+        # Access the permitted states from the child table
+        permitted_states = company.state_name  # This is the child table containing permitted states
+
+        if permitted_states:
+            # Check if the lead's state_code is in the permitted states
             state_permitted = any(
                 state.state_code == self.state_code
-                for state in company.state_name
+                for state in permitted_states
             )
             if not state_permitted:
                 frappe.throw(
                     _("The selected state ({0}) is not allowed for the company {1}. Please select a valid state.").format(self.state_code, self.company),
                     title=_("State Not Allowed")
                 )
-
-        # Check if the business type is restricted
-        if company.restricted_type and len(company.restricted_type) > 0:
-            business_restricted = any(
-                restricted.business_type == self.business_type
-                for restricted in company.restricted_type
+        else:
+            # If the child table is empty, allow all states
+            frappe.msgprint(
+                _("No restricted states specified for the selected company. All states are allowed."),
+                alert=True
             )
-            if business_restricted:
-                frappe.throw(
-                    _("The selected business type ({0}) is restricted for the company {1}. Please select a different business type.").format(self.business_type, self.company),
-                    title=_("Business Type Not Allowed")
-                )
+
+    # def validate(self):
+    #     self.validate_lead_state_and_business_type()
+
+    # def validate_lead_state_and_business_type(self):
+    #     # Check if the company is selected
+    #     if not self.company:
+    #         frappe.throw(
+    #             _("Please select a company before saving the lead."),
+    #             title=_("Company Not Selected")
+    #         )
+
+    #     # Fetch operator company details
+    #     company = frappe.get_doc('Operator Companies', self.company)
+
+    #     # Ensure the company exists
+    #     if not company:
+    #         frappe.throw(
+    #             _("The selected company does not exist."),
+    #             title=_("Invalid Company")
+    #         )
+
+    #     # Check if the state is restricted
+    #     if company.state_name and len(company.state_name) > 0:
+    #         state_permitted = any(
+    #             state.state_code == self.state_code
+    #             for state in company.state_name
+    #         )
+    #         if not state_permitted:
+    #             frappe.throw(
+    #                 _("The selected state ({0}) is not allowed for the company {1}. Please select a valid state.").format(self.state_code, self.company),
+    #                 title=_("State Not Allowed")
+    #             )
+
+    #     # Check if the business type is restricted
+    #     if company.restricted_type and len(company.restricted_type) > 0:
+    #         business_restricted = any(
+    #             restricted.business_type == self.business_type
+    #             for restricted in company.restricted_type
+    #         )
+    #         if business_restricted:
+    #             frappe.throw(
+    #                 _("The selected business type ({0}) is restricted for the company {1}. Please select a different business type.").format(self.business_type, self.company),
+    #                 title=_("Business Type Not Allowed")
+    #             )
 
 
     # def validate(self):
