@@ -10,54 +10,100 @@ from frappe.utils import date_diff, today
 
 class ATMLeads(Document):
     def validate(self):
-        self.validate_lead_state_code()
+        self.validate_lead_state_and_business_type()
 
-    def validate_lead_state_code(self):
-        # Check if company is selected
+    def validate_lead_state_and_business_type(self):
+        # Check if the company is selected
         if not self.company:
             frappe.throw(
                 _("Please select a company before saving the lead."),
                 title=_("Company Not Selected")
             )
 
-        # Fetch permitted states linked to the selected company
-        try:
-            permitted_states = frappe.get_all(
-                "Permitted States",  # Child Doctype name for permitted states
-                filters={
-                    'parent': self.company  # Filter based on the selected company in the lead
-                },
-                fields=['state_code'],  # Fields to validate against (only state_code)
-                ignore_permissions=True  # Bypass permission check
+        # Fetch operator company details
+        company = frappe.get_doc('Operator Companies', self.company)
+
+        # Ensure the company exists
+        if not company:
+            frappe.throw(
+                _("The selected company does not exist."),
+                title=_("Invalid Company")
             )
 
-            frappe.logger().info(f"Fetched permitted states for {self.company}: {permitted_states}")
-
-            # Validate lead's state code against the permitted states
-            if permitted_states:
-                # Check if any permitted state code matches the lead's state_code
-                is_permitted = any(
-                    d['state_code'] == self.state_code
-                    for d in permitted_states
+        # Check if the state is restricted
+        if company.state_name and len(company.state_name) > 0:
+            state_permitted = any(
+                state.state_code == self.state_code
+                for state in company.state_name
+            )
+            if not state_permitted:
+                frappe.throw(
+                    _("The selected state ({0}) is not allowed for the company {1}. Please select a valid state.").format(self.state_code, self.company),
+                    title=_("State Not Allowed")
                 )
 
-                # Restrict if the lead's state code does not match permitted states
-                if not is_permitted:
-                    frappe.throw(
-                        _("This lead is not qualified for the selected operator because the state code is not permitted."),
-                        title=_("Not Qualified")
-                    )
-            else:
-                # If the permitted states table is empty, allow all state codes
-                frappe.msgprint(
-                    _("No permitted state codes specified for the selected company. All state codes are allowed."),
-                    alert=True
+        # Check if the business type is restricted
+        if company.restricted_type and len(company.restricted_type) > 0:
+            business_restricted = any(
+                restricted.business_type == self.business_type
+                for restricted in company.restricted_type
+            )
+            if business_restricted:
+                frappe.throw(
+                    _("The selected business type ({0}) is restricted for the company {1}. Please select a different business type.").format(self.business_type, self.company),
+                    title=_("Business Type Not Allowed")
                 )
 
-        except frappe.PermissionError as e:
-            frappe.throw(_("You do not have permission to access Permitted States: {0}").format(str(e)))
-        except Exception as e:
-            frappe.throw(_("An unexpected error occurred: {0}").format(str(e)))
+
+    # def validate(self):
+    #     self.validate_lead_state_code()
+
+    # def validate_lead_state_code(self):
+    #     # Check if company is selected
+    #     if not self.company:
+    #         frappe.throw(
+    #             _("Please select a company before saving the lead."),
+    #             title=_("Company Not Selected")
+    #         )
+
+    #     # Fetch permitted states linked to the selected company
+    #     try:
+    #         permitted_states = frappe.get_all(
+    #             "Permitted States",  # Child Doctype name for permitted states
+    #             filters={
+    #                 'parent': self.company  # Filter based on the selected company in the lead
+    #             },
+    #             fields=['state_code'],  # Fields to validate against (only state_code)
+    #             ignore_permissions=True  # Bypass permission check
+    #         )
+
+    #         frappe.logger().info(f"Fetched permitted states for {self.company}: {permitted_states}")
+
+    #         # Validate lead's state code against the permitted states
+    #         if permitted_states:
+    #             # Check if any permitted state code matches the lead's state_code
+    #             is_permitted = any(
+    #                 d['state_code'] == self.state_code
+    #                 for d in permitted_states
+    #             )
+
+    #             # Restrict if the lead's state code does not match permitted states
+    #             if not is_permitted:
+    #                 frappe.throw(
+    #                     _("This lead is not qualified for the selected operator because the state code is not permitted."),
+    #                     title=_("Not Qualified")
+    #                 )
+    #         else:
+    #             # If the permitted states table is empty, allow all state codes
+    #             frappe.msgprint(
+    #                 _("No permitted state codes specified for the selected company. All state codes are allowed."),
+    #                 alert=True
+    #             )
+
+    #     except frappe.PermissionError as e:
+    #         frappe.throw(_("You do not have permission to access Permitted States: {0}").format(str(e)))
+    #     except Exception as e:
+    #         frappe.throw(_("An unexpected error occurred: {0}").format(str(e)))
     # def validate(self):
     #     self.validate_lead_state()
 
