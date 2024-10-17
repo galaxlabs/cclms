@@ -431,7 +431,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-10-11 13:01:14.718154",
+ "modified": "2024-10-16 15:23:12.699858",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
@@ -498,6 +498,16 @@
    "report": 1,
    "role": "Data Executive",
    "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "OC",
    "share": 1,
    "write": 1
   }
