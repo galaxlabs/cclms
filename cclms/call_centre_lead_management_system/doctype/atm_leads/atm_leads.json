@@ -73,7 +73,9 @@
   "column_break_mhpr",
   "remove_days",
   "section_break_utay",
-  "opening_hours"
+  "opening_hours",
+  "refrence",
+  "hidden_by_signed_lead"
  ],
  "fields": [
   {
@@ -105,7 +107,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Executive Name",
-   "options": "Employee"
+   "options": "Employee",
+   "search_index": 1
   },
   {
    "fieldname": "column_break_rdkf",
@@ -279,6 +282,7 @@
   {
    "fieldname": "approve_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Approve Date"
   },
   {
@@ -297,6 +301,7 @@
   {
    "fieldname": "sign_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Sign Date"
   },
   {
@@ -421,6 +426,19 @@
    "label": "Duplicate Lead",
    "options": "ATM Leads",
    "read_only": 1
+  },
+  {
+   "fieldname": "refrence",
+   "fieldtype": "Data",
+   "label": "Refrence"
+  },
+  {
+   "default": "0",
+   "fieldname": "hidden_by_signed_lead",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Signed Leads Hide"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -431,7 +449,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-10-16 15:23:12.699858",
+ "modified": "2024-10-21 16:02:18.187388",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
