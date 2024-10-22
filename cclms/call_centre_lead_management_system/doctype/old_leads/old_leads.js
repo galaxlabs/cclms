@@ -142,7 +142,7 @@
 //                 address: frm.doc.address,
 //                 zippostal_code: frm.doc.zippostal_code,
 //                 state: frm.doc.state,
-//                 state_code:frm.doc.state_code
+//                 state_code:frm.doc.state_code,
 //                 city: frm.doc.city,
 //                 country: frm.doc.country,
 //                 executive_name: frm.doc.executive_name || current_employee,
