@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"jGSkQNX3sH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"xwcDxf0sIT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Approved</b></span>\",\"col\":12}},{\"id\":\"eeSAHkQnt9\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Approved\",\"col\":3}},{\"id\":\"WuO1j-bmn5\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Submitted</b></span>\",\"col\":12}},{\"id\":\"1KMOILb77i\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Submitted\",\"col\":3}},{\"id\":\"WYUew_WeXX\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Submitted For Bit Stop\",\"col\":3}},{\"id\":\"bqwc4kutaF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Submitted For Bitcoin Depot\",\"col\":3}},{\"id\":\"jf1PpH3BU9\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Submitted For Budget Coinz\",\"col\":3}},{\"id\":\"as2Sh1Akyn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Agreement Sign</b></span>\",\"col\":12}},{\"id\":\"HIto1IfltJ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Agreement Sent\",\"col\":3}},{\"id\":\"mkThGCkpV7\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Signed</b></span>\",\"col\":12}},{\"id\":\"JR_aQnZZQg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Signed\",\"col\":3}}]",
+ "content": "[{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ca6wUKYxT_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Import Leads\",\"col\":3}},{\"id\":\"l0ErdydTkD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads Submissions\",\"col\":3}},{\"id\":\"5wIcBEbF78\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Today Leads\",\"col\":3}},{\"id\":\"ZbKh_I8teU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Companies\",\"col\":3}},{\"id\":\"r8bNFeHfTy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"j89ak_q9vG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance Tool\",\"col\":3}},{\"id\":\"z0yFN9X7h5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Check In\",\"col\":3}},{\"id\":\"jODKFdRKEY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Application\",\"col\":3}},{\"id\":\"RH5nobRF7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Old Data\",\"col\":3}},{\"id\":\"z4KaRjd6n7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Submit Leave\",\"col\":3}},{\"id\":\"uhm4TTyDxf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"u_aDM1nBUG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads By Status</b></span>\",\"col\":12}},{\"id\":\"eA3CtedX_G\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Approved Leads\",\"col\":3}},{\"id\":\"g8Z3_A7UR2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pending Leads\",\"col\":3}},{\"id\":\"Ci8ZRIQ5YT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Signed Leads\",\"col\":3}},{\"id\":\"OJx3Rh3uWQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Installed Leads\",\"col\":3}},{\"id\":\"6XNrSFzXjp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Pending</b></span>\",\"col\":12}},{\"id\":\"9PzejdGyv_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bitcoin Depot\",\"col\":3}},{\"id\":\"y-HwTw8FGe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bitcoin De\",\"col\":3}},{\"id\":\"VF4xrbzrAI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Local Coin\",\"col\":3}},{\"id\":\"QRpoOYwbEY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Un Bank \",\"col\":3}},{\"id\":\"YqWfeZijR7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bit Stop\",\"col\":3}},{\"id\":\"e-lgGzWdmU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"b p\",\"col\":3}},{\"id\":\"e4KrOecITl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Budget Coinz\",\"col\":3}},{\"id\":\"LkKL6FLoN6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coin Works\",\"col\":3}},{\"id\":\"2sO7iHqeLe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Crypto Base\",\"col\":3}},{\"id\":\"Q6NhUs6iNx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Rocket Coin\",\"col\":3}},{\"id\":\"9JPBOzE-pS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Instant Coin Bank\",\"col\":3}},{\"id\":\"cHeN724Qzl\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jNrICW0OnY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Approved</b></span>\",\"col\":12}},{\"id\":\"xwcDxf0sIT\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Count By Status</b></span>\",\"col\":12}},{\"id\":\"QlSuGQIZhe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tools</b></span>\",\"col\":12}},{\"id\":\"3HNtjJSlb7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calendar\",\"col\":3}},{\"id\":\"tqeM5-Kdge\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coming Events \",\"col\":3}},{\"id\":\"6brBBEBmRh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Notes \",\"col\":3}},{\"id\":\"ixZdx7O6Gp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"ToDo\",\"col\":3}}]",
  "creation": "2024-07-17 09:32:26.293533",
  "custom_blocks": [],
  "docstatus": 0,
@@ -8,45 +8,16 @@
  "for_user": "",
  "hide_custom": 0,
  "icon": "gantt",
- "idx": 2,
+ "idx": 115,
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "PW",
  "links": [],
- "modified": "2024-09-04 09:12:40.902627",
+ "modified": "2024-10-27 13:22:16.993580",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
- "number_cards": [
-  {
-   "label": "Total Approved",
-   "number_card_name": "Approved"
-  },
-  {
-   "label": "Submitted For Bit Stop",
-   "number_card_name": "Submitted For Bit Stop"
-  },
-  {
-   "label": "Total Agreement Sent",
-   "number_card_name": "Agreement Sent"
-  },
-  {
-   "label": "Total Submitted",
-   "number_card_name": "Submitted"
-  },
-  {
-   "label": "Submitted For Bitcoin Depot",
-   "number_card_name": "Submitted For Bitcoin Depot"
-  },
-  {
-   "label": "Total Signed",
-   "number_card_name": "Signed"
-  },
-  {
-   "label": "Submitted For Budget Coinz",
-   "number_card_name": "Submitted For Budget Coinz"
-  }
- ],
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -65,9 +36,246 @@
  "sequence_id": 31.0,
  "shortcuts": [
   {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Approved Leads",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Approved\"],false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Installed Leads",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Install\"],false],[\"ATM Leads\",\"workflow_state\",\"not in\",[\"Signed\",\"Approved\",\"Draft\",\"Pending\"],false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Check In",
+   "link_to": "Employee Checkin",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Bitcoin De",
+   "link_to": "bitcoin-depot",
+   "type": "Page"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "b p",
+   "link_to": "bitstop",
+   "type": "Page"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Leave Application",
+   "link_to": "Leave Application",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Employee",
+   "link_to": "Employee",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Submit Leave",
+   "link_to": "Leave Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Signed Leads",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Signed\"],false],[\"ATM Leads\",\"workflow_state\",\"not in\",[\"Approved\",\"Installed\",\"Pending\",\"Draft\",\"rejected\",\"Requested for Agreement Sent\"],false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Leads Submissions",
+   "link_to": "ATM Leads",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Local Coin",
+   "link_to": "Local Coin",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Pending Leads",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Pending\"],false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Old Data",
+   "link_to": "Old Leads",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "Companies",
+   "link_to": "Operator Companies",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
    "doc_view": "New",
    "label": "Leads",
    "link_to": "ATM Leads",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Today Leads",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"post_date\",\"Timespan\",\"today\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Bitcoin Depot",
+   "link_to": "Bitcoin Depot",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Rocket Coin",
+   "link_to": "Rocket Coin",
+   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Rocket Coin\",false],[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Un Bank ",
+   "link_to": "Un Bank",
+   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Un Bank\",false],[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Attendance",
+   "link_to": "Attendance",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "ToDo",
+   "link_to": "ToDo",
+   "stats_filter": "[[\"ToDo\",\"status\",\"=\",\"Open\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Import Leads",
+   "link_to": "Data Import",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "New",
+   "label": "Calendar",
+   "link_to": "Calendar View",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Attendance Tool",
+   "link_to": "Employee Attendance Tool",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Coming Events ",
+   "link_to": "Event",
+   "stats_filter": "[[\"Event\",\"event_type\",\"=\",\"Public\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Bit Stop",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Bit Stop\",false],[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "New",
+   "label": "Notes ",
+   "link_to": "Note",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Budget Coinz",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Budget Coinz\",false],[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Coin Works",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Coin Works\",false],[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Crypto Base",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Crypto Base\",false],[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Instant Coin Bank",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Instant Coin Bank\",false],[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
    "type": "DocType"
   }
  ],
