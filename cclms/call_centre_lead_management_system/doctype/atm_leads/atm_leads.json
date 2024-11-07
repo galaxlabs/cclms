@@ -525,7 +525,7 @@
   },
   {
    "email": 1,
-   "export": 1,
+   "export": 0,
    "print": 1,
    "read": 1,
    "report": 1,

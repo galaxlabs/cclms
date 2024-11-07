@@ -14,7 +14,6 @@
   "lead_status",
   "section_break_hmqm",
   "executive_name",
-  "sales_person",
   "column_break_rdkf",
   "post_date",
   "column_break_qxgi",
@@ -95,14 +94,6 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Executive Name"
-  },
-  {
-   "fieldname": "sales_person",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Sales Person"
   },
   {
    "fieldname": "column_break_rdkf",
@@ -366,7 +357,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-17 11:18:57.458763",
+ "modified": "2024-11-07 13:43:47.265733",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Old Leads",

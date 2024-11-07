@@ -92,6 +92,38 @@ class ATMLeads(Document):
             self.db_set('remove_days', date_diff(nowdate(), self.remove_date))
     
 
+    def notify_on_workflow_change(doc, method):
+        previous_doc = doc.get_doc_before_save()
+        # Check if the workflow state has changed
+        if doc.workflow_state != doc.get_doc_before_save().workflow_state:
+            # Define notification message based on the new workflow state
+            message = ""
+            if doc.workflow_state == "Approved":
+                message = f"The lead {doc.name} for {doc.business_name} at {doc.address} has been approved."
+            elif doc.workflow_state == "Rejected":
+                message = f"The lead {doc.name} for {doc.business_name} at {doc.address} has been rejected."
+            elif doc.workflow_state == "Pending":
+                message = f"The lead {doc.name} for {doc.business_name} at {doc.address} is pending review."
+            elif doc.workflow_state == "Signed":
+                message = f"The lead {doc.name} for {doc.business_name} at {doc.address} has been signed."
+
+            # Only proceed if a relevant message is generated
+            if message:
+                # Create a notification in the Notification Log for all users with relevant permissions
+                recipients = frappe.get_all("User", filters={"enabled": 1}, pluck="name")
+                for user in recipients:
+                    frappe.get_doc({
+                        "doctype": "Notification Log",
+                        "subject": f"Workflow Update - {doc.workflow_state}",
+                        "email_content": message,
+                        "for_user": user,
+                        "document_type": doc.doctype,
+                        "document_name": doc.name
+                    }).insert(ignore_permissions=True)
+
+    # Call the function on workflow state change
+    notify_on_workflow_change(doc, method)
+
     # Assuming you have a list of ATM lead documents
 
 # import frappe
