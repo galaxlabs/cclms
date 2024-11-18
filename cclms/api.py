@@ -1,7 +1,12 @@
 import frappe
 import requests
+from frappe import _
 
+# cclms/api.py
 
+@frappe.whitelist(allow_guest=True)
+def ringcentral_callback():
+    return {"status": "success", "message": "Callback received"}
 
 @frappe.whitelist()
 def get_lead_counts_by_company(company_name):

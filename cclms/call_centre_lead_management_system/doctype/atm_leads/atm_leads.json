@@ -5,7 +5,7 @@
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:Lead-{company}-{DD}-{MM}-{YY}-{######}",
+ "autoname": "format:Lead-{DD}-{MM}-{YY}-{######}",
  "creation": "2024-09-03 13:16:55.637135",
  "default_view": "List",
  "doctype": "DocType",
@@ -14,6 +14,9 @@
   "section_break_fk0q",
   "company",
   "is_duplicate",
+  "item_created",
+  "supplier_created",
+  "sales_order_created",
   "duplicate_lead",
   "section_break_hmqm",
   "executive_name",
@@ -443,6 +446,27 @@
    "hidden": 1,
    "in_list_view": 1,
    "label": "Signed Leads Hide"
+  },
+  {
+   "default": "0",
+   "fieldname": "item_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Item Created"
+  },
+  {
+   "default": "0",
+   "fieldname": "supplier_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Supplier Created"
+  },
+  {
+   "default": "0",
+   "fieldname": "sales_order_created",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Sales Order Created"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -453,7 +477,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-11-04 08:52:40.553329",
+ "modified": "2024-11-15 10:35:23.602611",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
@@ -525,7 +549,7 @@
   },
   {
    "email": 1,
-   "export": 0,
+   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
