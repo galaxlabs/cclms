@@ -1,6 +1,4 @@
 {
- "_comments": "[]",
- "_liked_by": "[]",
  "actions": [],
  "allow_events_in_timeline": 1,
  "allow_import": 1,
@@ -95,6 +93,7 @@
    "fieldtype": "Link",
    "in_filter": 1,
    "in_global_search": 1,
+   "in_list_view": 1,
    "label": "Company",
    "options": "Operator Companies"
   },
@@ -106,7 +105,7 @@
    "fieldname": "executive_name",
    "fieldtype": "Link",
    "in_filter": 1,
-   "in_global_search": 1,
+   "in_list_view": 1,
    "label": "Executive Name",
    "options": "Employee",
    "search_index": 1
@@ -123,13 +122,13 @@
    "default": "Today",
    "fieldname": "post_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Post Date",
    "reqd": 1
   },
   {
    "fieldname": "branch",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Branch",
    "options": "Branch"
   },
@@ -153,6 +152,7 @@
   {
    "fieldname": "business_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Business Name"
   },
   {
@@ -204,6 +204,7 @@
   {
    "fieldname": "country",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Country",
    "options": "Country"
   },
@@ -424,7 +425,8 @@
    "default": "0",
    "fieldname": "is_duplicate",
    "fieldtype": "Check",
-   "label": "Is Duplicate"
+   "label": "Is Duplicate",
+   "read_only": 1
   },
   {
    "fieldname": "duplicate_lead",
@@ -472,92 +474,19 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "group": "Leads",
-   "link_doctype": "Employee",
-   "link_fieldname": "employee_name"
+   "group": "Leads Origin",
+   "hidden": 1,
+   "link_doctype": "Branch",
+   "link_fieldname": "branch"
   }
  ],
- "modified": "2024-11-15 10:35:23.602611",
+ "modified": "2024-11-22 05:47:39.529367",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
  "naming_rule": "Expression",
  "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "select": 1,
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Employee",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales User",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Manager",
-   "select": 1,
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Data Executive",
-   "select": 1,
-   "share": 1,
-   "write": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "OC",
-   "share": 1,
-   "write": 1
-  }
- ],
+ "permissions": [],
  "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
