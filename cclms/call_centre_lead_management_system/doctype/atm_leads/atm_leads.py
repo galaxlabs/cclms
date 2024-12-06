@@ -7,92 +7,9 @@ from frappe.model.document import Document
 from frappe.utils import today, add_days
 
 class ATMLeads(Document):
-    def validate(self):
-        self.validate_lead_state()
+    pass
 
-    def before_save(self):
-        self.update_dates_and_days()
-
-    def validate_lead_state(self):
-        if not self.company:
-            frappe.throw(
-                _("Please select a company before saving the lead."),
-                title=_("Company Not Selected")
-            )
-
-        # Fetch the operator company details
-        company = frappe.get_doc('Operator Companies', self.company)
-
-        if not company:
-            frappe.throw(
-                _("The selected company does not exist."),
-                title=_("Invalid Company")
-            )
-
-        # Access the permitted states from the child table
-        permitted_states = company.get("permitted_states")  # Assuming child table is named "permitted_states"
-
-        if permitted_states:
-            # Check if the lead's state_code is in the permitted states
-            state_permitted = any(
-                state.state_code == self.state_code
-                for state in permitted_states
-            )
-            if not state_permitted:
-                frappe.throw(
-                    _("The selected state ({0}) is not allowed for the company {1}. Please select a valid state.").format(self.state_code, self.company),
-                    title=_("State Not Allowed")
-                )
-        else:
-            frappe.msgprint(
-                _("No restricted states specified for the selected company. All states are allowed."),
-                alert=True
-            )
-
-    def update_dates_and_days(self):
-        current_date = nowdate()
-        should_save = False
-
-        workflow_dates = {
-            "Approved": "approve_date",
-            "Agreement Sent": "agreement_sent_date",
-            "Signed": "sign_date",
-            "Converted": "convert_date",
-            "Installed": "install_date",
-            "Removed": "remove_date"
-        }
-
-        for state, date_field in workflow_dates.items():
-            if self.workflow_state == state and not getattr(self, date_field):
-                self.db_set(date_field, current_date)
-                should_save = True
-
-        # Calculate days between dates
-        self.calculate_days()
-
-        # Commit if any field was updated
-        if should_save:
-            frappe.db.commit()
-            frappe.msgprint(_("Dates and days updated based on workflow state."))
-
-    def calculate_days(self):
-        def calculate_days_diff(start_field, end_field, days_field):
-            if getattr(self, start_field):
-                end_date = getattr(self, end_field) or nowdate()
-                days = date_diff(end_date, getattr(self, start_field))
-                self.db_set(days_field, days)
-
-        calculate_days_diff('approve_date', 'agreement_sent_date', 'approved_days')
-        calculate_days_diff('agreement_sent_date', 'sign_date', 'agreement_sent_days')
-        calculate_days_diff('sign_date', 'convert_date', 'sign_days')
-        calculate_days_diff('convert_date', 'install_date', 'convert_days')
-        calculate_days_diff('install_date', 'remove_date', 'install_days')
-
-        if self.remove_date:
-            self.db_set('remove_days', date_diff(nowdate(), self.remove_date))
-    
-
-    # def notify_on_workflow_change(doc, method):
+        # def notify_on_workflow_change(doc, method):
     #     previous_doc = doc.get_doc_before_save()
     #     # Check if the workflow state has changed
     #     if doc.workflow_state != doc.get_doc_before_save().workflow_state:
