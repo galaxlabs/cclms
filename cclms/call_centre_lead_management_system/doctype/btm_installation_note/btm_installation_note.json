@@ -1,0 +1,221 @@
+{
+ "actions": [],
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
+ "autoname": "format:{owner_name}-{business_name}",
+ "creation": "2024-12-11 06:02:30.912114",
+ "default_view": "List",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "installation_note",
+  "column_break0",
+  "company",
+  "branch",
+  "address_display",
+  "contact_display",
+  "contact_email",
+  "column_break1",
+  "inst_date",
+  "inst_time",
+  "owner_name",
+  "business_name",
+  "user_information",
+  "remarks",
+  "contact_mobile",
+  "item_details",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "installation_note",
+   "fieldtype": "Section Break",
+   "label": "Installation Note",
+   "oldfieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break0",
+   "fieldtype": "Column Break",
+   "oldfieldtype": "Column Break",
+   "width": "50%"
+  },
+  {
+   "fieldname": "address_display",
+   "fieldtype": "Small Text",
+   "label": "Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "contact_display",
+   "fieldtype": "Small Text",
+   "in_global_search": 1,
+   "label": "Contact",
+   "read_only": 1
+  },
+  {
+   "fieldname": "contact_mobile",
+   "fieldtype": "Small Text",
+   "in_global_search": 1,
+   "label": "Mobile No",
+   "read_only": 1
+  },
+  {
+   "depends_on": "customer",
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email",
+   "options": "Email",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break1",
+   "fieldtype": "Column Break",
+   "oldfieldtype": "Column Break",
+   "width": "50%"
+  },
+  {
+   "fieldname": "inst_date",
+   "fieldtype": "Date",
+   "label": "Installation Date",
+   "oldfieldname": "inst_date",
+   "oldfieldtype": "Date",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "inst_time",
+   "fieldtype": "Time",
+   "label": "Installation Time",
+   "oldfieldname": "inst_time",
+   "oldfieldtype": "Time"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "oldfieldname": "company",
+   "oldfieldtype": "Select",
+   "print_hide": 1,
+   "remember_last_selected_value": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Remarks",
+   "oldfieldname": "remarks",
+   "oldfieldtype": "Small Text",
+   "print_hide": 1
+  },
+  {
+   "fieldname": "item_details",
+   "fieldtype": "Section Break",
+   "oldfieldtype": "Section Break",
+   "options": "Simple"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "BTM Installation Note",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "owner_name",
+   "fieldtype": "Data",
+   "label": "Owner name"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "user_information",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "User Information"
+  },
+  {
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "label": "Business Name"
+  }
+ ],
+ "icon": "fa fa-wrench",
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-12-11 11:34:54.628809",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "BTM Installation Note",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "OC",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "owner_name",
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}
