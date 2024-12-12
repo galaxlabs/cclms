@@ -12,12 +12,14 @@
   "branch",
   "join_date",
   "designation",
+  "phone",
   "column_break_zgsg",
   "user_name",
   "email",
   "company",
   "date_off_berth",
-  "employee"
+  "employee",
+  "full__name"
  ],
  "fields": [
   {
@@ -58,14 +60,12 @@
   {
    "fieldname": "first_name",
    "fieldtype": "Data",
-   "label": "First Name",
-   "options": "Employee"
+   "label": "First Name"
   },
   {
    "fieldname": "last_name",
    "fieldtype": "Data",
-   "label": "Last Name ",
-   "options": "Employee"
+   "label": "Last Name "
   },
   {
    "fieldname": "join_date",
@@ -75,7 +75,7 @@
   {
    "fieldname": "date_off_berth",
    "fieldtype": "Date",
-   "label": "Date Off Berth"
+   "label": "Date Off Birth"
   },
   {
    "fieldname": "employee",
@@ -88,9 +88,20 @@
    "fieldtype": "Link",
    "label": "Designation",
    "options": "Designation"
+  },
+  {
+   "fieldname": "full__name",
+   "fieldtype": "Data",
+   "label": "Full  Name"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Phone",
+   "label": "Phone"
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
  "links": [
   {
    "group": "Track",
@@ -101,14 +112,9 @@
    "group": "Track",
    "link_doctype": "Employee",
    "link_fieldname": "employee_name"
-  },
-  {
-   "group": "Track",
-   "link_doctype": "User",
-   "link_fieldname": "role"
   }
  ],
- "modified": "2024-12-11 05:09:41.546930",
+ "modified": "2024-12-12 11:59:25.065286",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
@@ -128,7 +134,11 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
 }

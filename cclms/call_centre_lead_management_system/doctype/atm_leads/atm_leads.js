@@ -331,69 +331,69 @@ function duplicate_lead_for_selected_companies(frm, selected_companies) {
 //         });
 //     }
 // });
-frappe.ui.form.on('ATM Leads', {
-    refresh: function(frm) {
-        function hasRole(role) {
-            return frappe.user_roles.includes(role);
-        }
+// frappe.ui.form.on('ATM Leads', {
+//     refresh: function(frm) {
+//         function hasRole(role) {
+//             return frappe.user_roles.includes(role);
+//         }
 
-        // Only show the buttons if the user has the "Data Executive" role
-        if (hasRole('Sales User'))
-        // Add button to copy data for Skype
-        frm.add_custom_button(__('Skype Approval'), function() {
-            // Define the formatted text for Skype
-            let skypeText = `
-Approval Send Request:
+//         // Only show the buttons if the user has the "Data Executive" role
+//         if (hasRole('Sales User'))
+//         // Add button to copy data for Skype
+//         frm.add_custom_button(__('Skype Approval'), function() {
+//             // Define the formatted text for Skype
+//             let skypeText = `
+// Approval Send Request:
 
-Owner Name: ${frm.doc.owner_name || 'N/A'}
+// Owner Name: ${frm.doc.owner_name || 'N/A'}
 
-Owner Mail: mailto:${frm.doc.email || 'N/A'}
+// Owner Mail: mailto:${frm.doc.email || 'N/A'}
 
-Personal Phone: ${frm.doc.personal_cell_phone || 'N/A'}
+// Personal Phone: ${frm.doc.personal_cell_phone || 'N/A'}
 
-Business Name: ${frm.doc.business_name || 'N/A'}
+// Business Name: ${frm.doc.business_name || 'N/A'}
 
-Business Address: ${frm.doc.address || 'N/A'}, ${frm.doc.city || 'N/A'}, ${frm.doc.state_code || 'N/A'}, ${frm.doc.zippostal_code || 'N/A'}
+// Business Address: ${frm.doc.address || 'N/A'}, ${frm.doc.city || 'N/A'}, ${frm.doc.state_code || 'N/A'}, ${frm.doc.zippostal_code || 'N/A'}
 
-Business Phone: ${frm.doc.business_phone_number || 'N/A'}
+// Business Phone: ${frm.doc.business_phone_number || 'N/A'}
 
-Operations Hours: ${frm.doc.hours || 'N/A'}
+// Operations Hours: ${frm.doc.hours || 'N/A'}
 
-Location Type: ${frm.doc.business_type || 'N/A'}
+// Location Type: ${frm.doc.business_type || 'N/A'}
 
-Offer Details:
+// Offer Details:
 
-Fixed: ${frm.doc.fixed || 'TBD'}
+// Fixed: ${frm.doc.fixed || 'TBD'}
 
-Per Trans: ${frm.doc.per_transaction || 'TBD'}
+// Per Trans: ${frm.doc.per_transaction || 'TBD'}
 
-Term: ${frm.doc.contract_length || 'TBD'}
+// Term: ${frm.doc.contract_length || 'TBD'}
 
-Additional Notes: Please Send This Location For Approval. Thanks
-`;
+// Additional Notes: Please Send This Location For Approval. Thanks
+// `;
 
-            // Create a temporary textarea element to hold the text
-            let tempTextArea = document.createElement('textarea');
-            tempTextArea.value = skypeText;
-            document.body.appendChild(tempTextArea);
+//             // Create a temporary textarea element to hold the text
+//             let tempTextArea = document.createElement('textarea');
+//             tempTextArea.value = skypeText;
+//             document.body.appendChild(tempTextArea);
 
-            // Select the text inside the textarea and copy it
-            tempTextArea.select();
-            tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+//             // Select the text inside the textarea and copy it
+//             tempTextArea.select();
+//             tempTextArea.setSelectionRange(0, 99999); // For mobile devices
 
-            try {
-                // Execute the copy command
-                document.execCommand('copy');
-                frappe.msgprint(__('Copied to clipboard!'));
-            } catch (err) {
-                frappe.msgprint(__('Failed to copy: ' + err));
-            }
+//             try {
+//                 // Execute the copy command
+//                 document.execCommand('copy');
+//                 frappe.msgprint(__('Copied to clipboard!'));
+//             } catch (err) {
+//                 frappe.msgprint(__('Failed to copy: ' + err));
+//             }
 
-            // Remove the temporary textarea
-            document.body.removeChild(tempTextArea);
-        });
-    }
-});
+//             // Remove the temporary textarea
+//             document.body.removeChild(tempTextArea);
+//         });
+//     }
+// });
 
 // frappe.ui.form.on('ATM Leads', {
 //     onload: function(frm) {
