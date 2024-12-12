@@ -15,7 +15,6 @@
   "item_created",
   "supplier_created",
   "sales_order_created",
-  "duplicate_lead",
   "section_break_hmqm",
   "executive_name",
   "sales_person",
@@ -429,14 +428,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "duplicate_lead",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Duplicate Lead",
-   "options": "ATM Leads",
-   "read_only": 1
-  },
-  {
    "fieldname": "refrence",
    "fieldtype": "Data",
    "label": "Refrence"
@@ -480,7 +471,7 @@
    "link_fieldname": "branch"
   }
  ],
- "modified": "2024-11-22 05:47:39.529367",
+ "modified": "2024-12-12 10:16:37.469824",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",

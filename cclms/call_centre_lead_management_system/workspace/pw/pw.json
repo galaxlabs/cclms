@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "PW",
  "links": [],
- "modified": "2024-10-27 13:22:16.993580",
+ "modified": "2024-12-11 14:42:45.091612",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
@@ -41,14 +41,6 @@
    "label": "Approved Leads",
    "link_to": "ATM Leads",
    "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Approved\"],false]]",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
-   "doc_view": "List",
-   "label": "Installed Leads",
-   "link_to": "ATM Leads",
-   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Install\"],false],[\"ATM Leads\",\"workflow_state\",\"not in\",[\"Signed\",\"Approved\",\"Draft\",\"Pending\"],false]]",
    "type": "DocType"
   },
   {
@@ -103,6 +95,14 @@
    "label": "Signed Leads",
    "link_to": "ATM Leads",
    "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Signed\"],false],[\"ATM Leads\",\"workflow_state\",\"not in\",[\"Approved\",\"Installed\",\"Pending\",\"Draft\",\"rejected\",\"Requested for Agreement Sent\"],false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Installed Leads",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Installed\"],false]]",
    "type": "DocType"
   },
   {
