@@ -1,25 +1,30 @@
 {
  "actions": [],
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:agent_name",
  "creation": "2024-12-11 04:31:43.118720",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "agent_name",
+  "gender_column",
+  "status",
   "first_name",
   "last_name",
   "branch",
   "join_date",
   "designation",
   "phone",
+  "gender",
   "column_break_zgsg",
   "user_name",
   "email",
   "company",
   "date_off_berth",
   "employee",
-  "full__name"
+  "full_name",
+  "agent_name"
  ],
  "fields": [
   {
@@ -90,14 +95,30 @@
    "options": "Designation"
   },
   {
-   "fieldname": "full__name",
+   "fieldname": "phone",
+   "fieldtype": "Phone",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "full_name",
    "fieldtype": "Data",
    "label": "Full  Name"
   },
   {
-   "fieldname": "phone",
-   "fieldtype": "Phone",
-   "label": "Phone"
+   "fieldname": "gender_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Link",
+   "label": "Gender",
+   "options": "Gender"
+  },
+  {
+   "default": "0",
+   "fieldname": "status",
+   "fieldtype": "Check",
+   "label": "Status"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -114,7 +135,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-12-12 11:59:25.065286",
+ "modified": "2024-12-12 13:57:53.971403",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
@@ -135,9 +156,11 @@
   }
  ],
  "quick_entry": 1,
+ "search_fields": "employee,agent_name",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
+ "title_field": "employee",
  "track_changes": 1,
  "track_seen": 1,
  "track_views": 1
