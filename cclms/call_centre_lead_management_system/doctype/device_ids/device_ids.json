@@ -56,11 +56,9 @@
    "label": "Location Trust Score"
   },
   {
-   "default": "Bx46trYp9JX2MMubrxKt25G4mm4hrVigsK4qiovecviw",
    "fieldname": "owner_name",
-   "fieldtype": "Select",
-   "label": "Owner Name",
-   "options": "Bx46trYp9JX2MMubrxKt25G4mm4hrVigsK4qiovecviw"
+   "fieldtype": "Data",
+   "label": "Owner Name"
   },
   {
    "fieldname": "internet_provider",
@@ -80,7 +78,7 @@
    "link_fieldname": "miner_name"
   }
  ],
- "modified": "2024-12-15 01:58:53.077601",
+ "modified": "2024-12-15 07:33:25.050291",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Device IDs",
