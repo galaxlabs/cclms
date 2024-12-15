@@ -1,18 +1,24 @@
 {
  "actions": [],
  "allow_import": 1,
- "autoname": "MINER-ACT-.MM.-.YYYY.-.######",
+ "allow_rename": 1,
+ "autoname": "format:Miner Activity-{DD}-{MM}-{YYYY}-{######}",
  "creation": "2024-12-14 06:38:03.896456",
  "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "miner_name",
+  "column_break_hzcu",
+  "date",
   "time",
+  "day",
   "section_break_rltv",
   "log_type",
   "7_days",
   "30_days",
+  "column_break_hzbx",
+  "earning",
   "valid_heartbeat"
  ],
  "fields": [
@@ -39,8 +45,7 @@
    "in_standard_filter": 1,
    "label": "Miner Name",
    "options": "Device IDs",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "section_break_rltv",
@@ -63,6 +68,31 @@
    "fieldname": "valid_heartbeat",
    "fieldtype": "Check",
    "label": "Valid Heartbeat"
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Select",
+   "label": "Day",
+   "options": "Sunday\nMonday\nTuesday\nWednesday\nThursday\nFriday\nSaturday"
+  },
+  {
+   "fieldname": "earning",
+   "fieldtype": "Float",
+   "label": "Earning"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_hzcu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hzbx",
+   "fieldtype": "Column Break"
   }
  ],
  "links": [
@@ -71,11 +101,11 @@
    "link_fieldname": "miner_name"
   }
  ],
- "modified": "2024-12-14 07:22:40.733980",
+ "modified": "2024-12-15 03:57:29.453164",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Activity",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -104,9 +134,11 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "ASC",
  "states": [],
  "title_field": "miner_name",
- "track_changes": 1
+ "track_changes": 1,
+ "track_seen": 1
 }

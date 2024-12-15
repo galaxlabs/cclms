@@ -7,12 +7,15 @@
  "engine": "InnoDB",
  "field_order": [
   "wallet_address",
+  "owner_name",
   "device_id",
+  "internet_provider",
   "column_break_ckqu",
   "title",
   "address",
   "hotspot_type",
-  "location_trust_score"
+  "location_trust_score",
+  "zone"
  ],
  "fields": [
   {
@@ -51,6 +54,23 @@
    "fieldname": "location_trust_score",
    "fieldtype": "Int",
    "label": "Location Trust Score"
+  },
+  {
+   "default": "Bx46trYp9JX2MMubrxKt25G4mm4hrVigsK4qiovecviw",
+   "fieldname": "owner_name",
+   "fieldtype": "Select",
+   "label": "Owner Name",
+   "options": "Bx46trYp9JX2MMubrxKt25G4mm4hrVigsK4qiovecviw"
+  },
+  {
+   "fieldname": "internet_provider",
+   "fieldtype": "Data",
+   "label": "Internet Provider"
+  },
+  {
+   "fieldname": "zone",
+   "fieldtype": "Data",
+   "label": "Zone"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -60,7 +80,7 @@
    "link_fieldname": "miner_name"
   }
  ],
- "modified": "2024-12-14 07:25:45.942319",
+ "modified": "2024-12-15 01:58:53.077601",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Device IDs",
