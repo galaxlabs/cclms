@@ -29,7 +29,7 @@
   {
    "fieldname": "agent_name",
    "fieldtype": "Data",
-   "label": "Pseudo  Name",
+   "label": "Pseudo Name",
    "unique": 1
   },
   {
@@ -133,7 +133,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-12-13 04:15:27.013245",
+ "modified": "2024-12-16 11:44:45.816564",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",

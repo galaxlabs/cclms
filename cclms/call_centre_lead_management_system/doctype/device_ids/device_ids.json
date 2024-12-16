@@ -21,9 +21,9 @@
   {
    "default": "Bx46trYp9JX2MMubrxKt25G4mm4hrVigsK4qiovecviw",
    "fieldname": "wallet_address",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Wallet Address",
-   "options": "Bx46trYp9JX2MMubrxKt25G4mm4hrVigsK4qiovecviw"
+   "options": "Wallet Name"
   },
   {
    "fieldname": "device_id",
@@ -78,7 +78,7 @@
    "link_fieldname": "miner_name"
   }
  ],
- "modified": "2024-12-15 07:33:25.050291",
+ "modified": "2024-12-16 12:03:17.608433",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Device IDs",

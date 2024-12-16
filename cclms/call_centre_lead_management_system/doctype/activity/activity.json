@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "miner_name",
+  "status",
   "column_break_hzcu",
   "date",
   "time",
@@ -45,7 +46,8 @@
    "in_standard_filter": 1,
    "label": "Miner Name",
    "options": "Device IDs",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "section_break_rltv",
@@ -93,6 +95,12 @@
   {
    "fieldname": "column_break_hzbx",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Earning\nDown\nDegraded"
   }
  ],
  "links": [
@@ -101,7 +109,7 @@
    "link_fieldname": "miner_name"
   }
  ],
- "modified": "2024-12-15 03:57:29.453164",
+ "modified": "2024-12-15 08:01:12.220811",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Activity",
