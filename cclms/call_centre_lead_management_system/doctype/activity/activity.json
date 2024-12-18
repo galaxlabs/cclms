@@ -24,12 +24,12 @@
  ],
  "fields": [
   {
-   "default": "Not Active",
+   "default": "Inactive",
    "fieldname": "log_type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Log Type",
-   "options": "Active\nNot Active"
+   "options": "Active\nInactive"
   },
   {
    "default": "Now",
@@ -109,7 +109,7 @@
    "link_fieldname": "miner_name"
   }
  ],
- "modified": "2024-12-15 08:01:12.220811",
+ "modified": "2024-12-18 08:35:15.375175",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Activity",
