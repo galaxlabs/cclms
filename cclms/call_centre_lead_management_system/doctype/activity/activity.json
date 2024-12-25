@@ -2,47 +2,24 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:Miner Activity-{DD}-{MM}-{YYYY}-{######}",
+ "autoname": "format:{miner_name}-{MM}-{YYYY}",
  "creation": "2024-12-14 06:38:03.896456",
  "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "miner_name",
-  "status",
-  "column_break_hzcu",
-  "date",
-  "time",
-  "day",
   "section_break_rltv",
-  "log_type",
-  "7_days",
-  "30_days",
-  "column_break_hzbx",
+  "column_break_esoo",
   "earning",
-  "valid_heartbeat"
+  "section_break_wzfb",
+  "miner_activity"
  ],
  "fields": [
   {
-   "default": "Inactive",
-   "fieldname": "log_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Log Type",
-   "options": "Active\nInactive"
-  },
-  {
-   "default": "Now",
-   "fieldname": "time",
-   "fieldtype": "Datetime",
-   "in_list_view": 1,
-   "label": "Time",
-   "permlevel": 1,
-   "reqd": 1
-  },
-  {
    "fieldname": "miner_name",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Miner Name",
    "options": "Device IDs",
@@ -54,53 +31,23 @@
    "fieldtype": "Section Break"
   },
   {
-   "default": "0",
-   "fieldname": "7_days",
-   "fieldtype": "Check",
-   "label": "7 Days"
-  },
-  {
-   "default": "0",
-   "fieldname": "30_days",
-   "fieldtype": "Check",
-   "label": "30 Days"
-  },
-  {
-   "default": "0",
-   "fieldname": "valid_heartbeat",
-   "fieldtype": "Check",
-   "label": "Valid Heartbeat"
-  },
-  {
-   "fieldname": "day",
-   "fieldtype": "Select",
-   "label": "Day",
-   "options": "Sunday\nMonday\nTuesday\nWednesday\nThursday\nFriday\nSaturday"
-  },
-  {
    "fieldname": "earning",
    "fieldtype": "Float",
    "label": "Earning"
   },
   {
-   "default": "Today",
-   "fieldname": "date",
-   "fieldtype": "Date",
-   "label": "Date"
+   "fieldname": "section_break_wzfb",
+   "fieldtype": "Section Break"
   },
   {
-   "fieldname": "column_break_hzcu",
+   "fieldname": "miner_activity",
+   "fieldtype": "Table",
+   "label": "Miner Activity",
+   "options": "Miner Activity Log"
+  },
+  {
+   "fieldname": "column_break_esoo",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_hzbx",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status",
-   "options": "Earning\nDown\nDegraded"
   }
  ],
  "links": [
@@ -109,7 +56,7 @@
    "link_fieldname": "miner_name"
   }
  ],
- "modified": "2024-12-18 08:35:15.375175",
+ "modified": "2024-12-24 17:25:17.849956",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Activity",
