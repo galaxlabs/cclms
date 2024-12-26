@@ -8,22 +8,21 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "status",
   "first_name",
-  "last_name",
-  "branch",
-  "join_date",
-  "designation",
-  "phone",
-  "gender",
-  "column_break_zgsg",
-  "user_name",
   "email",
   "company",
   "date_off_berth",
-  "employee",
+  "designation",
   "full_name",
-  "agent_name"
+  "phone",
+  "column_break_zgsg",
+  "last_name",
+  "user_name",
+  "branch",
+  "join_date",
+  "employee",
+  "agent_name",
+  "gender"
  ],
  "fields": [
   {
@@ -33,6 +32,7 @@
    "unique": 1
   },
   {
+   "fetch_from": "email.username",
    "fieldname": "user_name",
    "fieldtype": "Link",
    "label": "User Name",
@@ -108,15 +108,6 @@
    "fieldtype": "Link",
    "label": "Gender",
    "options": "Gender"
-  },
-  {
-   "default": "Active",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "hidden": 1,
-   "label": "Status",
-   "options": "Active\nInactive\nSuspended\nLeft",
-   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -133,7 +124,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-12-16 11:44:45.816564",
+ "modified": "2024-12-25 19:04:04.584424",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
