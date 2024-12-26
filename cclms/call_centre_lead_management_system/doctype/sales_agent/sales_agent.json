@@ -32,7 +32,6 @@
    "unique": 1
   },
   {
-   "fetch_from": "email.username",
    "fieldname": "user_name",
    "fieldtype": "Link",
    "label": "User Name",
@@ -124,7 +123,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-12-25 19:04:04.584424",
+ "modified": "2024-12-26 10:16:12.266838",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
