@@ -15,6 +15,7 @@
   "designation",
   "full_name",
   "phone",
+  "phone_ext",
   "column_break_zgsg",
   "last_name",
   "user_name",
@@ -107,6 +108,11 @@
    "fieldtype": "Link",
    "label": "Gender",
    "options": "Gender"
+  },
+  {
+   "fieldname": "phone_ext",
+   "fieldtype": "Data",
+   "label": "Phone Ext."
   }
  ],
  "index_web_pages_for_search": 1,
@@ -123,7 +129,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2024-12-26 10:16:12.266838",
+ "modified": "2025-01-10 13:14:20.132908",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
