@@ -10,8 +10,8 @@ class ATMLeads(Document):
     def validate(self):
         self.validate_lead_state()
 
-    def before_save(self):
-        self.update_dates_and_days()
+    # def before_save(self):
+    #     self.update_dates_and_days()
 
     def validate_lead_state(self):
         if not self.company:
@@ -107,47 +107,47 @@ class ATMLeads(Document):
     #     if self.get("remove_date"):
     #         self.db_set("remove_days", date_diff(nowdate(), self.get("remove_date")))
 
-    def update_dates_and_days(self):
-        current_date = nowdate()
-        should_save = False
+    # def update_dates_and_days(self):
+    #     current_date = nowdate()
+    #     should_save = False
 
-        workflow_dates = {
-            "Approved": "approve_date",
-            "Agreement Sent": "agreement_sent_date",
-            "Signed": "sign_date",
-            "Converted": "convert_date",
-            "Installed": "install_date",
-            "Removed": "remove_date"
-        }
+    #     workflow_dates = {
+    #         "Approved": "approve_date",
+    #         "Agreement Sent": "agreement_sent_date",
+    #         "Signed": "sign_date",
+    #         "Converted": "convert_date",
+    #         "Installed": "install_date",
+    #         "Removed": "remove_date"
+    #     }
 
-        for state, date_field in workflow_dates.items():
-            if self.workflow_state == state and not getattr(self, date_field):
-                self.db_set(date_field, current_date)
-                should_save = True
+    #     for state, date_field in workflow_dates.items():
+    #         if self.workflow_state == state and not getattr(self, date_field):
+    #             self.db_set(date_field, current_date)
+    #             should_save = True
 
-        # Calculate days between dates
-        self.calculate_days()
+    #     # Calculate days between dates
+    #     self.calculate_days()
 
-        # Commit if any field was updated
-        if should_save:
-            frappe.db.commit()
-            frappe.msgprint(_("Dates and days updated based on workflow state."))
+    #     # Commit if any field was updated
+    #     if should_save:
+    #         frappe.db.commit()
+    #         frappe.msgprint(_("Dates and days updated based on workflow state."))
 
-    def calculate_days(self):
-        def calculate_days_diff(start_field, end_field, days_field):
-            if getattr(self, start_field):
-                end_date = getattr(self, end_field) or nowdate()
-                days = date_diff(end_date, getattr(self, start_field))
-                self.db_set(days_field, days)
+    # def calculate_days(self):
+    #     def calculate_days_diff(start_field, end_field, days_field):
+    #         if getattr(self, start_field):
+    #             end_date = getattr(self, end_field) or nowdate()
+    #             days = date_diff(end_date, getattr(self, start_field))
+    #             self.db_set(days_field, days)
 
-        calculate_days_diff('approve_date', 'agreement_sent_date', 'approved_days')
-        calculate_days_diff('agreement_sent_date', 'sign_date', 'agreement_sent_days')
-        calculate_days_diff('sign_date', 'convert_date', 'sign_days')
-        calculate_days_diff('convert_date', 'install_date', 'convert_days')
-        calculate_days_diff('install_date', 'remove_date', 'install_days')
+    #     calculate_days_diff('approve_date', 'agreement_sent_date', 'approved_days')
+    #     calculate_days_diff('agreement_sent_date', 'sign_date', 'agreement_sent_days')
+    #     calculate_days_diff('sign_date', 'convert_date', 'sign_days')
+    #     calculate_days_diff('convert_date', 'install_date', 'convert_days')
+    #     calculate_days_diff('install_date', 'remove_date', 'install_days')
 
-        if self.remove_date:
-            self.db_set('remove_days', date_diff(nowdate(), self.remove_date))
+    #     if self.remove_date:
+    #         self.db_set('remove_days', date_diff(nowdate(), self.remove_date))
     
         
 
