@@ -10,8 +10,8 @@ class ATMLeads(Document):
     def validate(self):
         self.validate_lead_state()
 
-    def before_save(self):
-        self.update_dates_and_days()
+    # def before_save(self):
+    #     self.update_dates_and_days()
 
     def validate_lead_state(self):
         if not self.company:
@@ -49,63 +49,63 @@ class ATMLeads(Document):
                 alert=True
             )
     
-    def update_dates_and_days(self):
-        """
-        Update specific date fields based on workflow state only when the state changes.
-        Maintain the original date unless manually edited.
-        """
-        current_date = nowdate()
-        should_save = False
+    # def update_dates_and_days(self):
+    #     """
+    #     Update specific date fields based on workflow state only when the state changes.
+    #     Maintain the original date unless manually edited.
+    #     """
+    #     current_date = nowdate()
+    #     should_save = False
 
-        # Workflow state to date field mapping
-        workflow_dates = {
-            "Approved": "approve_date",
-            "Agreement Sent": "agreement_sent_date",
-            "Signed": "sign_date",
-            "Converted": "convert_date",
-            "Installed": "install_date",
-            "Removed": "remove_date"
-        }
+    #     # Workflow state to date field mapping
+    #     workflow_dates = {
+    #         "Approved": "approve_date",
+    #         "Agreement Sent": "agreement_sent_date",
+    #         "Signed": "sign_date",
+    #         "Converted": "convert_date",
+    #         "Installed": "install_date",
+    #         "Removed": "remove_date"
+    #     }
 
-        # Set dates only if the state changes and the corresponding field is empty
-        for state, date_field in workflow_dates.items():
-            if self.workflow_state == state and not self.get(date_field):
-                self.db_set(date_field, current_date)
-                should_save = True
+    #     # Set dates only if the state changes and the corresponding field is empty
+    #     for state, date_field in workflow_dates.items():
+    #         if self.workflow_state == state and not self.get(date_field):
+    #             self.db_set(date_field, current_date)
+    #             should_save = True
 
-        # Call the function to calculate day differences
-        self.calculate_days()
+    #     # Call the function to calculate day differences
+    #     self.calculate_days()
 
-        # Commit only if a field is updated
-        if should_save:
-            frappe.db.commit()
-            frappe.msgprint(_("Dates and days updated based on workflow state."))
+    #     # Commit only if a field is updated
+    #     if should_save:
+    #         frappe.db.commit()
+    #         frappe.msgprint(_("Dates and days updated based on workflow state."))
 
-    def calculate_days(self):
-        """
-        Calculate the difference in days between specific date fields.
-        """
-        def calculate_days_diff(start_field, end_field, days_field):
-            if self.get(start_field):
-                end_date = self.get(end_field) or nowdate()
-                days = date_diff(end_date, self.get(start_field))
-                self.db_set(days_field, days)
+    # def calculate_days(self):
+    #     """
+    #     Calculate the difference in days between specific date fields.
+    #     """
+    #     def calculate_days_diff(start_field, end_field, days_field):
+    #         if self.get(start_field):
+    #             end_date = self.get(end_field) or nowdate()
+    #             days = date_diff(end_date, self.get(start_field))
+    #             self.db_set(days_field, days)
 
-        # Sequence of fields for day calculations
-        date_pairs = [
-            ("approve_date", "agreement_sent_date", "approved_days"),
-            ("agreement_sent_date", "sign_date", "agreement_sent_days"),
-            ("sign_date", "convert_date", "sign_days"),
-            ("convert_date", "install_date", "convert_days"),
-            ("install_date", "remove_date", "install_days"),
-        ]
+    #     # Sequence of fields for day calculations
+    #     date_pairs = [
+    #         ("approve_date", "agreement_sent_date", "approved_days"),
+    #         ("agreement_sent_date", "sign_date", "agreement_sent_days"),
+    #         ("sign_date", "convert_date", "sign_days"),
+    #         ("convert_date", "install_date", "convert_days"),
+    #         ("install_date", "remove_date", "install_days"),
+    #     ]
 
-        for start_field, end_field, days_field in date_pairs:
-            calculate_days_diff(start_field, end_field, days_field)
+    #     for start_field, end_field, days_field in date_pairs:
+    #         calculate_days_diff(start_field, end_field, days_field)
 
-        # Calculate days since removal if `remove_date` exists
-        if self.get("remove_date"):
-            self.db_set("remove_days", date_diff(nowdate(), self.get("remove_date")))
+    #     # Calculate days since removal if `remove_date` exists
+    #     if self.get("remove_date"):
+    #         self.db_set("remove_days", date_diff(nowdate(), self.get("remove_date")))
 
     # def update_dates_and_days(self):
     #     current_date = nowdate()
