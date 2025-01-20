@@ -59,6 +59,7 @@
    "options": "User"
   },
   {
+   "fetch_from": "employee.company",
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
@@ -136,7 +137,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2025-01-20 12:42:37.972910",
+ "modified": "2025-01-20 13:07:40.616796",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
