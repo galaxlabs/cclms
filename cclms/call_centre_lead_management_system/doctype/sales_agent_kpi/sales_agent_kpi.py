@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class KPI(Document):
+class SalesAgentKPI(Document):
 	pass

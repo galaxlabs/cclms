@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestKPI(FrappeTestCase):
+class TestSalesAgentKPI(FrappeTestCase):
 	pass
