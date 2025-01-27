@@ -1,0 +1,66 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-27 06:07:31.983519",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "client_name",
+  "camera_name",
+  "camera_id",
+  "camera_location",
+  "camera_ip"
+ ],
+ "fields": [
+  {
+   "fieldname": "client_name",
+   "fieldtype": "Link",
+   "label": "Client Name",
+   "options": "Client"
+  },
+  {
+   "fieldname": "camera_name",
+   "fieldtype": "Data",
+   "label": "Camera Name"
+  },
+  {
+   "fieldname": "camera_id",
+   "fieldtype": "Data",
+   "label": "Camera ID"
+  },
+  {
+   "fieldname": "camera_location",
+   "fieldtype": "Data",
+   "label": "Camera Location"
+  },
+  {
+   "fieldname": "camera_ip",
+   "fieldtype": "Data",
+   "label": "Camera IP"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-27 06:11:46.292044",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Camera",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
