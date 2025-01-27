@@ -32,9 +32,17 @@
   {
    "link_doctype": "Camera",
    "link_fieldname": "client_name"
+  },
+  {
+   "link_doctype": "Camera Location",
+   "link_fieldname": "client_name"
+  },
+  {
+   "link_doctype": "Incident",
+   "link_fieldname": "client_name"
   }
  ],
- "modified": "2025-01-27 09:41:05.868241",
+ "modified": "2025-01-27 11:02:54.364389",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Client",

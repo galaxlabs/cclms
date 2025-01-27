@@ -9,7 +9,7 @@
   "client_name",
   "location",
   "address",
-  "contact_name",
+  "contact_no",
   "whatsapp",
   "telegram_id",
   "email"
@@ -33,11 +33,6 @@
    "label": "Address"
   },
   {
-   "fieldname": "contact_name",
-   "fieldtype": "Phone",
-   "label": "Contact Name"
-  },
-  {
    "fieldname": "whatsapp",
    "fieldtype": "Data",
    "label": "WhatsApp",
@@ -53,6 +48,11 @@
    "fieldtype": "Data",
    "label": "Email",
    "options": "Email"
+  },
+  {
+   "fieldname": "contact_no",
+   "fieldtype": "Phone",
+   "label": "Contact No"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -60,9 +60,17 @@
   {
    "link_doctype": "Client",
    "link_fieldname": "client_name"
+  },
+  {
+   "link_doctype": "Camera",
+   "link_fieldname": "client_name"
+  },
+  {
+   "link_doctype": "Incident",
+   "link_fieldname": "location"
   }
  ],
- "modified": "2025-01-27 09:58:42.327913",
+ "modified": "2025-01-27 11:04:53.333649",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Camera Location",
