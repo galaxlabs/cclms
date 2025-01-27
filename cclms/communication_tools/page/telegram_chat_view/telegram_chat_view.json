@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2025-01-24 10:53:05.218095",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-01-24 10:53:05.218095",
+ "modified_by": "Administrator",
+ "module": "Communication Tools",
+ "name": "telegram-chat-view",
+ "owner": "Administrator",
+ "page_name": "telegram-chat-view",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Telegram Chat"
+}

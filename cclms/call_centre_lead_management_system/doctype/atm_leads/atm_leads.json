@@ -31,6 +31,7 @@
   "address_section",
   "address",
   "zippostal_code",
+  "full_address",
   "column_break_ovkd",
   "state",
   "city",
@@ -471,6 +472,11 @@
    "fieldname": "sign_by",
    "fieldtype": "Data",
    "label": "Sign By"
+  },
+  {
+   "fieldname": "full_address",
+   "fieldtype": "Small Text",
+   "label": "Full Address"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -482,7 +488,7 @@
    "link_fieldname": "branch"
   }
  ],
- "modified": "2025-01-20 11:50:09.236104",
+ "modified": "2025-01-24 07:38:19.061678",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",

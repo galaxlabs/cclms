@@ -1,0 +1,26 @@
+{
+ "content": null,
+ "creation": "2024-10-27 11:13:14.506987",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 2,
+ "modified": "2025-01-24 10:50:59.619329",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "bitcoin-depot",
+ "owner": "Administrator",
+ "page_name": "bitcoin-depot",
+ "roles": [
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "Sales User"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Bitcoin Depot Dashboard"
+}
