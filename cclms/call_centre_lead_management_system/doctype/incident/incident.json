@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-27 08:53:29.030902",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "client_name",
+  "location",
+  "camera",
+  "incident_description",
+  "evidence",
+  "evidence_snape",
+  "review_and_action_taken",
+  "client_phone_no",
+  "whatsapp",
+  "telegram_id",
+  "email"
+ ],
+ "fields": [
+  {
+   "fieldname": "client_name",
+   "fieldtype": "Link",
+   "label": "Client Name",
+   "options": "Camera Location"
+  },
+  {
+   "fieldname": "incident_description",
+   "fieldtype": "Small Text",
+   "label": "Incident Description"
+  },
+  {
+   "fieldname": "evidence",
+   "fieldtype": "Attach",
+   "label": "Evidence"
+  },
+  {
+   "fieldname": "evidence_snape",
+   "fieldtype": "Attach Image",
+   "label": "Evidence Snape "
+  },
+  {
+   "fieldname": "review_and_action_taken",
+   "fieldtype": "Small Text",
+   "label": "Review and Action Taken"
+  },
+  {
+   "fetch_from": "client_name.client_name",
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location"
+  },
+  {
+   "fieldname": "camera",
+   "fieldtype": "Link",
+   "label": "Camera",
+   "link_filters": "[[\"Camera\",\"camera_location\",\"like\",null]]",
+   "options": "Camera"
+  },
+  {
+   "fetch_from": "client_name.contact_name",
+   "fieldname": "client_phone_no",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Client Phone no"
+  },
+  {
+   "fetch_from": "client_name.whatsapp",
+   "fieldname": "whatsapp",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "WhatsApp"
+  },
+  {
+   "fetch_from": "client_name.telegram_id",
+   "fieldname": "telegram_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Telegram ID"
+  },
+  {
+   "fetch_from": "client_name.email",
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Email"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-27 10:14:20.907928",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Incident",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

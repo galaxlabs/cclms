@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class CameraInformation(Document):
+class Incident(Document):
 	pass

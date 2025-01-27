@@ -8,13 +8,7 @@
  "field_order": [
   "client_name",
   "business_name",
-  "business_type",
-  "contact_section_section",
-  "contact_information",
-  "location_section_section",
-  "camera_location",
-  "camera_details_section",
-  "camera_information"
+  "business_type"
  ],
  "fields": [
   {
@@ -31,39 +25,6 @@
    "fieldname": "business_type",
    "fieldtype": "Data",
    "label": "Business Type"
-  },
-  {
-   "fieldname": "contact_section_section",
-   "fieldtype": "Section Break",
-   "label": "Contact Section"
-  },
-  {
-   "fieldname": "contact_information",
-   "fieldtype": "Table",
-   "label": "Contact Information",
-   "options": "Client Contact"
-  },
-  {
-   "fieldname": "location_section_section",
-   "fieldtype": "Section Break",
-   "label": "Location Section"
-  },
-  {
-   "fieldname": "camera_location",
-   "fieldtype": "Table",
-   "label": "Camera Location",
-   "options": "Camera Location"
-  },
-  {
-   "fieldname": "camera_information",
-   "fieldtype": "Table",
-   "label": "Camera Information",
-   "options": "Camera Information"
-  },
-  {
-   "fieldname": "camera_details_section",
-   "fieldtype": "Section Break",
-   "label": "Camera Details "
   }
  ],
  "index_web_pages_for_search": 1,
@@ -73,7 +34,7 @@
    "link_fieldname": "client_name"
   }
  ],
- "modified": "2025-01-27 08:13:52.518484",
+ "modified": "2025-01-27 09:41:05.868241",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Client",

@@ -6,10 +6,11 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "camera_location",
   "client_name",
   "camera_name",
   "camera_id",
-  "camera_location",
+  "camera_position",
   "camera_ip"
  ],
  "fields": [
@@ -21,7 +22,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Client Name",
-   "options": "Camera Locations"
+   "options": "Camera Location"
   },
   {
    "fieldname": "camera_name",
@@ -42,7 +43,7 @@
    "label": "Camera ID"
   },
   {
-   "fetch_from": "client_name.data_sbgm",
+   "fetch_from": "client_name.client_name",
    "fieldname": "camera_location",
    "fieldtype": "Data",
    "in_filter": 1,
@@ -59,6 +60,11 @@
    "in_standard_filter": 1,
    "label": "Camera IP",
    "unique": 1
+  },
+  {
+   "fieldname": "camera_position",
+   "fieldtype": "Data",
+   "label": "Camera Position"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -68,11 +74,11 @@
    "link_fieldname": "client_name"
   },
   {
-   "link_doctype": "Camera Locations",
+   "link_doctype": "Camera Location",
    "link_fieldname": "location_name"
   }
  ],
- "modified": "2025-01-27 08:01:32.110481",
+ "modified": "2025-01-27 10:05:41.393712",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Camera",
