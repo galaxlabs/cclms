@@ -1,0 +1,106 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"vRDh5rlAHs\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Company Information\",\"col\":12}},{\"id\":\"J6xJMRfdi3\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h1\\\">BTM Dashboard</span>\",\"col\":12}},{\"id\":\"ViC6e0RCaw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lead List\",\"col\":3}},{\"id\":\"ogcV7iR9C1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pending\",\"col\":3}},{\"id\":\"qeXzx9vTbf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Approved\",\"col\":3}},{\"id\":\"yEOqM63E9U\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Rejected\",\"col\":3}},{\"id\":\"0PTIiXpB3d\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Signed\",\"col\":3}},{\"id\":\"dEzoU1h1ZC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Installed\",\"col\":3}},{\"id\":\"HGAYy0PTg2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Agreement Sent\",\"col\":3}},{\"id\":\"2-LIqtOWq9\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Workspace Footer\",\"col\":12}}]",
+ "creation": "2024-09-27 06:18:18.822859",
+ "custom_blocks": [
+  {
+   "custom_block_name": "Company Information",
+   "label": "Company Information"
+  },
+  {
+   "custom_block_name": "Workspace Footer",
+   "label": "Workspace Footer"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "kanban",
+ "idx": 7,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "BTM Operator Dashboard",
+ "links": [],
+ "modified": "2025-01-15 06:58:30.953334",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "BTM Operator Dashboard",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "OC"
+  },
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 34.0,
+ "shortcuts": [
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Pending",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"=\",\"Pending\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "Report Builder",
+   "label": "Lead List",
+   "link_to": "ATM Leads",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Approved",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"=\",\"Approved\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Rejected",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"=\",\"Rejected\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Signed",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"=\",\"Signed\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Installed",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"=\",\"Installed\",false]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Agreement Sent",
+   "link_to": "ATM Leads",
+   "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"=\",\"Agreement Sent\",false]]",
+   "type": "DocType"
+  }
+ ],
+ "title": "BTM Operator Dashboard"
+}

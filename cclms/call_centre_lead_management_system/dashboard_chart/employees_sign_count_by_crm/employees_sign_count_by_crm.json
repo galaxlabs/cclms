@@ -1,0 +1,41 @@
+{
+ "based_on": "",
+ "chart_name": "Employees Sign Count by CRM",
+ "chart_type": "Group By",
+ "color": "#088a1c",
+ "creation": "2024-10-31 22:32:51.220011",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart",
+ "document_type": "ATM Leads",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Signed\"],false]]",
+ "group_by_based_on": "executive_name",
+ "group_by_type": "Count",
+ "idx": 7,
+ "is_public": 1,
+ "is_standard": 1,
+ "last_synced_on": "2024-11-19 05:16:47.796025",
+ "modified": "2024-11-19 05:19:46.702154",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Employees Sign Count by CRM",
+ "number_of_groups": 12,
+ "owner": "Administrator",
+ "parent_document_type": "",
+ "roles": [
+  {
+   "role": "Lahore Team"
+  },
+  {
+   "role": "Karachi Team"
+  }
+ ],
+ "source": "",
+ "time_interval": "Weekly",
+ "timeseries": 0,
+ "timespan": "Last Month",
+ "type": "Bar",
+ "use_report_chart": 0,
+ "value_based_on": "",
+ "y_axis": []
+}

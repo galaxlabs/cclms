@@ -1,0 +1,34 @@
+{
+ "attach_print": 1,
+ "channel": "Email",
+ "condition": "",
+ "creation": "2025-01-28 00:52:06.491363",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Incident",
+ "enabled": 1,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "Dear {{doc.client_name}} we noticed an {{incident_description}} on {{doc.location}} where Camera {{doc.camera}} Located we take immedieatly taken action as following {{review_and_action_taken}} on it\n\n{{doc.evidence}}\nPlease Review Attached Image",
+ "message_type": "Markdown",
+ "method": "after_update",
+ "modified": "2025-01-28 09:35:05.711923",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Incidents",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "condition": "doc.incident_status == \"Submitted\"",
+   "receiver_by_document_field": ""
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Support",
+ "sender_email": "support@pros-world.com",
+ "subject": "Reported an Incident on {{doc.client_name}}{{doc.location}} where Camera {{doc.camera}} Located",
+ "value_changed": ""
+}

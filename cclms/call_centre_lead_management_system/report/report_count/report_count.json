@@ -1,0 +1,28 @@
+{
+ "add_total_row": 1,
+ "columns": [],
+ "creation": "2024-11-05 06:37:45.924511",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 10,
+ "is_standard": "Yes",
+ "letterhead": null,
+ "modified": "2024-12-13 12:47:58.934414",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Report Count",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT \r\n    sa.full_name AS \"Full Name:Data:200\", \r\n    sa.employee AS \"Employee ID:Link/Employee:150\", \r\n    sa.branch AS \"Branch:Link/Branch:150\",\r\n    COUNT(al.name) AS \"Total Leads:Int:100\",\r\n    SUM(CASE WHEN al.company = 'Bit Stop' THEN 1 ELSE 0 END) AS \"Bit Stop:Int:100\",\r\n    SUM(CASE WHEN al.company = 'Bitcoin Depot' THEN 1 ELSE 0 END) AS \"Bitcoin Depot:Int:100\",\r\n    SUM(CASE WHEN al.company = 'Un Bank' THEN 1 ELSE 0 END) AS \"Un Bank:Int:100\",\r\n    SUM(CASE WHEN al.company = 'Rockit Coin' THEN 1 ELSE 0 END) AS \"Rockit Coin:Int:100\",\r\n    SUM(CASE WHEN al.company = 'Crypto Base' THEN 1 ELSE 0 END) AS \"Crypto Base:Int:100\",\r\n    SUM(CASE WHEN al.company = 'Coin Works' THEN 1 ELSE 0 END) AS \"Coin Works:Int:100\",\r\n    SUM(CASE WHEN al.company = 'Budget Coinz' THEN 1 ELSE 0 END) AS \"Budget Coinz:Int:100\"\r\nFROM \r\n    `tabATM Leads` al\r\nJOIN \r\n    `tabSales Agent` sa ON al.executive_name = sa.employee\r\nGROUP BY \r\n    sa.full_name, sa.employee, sa.branch\r\nORDER BY \r\n    sa.full_name;\r\n",
+ "ref_doctype": "ATM Leads",
+ "report_name": "Report Count",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "timeout": 0
+}

@@ -23,8 +23,9 @@
   },
   {
    "fieldname": "business_type",
-   "fieldtype": "Data",
-   "label": "Business Type"
+   "fieldtype": "Link",
+   "label": "Business Type",
+   "options": "Business Types"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -42,7 +43,7 @@
    "link_fieldname": "client_name"
   }
  ],
- "modified": "2025-01-27 11:02:54.364389",
+ "modified": "2025-01-28 06:46:21.524799",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Client",

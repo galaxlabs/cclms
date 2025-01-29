@@ -5,25 +5,26 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "incident_time",
   "camera",
   "client_name",
-  "location",
+  "camera_location",
   "incident_description",
   "evidence",
   "evidence_snape",
   "review_and_action_taken",
-  "client_phone_no",
   "whatsapp",
+  "client_phone_no",
   "telegram_id",
   "email"
  ],
  "fields": [
   {
-   "fetch_from": "location.client_name",
    "fieldname": "client_name",
    "fieldtype": "Link",
    "label": "Client Name",
-   "options": "Client"
+   "options": "Client",
+   "search_index": 1
   },
   {
    "fieldname": "incident_description",
@@ -46,63 +47,57 @@
    "label": "Review and Action Taken"
   },
   {
-   "fetch_from": "camera.camera_location",
-   "fieldname": "location",
-   "fieldtype": "Link",
-   "label": "Location",
-   "options": "Camera Location"
-  },
-  {
    "fieldname": "camera",
    "fieldtype": "Link",
    "label": "Camera",
-   "options": "Camera"
+   "options": "Camera",
+   "search_index": 1
   },
   {
-   "fetch_from": "client_name.contact_name",
+   "fetch_from": "location.contact_no",
    "fieldname": "client_phone_no",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Client Phone no"
   },
   {
-   "fetch_from": "client_name.whatsapp",
+   "fetch_from": "location.whatsapp",
    "fieldname": "whatsapp",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "WhatsApp"
   },
   {
-   "fetch_from": "client_name.telegram_id",
    "fieldname": "telegram_id",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Telegram ID"
   },
   {
-   "fetch_from": "client_name.email",
+   "fetch_from": "location.email",
    "fieldname": "email",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Email"
+  },
+  {
+   "default": "Now",
+   "fieldname": "incident_time",
+   "fieldtype": "Datetime",
+   "label": "Incident time"
+  },
+  {
+   "fetch_from": "camera.camera_location",
+   "fieldname": "camera_location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Camera Location",
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Client",
-   "link_fieldname": "client_name"
-  },
-  {
-   "link_doctype": "Camera Location",
-   "link_fieldname": "location"
-  },
-  {
-   "link_doctype": "Camera",
-   "link_fieldname": "camera_name"
-  }
- ],
- "modified": "2025-01-27 11:10:04.765812",
+ "links": [],
+ "modified": "2025-01-28 08:36:29.629664",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Incident",
