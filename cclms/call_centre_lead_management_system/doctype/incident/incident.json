@@ -6,17 +6,16 @@
  "engine": "InnoDB",
  "field_order": [
   "incident_time",
-  "camera",
   "client_name",
   "camera_location",
+  "camera",
   "incident_description",
-  "evidence",
-  "evidence_snape",
   "review_and_action_taken",
   "whatsapp",
   "client_phone_no",
   "telegram_id",
-  "email"
+  "email",
+  "table_xxou"
  ],
  "fields": [
   {
@@ -30,16 +29,6 @@
    "fieldname": "incident_description",
    "fieldtype": "Small Text",
    "label": "Incident Description"
-  },
-  {
-   "fieldname": "evidence",
-   "fieldtype": "Attach",
-   "label": "Evidence"
-  },
-  {
-   "fieldname": "evidence_snape",
-   "fieldtype": "Attach Image",
-   "label": "Evidence Snape "
   },
   {
    "fieldname": "review_and_action_taken",
@@ -58,7 +47,7 @@
    "fieldname": "client_phone_no",
    "fieldtype": "Data",
    "hidden": 1,
-   "label": "Client Phone no"
+   "label": "Client Phone No"
   },
   {
    "fetch_from": "location.whatsapp",
@@ -93,11 +82,16 @@
    "label": "Location",
    "options": "Camera Location",
    "search_index": 1
+  },
+  {
+   "fieldname": "table_xxou",
+   "fieldtype": "Table",
+   "options": "Incident Details"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-28 08:36:29.629664",
+ "modified": "2025-02-01 06:44:39.829847",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Incident",
