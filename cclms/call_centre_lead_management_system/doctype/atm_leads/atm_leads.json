@@ -17,7 +17,6 @@
   "sales_order_created",
   "section_break_hmqm",
   "executive_name",
-  "sales_person",
   "column_break_rdkf",
   "post_date",
   "column_break_qxgi",
@@ -35,6 +34,7 @@
   "column_break_ovkd",
   "state",
   "city",
+  "map",
   "column_break_tonb",
   "state_code",
   "country",
@@ -49,7 +49,6 @@
   "percentage",
   "column_break_dxoa",
   "base_rent",
-  "sign_by",
   "column_break_wpzf",
   "hours",
   "section_break_nmmj",
@@ -79,7 +78,10 @@
   "section_break_utay",
   "opening_hours",
   "refrence",
-  "hidden_by_signed_lead"
+  "hidden_by_signed_lead",
+  "executive_name_ps",
+  "sign_by",
+  "lead_owner"
  ],
  "fields": [
   {
@@ -96,7 +98,8 @@
    "in_global_search": 1,
    "in_list_view": 1,
    "label": "Company",
-   "options": "Operator Companies"
+   "options": "Operator Companies",
+   "search_index": 1
   },
   {
    "fieldname": "section_break_hmqm",
@@ -131,7 +134,8 @@
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
-   "options": "Branch"
+   "options": "Branch",
+   "search_index": 1
   },
   {
    "fieldname": "section_break_dxas",
@@ -357,13 +361,6 @@
    "label": "State Code"
   },
   {
-   "fieldname": "sales_person",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Sales Person",
-   "options": "Sales Person"
-  },
-  {
    "fieldname": "section_break_utay",
    "fieldtype": "Section Break"
   },
@@ -469,14 +466,36 @@
    "label": "Sales Order Created"
   },
   {
-   "fieldname": "sign_by",
-   "fieldtype": "Data",
-   "label": "Sign By"
-  },
-  {
    "fieldname": "full_address",
    "fieldtype": "Small Text",
    "label": "Full Address"
+  },
+  {
+   "fetch_from": "executive_name.full_name",
+   "fieldname": "executive_name_ps",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Executive Name",
+   "show_on_timeline": 1
+  },
+  {
+   "fetch_from": "executive_name.agent_name",
+   "fieldname": "sign_by",
+   "fieldtype": "Data",
+   "label": "Sign By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "map",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Map Link"
+  },
+  {
+   "fieldname": "lead_owner",
+   "fieldtype": "Data",
+   "label": "Lead Owner"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -488,7 +507,7 @@
    "link_fieldname": "branch"
   }
  ],
- "modified": "2025-01-24 07:38:19.061678",
+ "modified": "2025-01-30 12:22:31.305934",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",

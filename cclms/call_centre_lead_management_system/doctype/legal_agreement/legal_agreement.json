@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-31 06:54:22.923839",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "agreement_type",
+  "effective_date",
+  "company_name",
+  "company_address",
+  "employee_name",
+  "executive_name",
+  "employee_cnicpassport",
+  "employee_address"
+ ],
+ "fields": [
+  {
+   "fieldname": "agreement_type",
+   "fieldtype": "Select",
+   "label": "Agreement Type",
+   "options": "Non-Disclosure Agreement"
+  },
+  {
+   "fieldname": "effective_date",
+   "fieldtype": "Date",
+   "label": "Effective Date"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Link",
+   "label": "Company Name",
+   "options": "Company"
+  },
+  {
+   "fieldname": "company_address",
+   "fieldtype": "Data",
+   "label": "Company Address"
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Link",
+   "label": "Employee Name",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee_name.passport_number",
+   "fieldname": "employee_cnicpassport",
+   "fieldtype": "Data",
+   "label": "Employee CNIC/Passport"
+  },
+  {
+   "fetch_from": "employee_name.permanent_address",
+   "fieldname": "employee_address",
+   "fieldtype": "Small Text",
+   "label": "Employee Address"
+  },
+  {
+   "fieldname": "executive_name",
+   "fieldtype": "Link",
+   "label": "Executive Name",
+   "options": "Sales Agent"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-31 10:02:18.929417",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Legal Agreement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
