@@ -1,24 +1,37 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:sales_agent",
  "creation": "2025-01-10 13:12:05.992613",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "sales_agent",
+  "official_name",
   "month",
   "year",
   "kpi_metric",
   "minimum_target",
   "max_target",
-  "achieved"
+  "achieved",
+  "lead_records_section",
+  "leads_table",
+  "section_break_mvcp",
+  "submit_count",
+  "approved",
+  "rejected",
+  "agreement_sent",
+  "signed",
+  "installed",
+  "re_approval"
  ],
  "fields": [
   {
    "fieldname": "sales_agent",
    "fieldtype": "Link",
    "label": "Sales Agent",
-   "options": "Sales Agent"
+   "options": "Sales Agent",
+   "unique": 1
   },
   {
    "fieldname": "month",
@@ -53,14 +66,70 @@
    "fieldtype": "Read Only",
    "label": "Achieved Value ",
    "read_only": 1
+  },
+  {
+   "fieldname": "lead_records_section",
+   "fieldtype": "Section Break",
+   "label": "Lead Records"
+  },
+  {
+   "fieldname": "leads_table",
+   "fieldtype": "Data",
+   "label": "Leads Table"
+  },
+  {
+   "fieldname": "section_break_mvcp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "submit_count",
+   "fieldtype": "Data",
+   "label": "Submit Count"
+  },
+  {
+   "fieldname": "approved",
+   "fieldtype": "Date",
+   "label": "Approved"
+  },
+  {
+   "fieldname": "rejected",
+   "fieldtype": "Date",
+   "label": "Rejected"
+  },
+  {
+   "fieldname": "agreement_sent",
+   "fieldtype": "Date",
+   "label": "Agreement Sent"
+  },
+  {
+   "fieldname": "signed",
+   "fieldtype": "Date",
+   "label": "Signed"
+  },
+  {
+   "fieldname": "installed",
+   "fieldtype": "Date",
+   "label": "Installed"
+  },
+  {
+   "fieldname": "re_approval",
+   "fieldtype": "Date",
+   "label": "Re Approval"
+  },
+  {
+   "fetch_from": "sales_agent.full_name",
+   "fieldname": "official_name",
+   "fieldtype": "Data",
+   "label": "Official Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-20 11:34:27.216154",
+ "modified": "2025-02-02 16:40:16.243704",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent KPI",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

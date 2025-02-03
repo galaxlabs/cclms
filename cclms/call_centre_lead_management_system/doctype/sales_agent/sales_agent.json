@@ -16,6 +16,8 @@
   "full_name",
   "phone",
   "phone_ext",
+  "address",
+  "company_address",
   "column_break_zgsg",
   "last_name",
   "user_name",
@@ -23,7 +25,10 @@
   "join_date",
   "employee",
   "agent_name",
-  "gender"
+  "gender",
+  "father_name",
+  "id",
+  "nic"
  ],
  "fields": [
   {
@@ -101,7 +106,7 @@
   },
   {
    "fieldname": "phone",
-   "fieldtype": "Phone",
+   "fieldtype": "Date",
    "label": "Phone"
   },
   {
@@ -120,6 +125,35 @@
    "fieldname": "phone_ext",
    "fieldtype": "Data",
    "label": "Phone Ext."
+  },
+  {
+   "fieldname": "father_name",
+   "fieldtype": "Data",
+   "label": "Father Name"
+  },
+  {
+   "fetch_from": "employee.pan_number",
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "label": "ID"
+  },
+  {
+   "fetch_from": "employee.current_address",
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Employee Address"
+  },
+  {
+   "fetch_from": "employee.passport_number",
+   "fieldname": "nic",
+   "fieldtype": "Data",
+   "label": "NIC"
+  },
+  {
+   "fetch_from": "company.custom_company_address",
+   "fieldname": "company_address",
+   "fieldtype": "Small Text",
+   "label": "Company Address"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -136,7 +170,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2025-01-20 13:12:20.082120",
+ "modified": "2025-02-01 18:54:25.774789",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",

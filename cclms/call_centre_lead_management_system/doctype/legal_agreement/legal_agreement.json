@@ -1,25 +1,45 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{agreement_type}-{employee_official_name}",
  "creation": "2025-01-31 06:54:22.923839",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "party_type",
   "agreement_type",
   "effective_date",
   "company_name",
+  "nic",
+  "employee_address",
+  "column_break_osad",
+  "party_name",
+  "abbr",
   "company_address",
-  "employee_name",
   "executive_name",
-  "employee_cnicpassport",
-  "employee_address"
+  "employee_official_name",
+  "father_name",
+  "employee_id",
+  "section_break_uhjf",
+  "contract_template",
+  "contract_terms",
+  "section_break_aate",
+  "requires_fulfilment",
+  "fulfilment_deadline",
+  "fulfilment_terms",
+  "section_break_uthk",
+  "signee_company",
+  "signee_by_company",
+  "column_break_apqd",
+  "signee",
+  "signee_user"
  ],
  "fields": [
   {
    "fieldname": "agreement_type",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Agreement Type",
-   "options": "Non-Disclosure Agreement"
+   "options": "Agreement Type"
   },
   {
    "fieldname": "effective_date",
@@ -27,30 +47,20 @@
    "label": "Effective Date"
   },
   {
+   "default": "Ash\u00a0Global\u00a0Trading",
    "fieldname": "company_name",
    "fieldtype": "Link",
    "label": "Company Name",
    "options": "Company"
   },
   {
+   "fetch_from": "company_name.custom_company_address",
    "fieldname": "company_address",
    "fieldtype": "Data",
    "label": "Company Address"
   },
   {
-   "fieldname": "employee_name",
-   "fieldtype": "Link",
-   "label": "Employee Name",
-   "options": "Employee"
-  },
-  {
-   "fetch_from": "employee_name.passport_number",
-   "fieldname": "employee_cnicpassport",
-   "fieldtype": "Data",
-   "label": "Employee CNIC/Passport"
-  },
-  {
-   "fetch_from": "employee_name.permanent_address",
+   "fetch_from": "executive_name.address",
    "fieldname": "employee_address",
    "fieldtype": "Small Text",
    "label": "Employee Address"
@@ -60,14 +70,128 @@
    "fieldtype": "Link",
    "label": "Executive Name",
    "options": "Sales Agent"
+  },
+  {
+   "fieldname": "column_break_osad",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "abbr",
+   "fieldtype": "Data",
+   "label": "Abbr",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "executive_name.full_name",
+   "fieldname": "employee_official_name",
+   "fieldtype": "Data",
+   "label": "Employee Official Name"
+  },
+  {
+   "fetch_from": "executive_name.father_name",
+   "fieldname": "father_name",
+   "fieldtype": "Data",
+   "label": "Father Name"
+  },
+  {
+   "fetch_from": "executive_name.id",
+   "fieldname": "employee_id",
+   "fieldtype": "Data",
+   "label": "Employee ID"
+  },
+  {
+   "fieldname": "section_break_uhjf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "contract_template",
+   "fieldtype": "Link",
+   "label": "Contract Template",
+   "options": "Contract Template"
+  },
+  {
+   "fieldname": "contract_terms",
+   "fieldtype": "Text Editor",
+   "label": "Contract Terms"
+  },
+  {
+   "fieldname": "section_break_aate",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_fulfilment",
+   "fieldtype": "Check",
+   "label": "Requires Fulfilment"
+  },
+  {
+   "depends_on": "eval:doc.requires_fulfilment==1",
+   "fieldname": "fulfilment_deadline",
+   "fieldtype": "Date",
+   "label": "Fulfilment Deadline"
+  },
+  {
+   "fieldname": "fulfilment_terms",
+   "fieldtype": "Table",
+   "label": "Fulfilment Terms",
+   "options": "Contract Fulfilment Checklist"
+  },
+  {
+   "fieldname": "section_break_uthk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "signee_company",
+   "fieldtype": "Signature",
+   "label": "Signee (Company)"
+  },
+  {
+   "fieldname": "column_break_apqd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "signee",
+   "fieldtype": "Signature",
+   "label": "Signee"
+  },
+  {
+   "fieldname": "signee_by_company",
+   "fieldtype": "Link",
+   "label": "Signee By Company",
+   "options": "User"
+  },
+  {
+   "fieldname": "signee_user",
+   "fieldtype": "Link",
+   "label": "Signee User",
+   "options": "User"
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Party Name",
+   "options": "party_type"
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Select",
+   "label": "Party Type",
+   "options": "\nCustomer\nEmployee\nCompany\nSupplier\nClient"
+  },
+  {
+   "fetch_from": "executive_name.nic",
+   "fieldname": "nic",
+   "fieldtype": "Data",
+   "label": "NIC"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-31 10:02:18.929417",
+ "modified": "2025-02-01 19:15:32.120249",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Legal Agreement",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
