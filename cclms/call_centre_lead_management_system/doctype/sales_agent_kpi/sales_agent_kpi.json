@@ -74,8 +74,9 @@
   },
   {
    "fieldname": "leads_table",
-   "fieldtype": "Data",
-   "label": "Leads Table"
+   "fieldtype": "Table",
+   "label": "Leads Table",
+   "options": "Leads Table"
   },
   {
    "fieldname": "section_break_mvcp",
@@ -125,7 +126,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-02 16:40:16.243704",
+ "modified": "2025-02-02 16:54:25.009695",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent KPI",
