@@ -17,7 +17,8 @@
   "column_break_lyph",
   "address",
   "city",
-  "state",
+  "state_code",
+  "state_name",
   "contact_persons_information_section",
   "first_name",
   "contacts_person_title_in_the_company",
@@ -66,11 +67,6 @@
    "fieldname": "city",
    "fieldtype": "Data",
    "label": "City"
-  },
-  {
-   "fieldname": "state",
-   "fieldtype": "Data",
-   "label": "State"
   },
   {
    "fieldname": "contact_persons_information_section",
@@ -204,11 +200,21 @@
    "fieldtype": "Link",
    "label": "Executive Name",
    "options": "Sales Agent"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "state_name",
+   "fieldtype": "Data",
+   "label": "State Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-04 05:02:42.428280",
+ "modified": "2025-02-04 07:44:23.006399",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "UCO Leads",
