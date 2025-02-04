@@ -106,7 +106,7 @@
   },
   {
    "fieldname": "phone",
-   "fieldtype": "Date",
+   "fieldtype": "Data",
    "label": "Phone"
   },
   {
@@ -170,7 +170,7 @@
    "link_fieldname": "employee_name"
   }
  ],
- "modified": "2025-02-01 18:54:25.774789",
+ "modified": "2025-02-03 13:08:28.646195",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
