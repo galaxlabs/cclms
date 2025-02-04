@@ -6,7 +6,14 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "btm_records"
+  "btm_records",
+  "approved_date",
+  "sign_date",
+  "submit_date",
+  "reject_date",
+  "install_date",
+  "convert_date",
+  "agreement_sent_date"
  ],
  "fields": [
   {
@@ -17,12 +24,53 @@
    "label": "BTM Records",
    "link_filters": "[[\"ATM Leads\",\"creation\",\"Timespan\",\"this month\"]]",
    "options": "ATM Leads"
+  },
+  {
+   "fetch_from": "btm_records.approve_date",
+   "fieldname": "approved_date",
+   "fieldtype": "Data",
+   "label": "Approved Date"
+  },
+  {
+   "fetch_from": "btm_records.sign_date",
+   "fieldname": "sign_date",
+   "fieldtype": "Data",
+   "label": "Sign Date"
+  },
+  {
+   "fieldname": "submit_date",
+   "fieldtype": "Data",
+   "label": "Submit Date"
+  },
+  {
+   "fieldname": "reject_date",
+   "fieldtype": "Data",
+   "label": "Reject Date"
+  },
+  {
+   "fetch_from": "btm_records.install_date",
+   "fieldname": "install_date",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Install Date"
+  },
+  {
+   "fetch_from": "btm_records.convert_date",
+   "fieldname": "convert_date",
+   "fieldtype": "Data",
+   "label": "Convert Date"
+  },
+  {
+   "fieldname": "agreement_sent_date",
+   "fieldtype": "Data",
+   "label": "Agreement Sent Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-02 16:54:52.657723",
+ "modified": "2025-02-03 14:33:20.320027",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Leads Table",

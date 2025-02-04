@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:UCO-{business_name}-{dd}-{mm}-{yy}-00000",
  "creation": "2024-12-11 14:44:21.042016",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -11,7 +12,9 @@
   "section_break_llfc",
   "cooking_oil_collection_address",
   "zip_code",
+  "country",
   "column_break_lyph",
+  "address",
   "city",
   "state",
   "contact_persons_information_section",
@@ -22,7 +25,7 @@
   "already_have_container",
   "container_provider_name",
   "24_hour_access",
-  "a_locked_space_can_we_have_a_key_or_code_so_we_can_access_247",
+  "if_locked_space_247",
   "last_collector_name",
   "column_break_tsbb",
   "last_name",
@@ -122,7 +125,8 @@
   {
    "fieldname": "oil_type",
    "fieldtype": "Select",
-   "label": "Oil Type"
+   "label": "Oil Type",
+   "options": "Soybean Oil\nVegetable Oil\nFrying Oil\nCanola Oil\nClear Liquid Frying Oil"
   },
   {
    "description": "Oil Condition at room Temperature",
@@ -160,11 +164,6 @@
    "options": "Yes\nNo"
   },
   {
-   "fieldname": "a_locked_space_can_we_have_a_key_or_code_so_we_can_access_247",
-   "fieldtype": "Small Text",
-   "label": "a locked space, can we have a key or code so we can access 24/7"
-  },
-  {
    "fieldname": "locked_space_container_access_time",
    "fieldtype": "Data",
    "label": " locked space Container access Time"
@@ -179,14 +178,33 @@
    "fieldtype": "Data",
    "label": "Payment Email",
    "options": "Email"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "link_filters": "[[\"Country\",\"country_name\",\"like\",\"%United States%\"]]",
+   "options": "Country"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "description": "can we have a key or code so we can access",
+   "fieldname": "if_locked_space_247",
+   "fieldtype": "Select",
+   "label": "If locked space, 24/7"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-11 15:33:03.107364",
+ "modified": "2025-02-04 04:20:25.008080",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "UCO Leads",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
