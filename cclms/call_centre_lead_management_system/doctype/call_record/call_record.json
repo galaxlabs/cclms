@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-02-05 04:35:48.740699",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "executive_name",
+  "depart",
+  "record_date",
+  "section_break_plaz",
+  "call_records_list",
+  "call_back_recrd"
+ ],
+ "fields": [
+  {
+   "fieldname": "executive_name",
+   "fieldtype": "Link",
+   "label": "Executive Name",
+   "options": "Sales Agent"
+  },
+  {
+   "fieldname": "depart",
+   "fieldtype": "Select",
+   "label": "Depart",
+   "options": "UCO\nBTM\nSecurity"
+  },
+  {
+   "default": "Today",
+   "fieldname": "record_date",
+   "fieldtype": "Data",
+   "label": "Record Date"
+  },
+  {
+   "fieldname": "section_break_plaz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "call_records_list",
+   "fieldtype": "Table",
+   "label": "Call Records List",
+   "options": "Call Records List"
+  },
+  {
+   "fieldname": "call_back_recrd",
+   "fieldtype": "Table",
+   "label": "Call Back Recrd",
+   "options": "Call Back Recrd"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-05 04:41:01.721313",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Call Record",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
