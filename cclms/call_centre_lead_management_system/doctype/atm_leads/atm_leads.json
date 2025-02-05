@@ -479,7 +479,6 @@
    "show_on_timeline": 1
   },
   {
-   "fetch_from": "executive_name.agent_name",
    "fieldname": "sign_by",
    "fieldtype": "Data",
    "label": "Sign By",
@@ -507,7 +506,7 @@
    "link_fieldname": "branch"
   }
  ],
- "modified": "2025-01-30 12:22:31.305934",
+ "modified": "2025-02-04 11:48:48.490539",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
