@@ -9,6 +9,7 @@
   "executive_name",
   "business_name",
   "column_break_vzjz",
+  "post_date",
   "legal_company_name",
   "branch",
   "cooking_oil_collection_address_section",
@@ -224,11 +225,17 @@
    "fieldtype": "Link",
    "label": "Branch",
    "options": "Branch"
+  },
+  {
+   "default": "Today",
+   "fieldname": "post_date",
+   "fieldtype": "Date",
+   "label": "Post Date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-20 11:32:43.508621",
+ "modified": "2025-02-20 11:34:50.320581",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "UCO Leads",
