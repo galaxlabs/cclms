@@ -17,19 +17,19 @@
    "label": "Sign Count"
   }
  ],
- "content": "[{\"id\":\"NxID82hQka\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads</b></span>\",\"col\":12}},{\"id\":\"DvvqdjfXfU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ecl43lV68f\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads List\",\"col\":3}},{\"id\":\"_PHdmPggeb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"This Month Lead's \",\"col\":3}},{\"id\":\"Cq0b7uxWHP\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads by Companies</b></span>\",\"col\":12}},{\"id\":\"ib853SCJTs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bitcoin Depot\",\"col\":3}},{\"id\":\"3ExRthLI-i\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Employees</b></span>\",\"col\":12}},{\"id\":\"M7OOJueI6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"K1pk2ViWYR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Control Panel\",\"col\":3}},{\"id\":\"tbLQmknzRz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Assignment\",\"col\":3}},{\"id\":\"CpX9T4G74N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Allocation\",\"col\":3}},{\"id\":\"PTMLDPVA2p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Type\",\"col\":3}},{\"id\":\"kcMIDXv8zJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bulk  Attendance Tool\",\"col\":3}},{\"id\":\"39crixBMVz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"XeNtRvoLyl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tools</b></span>\",\"col\":12}},{\"id\":\"BZH72EI4Fp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"BTM Note\",\"col\":3}},{\"id\":\"wjjhmwAi0-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"User\",\"col\":3}},{\"id\":\"8RbVOHI92I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lead Dashboard\",\"col\":3}},{\"id\":\"Tfo8ROzTk5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employees Installation Count\",\"col\":3}},{\"id\":\"vtVgb6ZygN\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Leads by Company\",\"col\":12}},{\"id\":\"wEcGsnmMjg\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Branch Count\",\"col\":12}},{\"id\":\"uYq3GcTSe-\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Employees Count\",\"col\":12}},{\"id\":\"xW3eI6rmeH\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sign Count\",\"col\":12}},{\"id\":\"-QogCBHb8U\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Note\",\"col\":3}}]",
+ "content": "[{\"id\":\"NxID82hQka\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads</b></span>\",\"col\":12}},{\"id\":\"DvvqdjfXfU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ecl43lV68f\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads List\",\"col\":3}},{\"id\":\"_PHdmPggeb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"This Month Lead's \",\"col\":3}},{\"id\":\"Cq0b7uxWHP\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads by Companies</b></span>\",\"col\":12}},{\"id\":\"3ExRthLI-i\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Employees</b></span>\",\"col\":12}},{\"id\":\"M7OOJueI6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"K1pk2ViWYR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Control Panel\",\"col\":3}},{\"id\":\"tbLQmknzRz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Assignment\",\"col\":3}},{\"id\":\"CpX9T4G74N\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Allocation\",\"col\":3}},{\"id\":\"PTMLDPVA2p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Type\",\"col\":3}},{\"id\":\"kcMIDXv8zJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bulk  Attendance Tool\",\"col\":3}},{\"id\":\"39crixBMVz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"5JN0tA5mqS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"KPI Setup\",\"col\":3}},{\"id\":\"XeNtRvoLyl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tools</b></span>\",\"col\":12}},{\"id\":\"BZH72EI4Fp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"BTM Note\",\"col\":3}},{\"id\":\"wjjhmwAi0-\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"User\",\"col\":3}},{\"id\":\"8RbVOHI92I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lead Dashboard\",\"col\":3}},{\"id\":\"Tfo8ROzTk5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employees Installation Count\",\"col\":3}},{\"id\":\"vtVgb6ZygN\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Leads by Company\",\"col\":12}},{\"id\":\"wEcGsnmMjg\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Branch Count\",\"col\":12}},{\"id\":\"uYq3GcTSe-\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Employees Count\",\"col\":12}},{\"id\":\"xW3eI6rmeH\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sign Count\",\"col\":12}},{\"id\":\"-QogCBHb8U\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Note\",\"col\":3}}]",
  "creation": "2024-07-18 18:01:53.044444",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
- "idx": 8,
+ "idx": 10,
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "PW Admin",
  "links": [],
- "modified": "2024-12-19 08:01:06.518421",
+ "modified": "2025-02-04 07:28:24.990493",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW Admin",
@@ -67,6 +67,14 @@
    "type": "DocType"
   },
   {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "KPI Setup",
+   "link_to": "Sales Agent KPI",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
    "color": "Green",
    "doc_view": "New",
    "label": "Leads",
@@ -81,13 +89,6 @@
    "link_to": "ATM Leads",
    "stats_filter": "[]",
    "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Bitcoin Depot",
-   "link_to": "Bitcoin Depot",
-   "type": "Dashboard"
   },
   {
    "color": "Grey",
