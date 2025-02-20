@@ -18,6 +18,7 @@
   "phone_ext",
   "address",
   "company_address",
+  "left_date",
   "column_break_zgsg",
   "last_name",
   "user_name",
@@ -28,11 +29,12 @@
   "gender",
   "father_name",
   "id",
-  "nic"
+  "nic",
+  "salary",
+  "department"
  ],
  "fields": [
   {
-   "fetch_from": "employee.employee",
    "fieldname": "agent_name",
    "fieldtype": "Data",
    "label": "Pseudo Name",
@@ -100,11 +102,11 @@
   {
    "fetch_from": "employee.designation",
    "fieldname": "designation",
-   "fieldtype": "Link",
-   "label": "Designation",
-   "options": "Designation"
+   "fieldtype": "Data",
+   "label": "Designation"
   },
   {
+   "fetch_from": "employee.cell_number",
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "Phone"
@@ -127,12 +129,13 @@
    "label": "Phone Ext."
   },
   {
+   "fetch_from": "employee.custom_father_name",
    "fieldname": "father_name",
    "fieldtype": "Data",
    "label": "Father Name"
   },
   {
-   "fetch_from": "employee.pan_number",
+   "fetch_from": "employee.custom_employee_id",
    "fieldname": "id",
    "fieldtype": "Data",
    "label": "ID"
@@ -152,8 +155,26 @@
   {
    "fetch_from": "company.custom_company_address",
    "fieldname": "company_address",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "label": "Company Address"
+  },
+  {
+   "fetch_from": "employee.resignation_letter_date",
+   "fieldname": "left_date",
+   "fieldtype": "Data",
+   "label": "Left Date"
+  },
+  {
+   "fetch_from": "employee.ctc",
+   "fieldname": "salary",
+   "fieldtype": "Data",
+   "label": "Salary"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -167,10 +188,15 @@
   {
    "group": "Track",
    "link_doctype": "Employee",
-   "link_fieldname": "employee_name"
+   "link_fieldname": "custom_employee_full_name"
+  },
+  {
+   "group": "Track",
+   "link_doctype": "UCO Leads",
+   "link_fieldname": "executive_name"
   }
  ],
- "modified": "2025-02-03 13:08:28.646195",
+ "modified": "2025-02-12 08:29:23.841842",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
@@ -192,10 +218,11 @@
  ],
  "quick_entry": 1,
  "search_fields": "employee,agent_name",
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "employee",
+ "title_field": "agent_name",
  "track_changes": 1,
  "track_seen": 1,
  "track_views": 1

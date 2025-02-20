@@ -12,6 +12,9 @@
   "company_name",
   "nic",
   "employee_address",
+  "agreement_date",
+  "basic_salary",
+  "annual_salary",
   "column_break_osad",
   "party_name",
   "abbr",
@@ -20,6 +23,9 @@
   "employee_official_name",
   "father_name",
   "employee_id",
+  "designation",
+  "department",
+  "join_date",
   "section_break_uhjf",
   "contract_template",
   "contract_terms",
@@ -47,7 +53,7 @@
    "label": "Effective Date"
   },
   {
-   "default": "Ash\u00a0Global\u00a0Trading",
+   "default": "PROS-WORLD (PVT) LTD",
    "fieldname": "company_name",
    "fieldtype": "Link",
    "label": "Company Name",
@@ -176,18 +182,53 @@
    "fieldname": "party_type",
    "fieldtype": "Select",
    "label": "Party Type",
-   "options": "\nCustomer\nEmployee\nCompany\nSupplier\nClient"
+   "options": "\nCustomer\nEmployee\nCompany\nSupplier\nClient\nSales Agent"
   },
   {
    "fetch_from": "executive_name.nic",
    "fieldname": "nic",
    "fieldtype": "Data",
    "label": "NIC"
+  },
+  {
+   "fetch_from": "executive_name.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Designation"
+  },
+  {
+   "fetch_from": "executive_name.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department"
+  },
+  {
+   "default": "Today",
+   "fieldname": "agreement_date",
+   "fieldtype": "Date",
+   "label": "Agreement Date"
+  },
+  {
+   "fetch_from": "executive_name.salary",
+   "fieldname": "basic_salary",
+   "fieldtype": "Data",
+   "label": "Monthly Salary"
+  },
+  {
+   "fieldname": "annual_salary",
+   "fieldtype": "Data",
+   "label": "Annual Salary"
+  },
+  {
+   "fetch_from": "executive_name.join_date",
+   "fieldname": "join_date",
+   "fieldtype": "Data",
+   "label": "Join date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-01 19:15:32.120249",
+ "modified": "2025-02-11 12:30:32.856547",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Legal Agreement",

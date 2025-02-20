@@ -148,7 +148,8 @@
    "in_global_search": 1,
    "in_list_view": 1,
    "label": "Owner Name",
-   "options": "Name"
+   "options": "Name",
+   "search_index": 1
   },
   {
    "fieldname": "column_break_dcwb",
@@ -158,7 +159,8 @@
    "fieldname": "business_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Business Name"
+   "label": "Business Name",
+   "search_index": 1
   },
   {
    "fieldname": "column_break_rujd",
@@ -186,6 +188,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Address",
+   "search_index": 1,
    "width": "200px"
   },
   {
@@ -222,7 +225,8 @@
    "fieldtype": "Data",
    "in_filter": 1,
    "in_standard_filter": 1,
-   "label": "Zip/Postal Code"
+   "label": "Zip/Postal Code",
+   "search_index": 1
   },
   {
    "fieldname": "contract_information_section",
@@ -358,7 +362,8 @@
    "fieldtype": "Data",
    "in_filter": 1,
    "in_standard_filter": 1,
-   "label": "State Code"
+   "label": "State Code",
+   "search_index": 1
   },
   {
    "fieldname": "section_break_utay",
@@ -481,8 +486,7 @@
   {
    "fieldname": "sign_by",
    "fieldtype": "Data",
-   "label": "Sign By",
-   "read_only": 1
+   "label": "Sign By"
   },
   {
    "fieldname": "map",
@@ -506,7 +510,7 @@
    "link_fieldname": "branch"
   }
  ],
- "modified": "2025-02-04 11:48:48.490539",
+ "modified": "2025-02-10 08:31:50.802556",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
