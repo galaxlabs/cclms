@@ -8,6 +8,7 @@
  "field_order": [
   "date",
   "executive_name",
+  "total_time",
   "section_break_owpe",
   "time_record_column",
   "activity_history"
@@ -40,11 +41,16 @@
    "fieldtype": "Table",
    "label": "Activity History",
    "options": "Activity History"
+  },
+  {
+   "fieldname": "total_time",
+   "fieldtype": "Data",
+   "label": "Total Time"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-20 06:13:19.529384",
+ "modified": "2025-02-21 08:19:29.800613",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Agent Activity",
