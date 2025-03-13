@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:IN-OUT-{{date}}",
+ "autoname": "format:IN-OUT{{executive_name}}-{{date}}",
  "creation": "2025-02-20 06:00:48.591496",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -50,7 +50,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-21 08:19:29.800613",
+ "modified": "2025-02-21 08:36:58.064524",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Agent Activity",

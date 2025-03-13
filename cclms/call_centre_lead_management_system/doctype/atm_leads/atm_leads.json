@@ -81,7 +81,8 @@
   "hidden_by_signed_lead",
   "executive_name_ps",
   "sign_by",
-  "lead_owner"
+  "lead_owner",
+  "status"
  ],
  "fields": [
   {
@@ -499,6 +500,12 @@
    "fieldname": "lead_owner",
    "fieldtype": "Data",
    "label": "Lead Owner"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Status"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -510,7 +517,7 @@
    "link_fieldname": "branch"
   }
  ],
- "modified": "2025-02-10 08:31:50.802556",
+ "modified": "2025-03-12 14:33:51.676039",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
