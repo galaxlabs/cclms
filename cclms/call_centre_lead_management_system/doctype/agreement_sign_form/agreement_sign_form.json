@@ -1,0 +1,256 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-27 08:10:00.112472",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lead_name",
+  "location_legal_entity",
+  "effective_date",
+  "location_dba_name",
+  "phone",
+  "data_hccc",
+  "address",
+  "tenant_or_landlord",
+  "contract_end_date",
+  "terms",
+  "county",
+  "distributer",
+  "premises",
+  "name1",
+  "title",
+  "column_break_dwrd",
+  "account_manager",
+  "account_manager_phone",
+  "account_manager_email",
+  "sales_contact",
+  "additonal_entity",
+  "transection_fees",
+  "flat_fee",
+  "oprator_name",
+  "signature_fkbb",
+  "company_address",
+  "client_signature",
+  "section_break_sufi",
+  "entity_name_on_w9",
+  "name_on_bank_account",
+  "routing_no",
+  "checking_account_no",
+  "section_break_qarx",
+  "contract_template",
+  "contract_terms"
+ ],
+ "fields": [
+  {
+   "fieldname": "lead_name",
+   "fieldtype": "Link",
+   "label": "Lead Name",
+   "options": "ATM Leads"
+  },
+  {
+   "fieldname": "location_legal_entity",
+   "fieldtype": "Data",
+   "label": "Location Legal Entity"
+  },
+  {
+   "fieldname": "effective_date",
+   "fieldtype": "Date",
+   "label": "Effective Date"
+  },
+  {
+   "fieldname": "account_manager",
+   "fieldtype": "Data",
+   "label": "Account Manager"
+  },
+  {
+   "fieldname": "sales_contact",
+   "fieldtype": "Data",
+   "label": "Sales Contact"
+  },
+  {
+   "fetch_from": "lead_name.business_name",
+   "fieldname": "location_dba_name",
+   "fieldtype": "Data",
+   "label": "Location DBA Name"
+  },
+  {
+   "fieldname": "account_manager_phone",
+   "fieldtype": "Data",
+   "label": "Account Manager Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "account_manager_email",
+   "fieldtype": "Data",
+   "label": "Account Manager Email",
+   "options": "Email"
+  },
+  {
+   "fetch_from": "lead_name.email",
+   "fieldname": "data_hccc",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fetch_from": "lead_name.personal_cell_phone",
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "PHone"
+  },
+  {
+   "fetch_from": "lead_name.full_address",
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Location Address"
+  },
+  {
+   "fieldname": "tenant_or_landlord",
+   "fieldtype": "Data",
+   "label": "Tenant or Landlord? "
+  },
+  {
+   "fieldname": "contract_end_date",
+   "fieldtype": "Date",
+   "label": "Contract End Date"
+  },
+  {
+   "fetch_from": "lead_name.contract_length",
+   "fieldname": "terms",
+   "fieldtype": "Data",
+   "label": "Terms"
+  },
+  {
+   "fieldname": "column_break_dwrd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Data",
+   "label": "County"
+  },
+  {
+   "default": "Professionals World",
+   "fieldname": "distributer",
+   "fieldtype": "Data",
+   "label": "Distributer"
+  },
+  {
+   "fetch_from": "lead_name.full_address",
+   "fieldname": "premises",
+   "fieldtype": "Data",
+   "label": "Premises"
+  },
+  {
+   "fieldname": "additonal_entity",
+   "fieldtype": "Data",
+   "label": "Additonal Entity"
+  },
+  {
+   "fieldname": "transection_fees",
+   "fieldtype": "Data",
+   "label": "Transection Fees"
+  },
+  {
+   "fieldname": "flat_fee",
+   "fieldtype": "Data",
+   "label": "Flat Fee"
+  },
+  {
+   "fetch_from": "lead_name.company",
+   "fieldname": "oprator_name",
+   "fieldtype": "Data",
+   "label": "Oprator Name"
+  },
+  {
+   "fieldname": "signature_fkbb",
+   "fieldtype": "Signature",
+   "label": "Company Signature "
+  },
+  {
+   "fieldname": "company_address",
+   "fieldtype": "Link",
+   "label": "Company Address",
+   "options": "Address"
+  },
+  {
+   "fetch_from": "lead_name.owner_name",
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "label": "Name"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
+  },
+  {
+   "fieldname": "client_signature",
+   "fieldtype": "Signature",
+   "label": "Client Signature "
+  },
+  {
+   "fieldname": "section_break_sufi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "entity_name_on_w9",
+   "fieldtype": "Data",
+   "label": "Entity Name on w9"
+  },
+  {
+   "fieldname": "name_on_bank_account",
+   "fieldtype": "Data",
+   "label": "Name On Bank Account"
+  },
+  {
+   "fieldname": "routing_no",
+   "fieldtype": "Data",
+   "label": "Routing No"
+  },
+  {
+   "fieldname": "checking_account_no",
+   "fieldtype": "Data",
+   "label": "Checking Account No "
+  },
+  {
+   "fieldname": "section_break_qarx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "contract_template",
+   "fieldtype": "Link",
+   "label": "Contract Template",
+   "options": "Contract Template"
+  },
+  {
+   "fieldname": "contract_terms",
+   "fieldtype": "Text Editor",
+   "label": "Contract Terms"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-03-27 09:48:36.656918",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Agreement Sign Form",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
