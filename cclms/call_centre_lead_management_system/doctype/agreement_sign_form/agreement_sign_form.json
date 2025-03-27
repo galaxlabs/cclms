@@ -10,7 +10,7 @@
   "effective_date",
   "location_dba_name",
   "phone",
-  "data_hccc",
+  "email",
   "address",
   "tenant_or_landlord",
   "contract_end_date",
@@ -85,12 +85,6 @@
    "fieldtype": "Data",
    "label": "Account Manager Email",
    "options": "Email"
-  },
-  {
-   "fetch_from": "lead_name.email",
-   "fieldname": "data_hccc",
-   "fieldtype": "Data",
-   "label": "Email"
   },
   {
    "fetch_from": "lead_name.personal_cell_phone",
@@ -227,11 +221,17 @@
    "fieldname": "company_signature",
    "fieldtype": "Signature",
    "label": "Company Signature "
+  },
+  {
+   "fetch_from": "lead_name.email",
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-27 12:46:00.850068",
+ "modified": "2025-03-27 12:48:56.610274",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Agreement Sign Form",
