@@ -18,7 +18,8 @@
   "county",
   "distributer",
   "premises",
-  "name1",
+  "company_name",
+  "signature_fkbb",
   "title",
   "column_break_dwrd",
   "account_manager",
@@ -29,7 +30,6 @@
   "transection_fees",
   "flat_fee",
   "oprator_name",
-  "signature_fkbb",
   "company_address",
   "client_signature",
   "section_break_sufi",
@@ -174,12 +174,6 @@
    "options": "Address"
   },
   {
-   "fetch_from": "lead_name.owner_name",
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "label": "Name"
-  },
-  {
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Title"
@@ -227,11 +221,17 @@
    "fieldname": "contract_terms",
    "fieldtype": "Text Editor",
    "label": "Contract Terms"
+  },
+  {
+   "fetch_from": "lead_name.owner_name",
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Company Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-27 09:48:36.656918",
+ "modified": "2025-03-27 12:40:12.966737",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Agreement Sign Form",
