@@ -1,7 +1,8 @@
 {
  "actions": [],
+ "allow_guest_to_view": 1,
  "allow_rename": 1,
- "autoname": "field:location_dba_name",
+ "autoname": "field:location_name",
  "creation": "2025-03-27 08:10:00.112472",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -9,7 +10,7 @@
   "lead_name",
   "location_legal_entity",
   "effective_date",
-  "location_dba_name",
+  "location_name",
   "phone",
   "email",
   "address",
@@ -34,11 +35,15 @@
   "company_address",
   "ein",
   "client_signature",
+  "unique_link",
   "section_break_sufi",
   "entity_name_on_w9",
   "name_on_bank_account",
   "routing_no",
   "checking_account_no",
+  "column_break_aqhq",
+  "route",
+  "publish",
   "section_break_qarx",
   "contract_template",
   "contract_terms"
@@ -48,6 +53,7 @@
    "fieldname": "lead_name",
    "fieldtype": "Link",
    "label": "Lead Name",
+   "link_filters": "[[\"ATM Leads\",\"company\",\"=\",\"Bitcoin Depot\"],[\"ATM Leads\",\"workflow_state\",\"in\",[\"Requested for Agreement Sent\",\"Approved\"]]]",
    "options": "ATM Leads"
   },
   {
@@ -69,13 +75,6 @@
    "fieldname": "sales_contact",
    "fieldtype": "Data",
    "label": "Sales Contact"
-  },
-  {
-   "fetch_from": "lead_name.business_name",
-   "fieldname": "location_dba_name",
-   "fieldtype": "Data",
-   "label": "Location DBA Name",
-   "unique": 1
   },
   {
    "fieldname": "account_manager_phone",
@@ -235,11 +234,41 @@
    "fieldname": "owner_name",
    "fieldtype": "Data",
    "label": "Owner Name"
+  },
+  {
+   "fieldname": "column_break_aqhq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route",
+   "mandatory_depends_on": "publish"
+  },
+  {
+   "default": "0",
+   "fieldname": "publish",
+   "fieldtype": "Check",
+   "label": "Publish on website"
+  },
+  {
+   "fieldname": "unique_link",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Unique Link"
+  },
+  {
+   "fetch_from": "lead_name.business_name",
+   "fieldname": "location_name",
+   "fieldtype": "Data",
+   "label": "Location Name",
+   "unique": 1
   }
  ],
- "index_web_pages_for_search": 1,
+ "has_web_view": 1,
+ "is_published_field": "publish",
  "links": [],
- "modified": "2025-03-27 13:18:00.538054",
+ "modified": "2025-03-28 03:32:23.676487",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Agreement Sign Form",

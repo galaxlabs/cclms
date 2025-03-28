@@ -510,13 +510,11 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "group": "Leads Origin",
-   "hidden": 1,
-   "link_doctype": "Branch",
-   "link_fieldname": "branch"
+   "link_doctype": "Agreement Sign Form",
+   "link_fieldname": "lead_name"
   }
  ],
- "modified": "2025-03-20 13:55:18.603492",
+ "modified": "2025-03-28 03:40:56.137320",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
