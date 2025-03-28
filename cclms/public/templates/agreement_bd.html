@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Bitcoin Depot Agreement</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 90%; margin: auto; padding: 20px; }
+        .header { display: flex; align-items: center; justify-content: space-between; }
+        .logo { width: 150px; }
+        .title { font-size: 24px; font-weight: bold; text-align: center; }
+        .content { margin-top: 20px; }
+        .signature { margin-top: 30px; }
+        .field { border-bottom: 1px solid #000; min-width: 250px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="/apps/cclms/cclms/public/images/company-logo-png.png" class="logo">
+            <div class="title">Bitcoin Depot Kiosk Placement Agreement</div>
+        </div>
+        <div class="content">
+            <p>Effective Date: <span class="field">{{ effective_date or "________________" }}</span></p>
+            <p>Legal Entity: <span class="field">{{ location_legal_entity or "________________" }}</span></p>
+            <p>DBA Name: <span class="field">{{ location_dba_name or "________________" }}</span></p>
+            <p>Address: <span class="field">{{ address or "________________" }}</span></p>
+            <p>Phone: <span class="field">{{ phone or "________________" }}</span></p>
+            <p>County: <span class="field">{{ county or "________________" }}</span></p>
+            <p>Contract Terms: <span class="field">{{ terms or "________________" }}</span></p>
+        </div>
+        <div class="signature">
+            <p>Client Signature: <span class="field">{{ client_signature or "________________" }}</span></p>
+            <p>Company Signature: <span class="field">{{ company_signature or "________________" }}</span></p>
+        </div>
+    </div>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Kiosk Placement Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .logo-container { margin: 10px 10px; padding: 10px; background-image: url(./company-logo-png.png); background-repeat: no-repeat; background-position: top left; background-size: 180px 180px; height: 180px;}
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f4f4f4; text-align: left; }
+        .section-title { font-size: 18px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+  <div class="logo-container"></div>
+    <h2>Kiosk Placement Form</h2>
+    
+    <table>
+        {% if location_legal_entity %}
+        <tr><th>Location Legal Entity:</th><td>{{ location_legal_entity or '' }}</td></tr>
+        {% if effective_date %}
+        <tr><th>Effective Date:</th><td>{{ effective_date or '' }}</td></tr>
+        <tr><th>Location DBA Name:</th><td>{{ location_dba_name or '' }}</td></tr>
+        <tr><th>Phone:</th><td>{{ phone or '' }}</td></tr>
+        <tr><th>Account Manager:</th><td>{{ account_manager or '' }}</td></tr>
+        <tr><th>Email:</th><td>{{ email or '' }}</td></tr>
+        <tr><th>Account Manager Phone:</th><td>{{ account_manager_phone or '' }}</td></tr>
+        <tr><th>Payment Address:</th><td>{{ payment_address or '' }}</td></tr>
+        <tr><th>Payment Email:</th><td>{{ payment_email or '' }}</td></tr>
+        <tr><th>Sales Contact:</th><td>{{ sales_contact or '' }}</td></tr>
+        <tr><th>Tenant or Landlord?</th><td>{{ tenant_or_landlord or '' }}</td></tr>
+        <tr><th>If Tenant, Lease End Date:</th><td>{{ lease_end_date or '' }}</td></tr>
+        <tr><th>Term:</th><td>{{ term or '' }}</td></tr>
+        <tr><th>County:</th><td>{{ county or '' }}</td></tr>
+        <tr><th>Distributor:</th><td>{{ distributor or '' }}</td></tr>
+    </table>
+
+    <h3 class="section-title">Premises Additional Entity (if applicable)</h3>
+    <table>
+        <tr><th>Per Transaction Fee:</th><td>{{ per_transaction_fee or '' }}</td></tr>
+        <tr><th>Flat Fee:</th><td>{{ flat_fee or '' }}</td></tr>
+    </table>
+
+    <p>By signing below, Location and Bitcoin Depot expressly agree to be bound by all the terms and conditions of the <b>Location Master Agreement</b> located at <a href="https://get.bitcoindepot.com/LMA">get.bitcoindepot.com/LMA</a>. Capitalized terms shall have the meaning set forth in the LMA.</p>
+
+    <h3 class="section-title">Signatures</h3>
+    <table>
+        <tr><th>Bitcoin Depot Representative:</th><td>_________________________</td></tr>
+        <tr><th>Name:</th><td>_________________________</td></tr>
+        <tr><th>Location Representative:</th><td>_________________________</td></tr>
+        <tr><th>Name:</th><td>_________________________</td></tr>
+        <tr><th>Title:</th><td>_________________________</td></tr>
+        <tr><th>Address:</th><td>_________________________</td></tr>
+    </table>
+
+    <h3 class="section-title">ACH Payment Option</h3>
+    <table>
+        <tr><th>Store Name and Address:</th><td>{{ store_name or '' }}</td></tr>
+        <tr><th>Entity Name on W9:</th><td>{{ entity_name or '' }}</td></tr>
+        <tr><th>Name on Bank Account:</th><td>{{ bank_account_name or '' }}</td></tr>
+        <tr><th>Routing Number:</th><td>{{ routing_number or '' }}</td></tr>
+        <tr><th>Checking Account Number:</th><td>{{ checking_account_number or '' }}</td></tr>
+        <tr><th>Email:</th><td>{{ ach_email or '' }}</td></tr>
+    </table>
+    
+    <p><i>RETURN THIS FORM WITH A VOIDED CHECK TO ENSURE PROMPT AND PROPER PAYMENT.</i></p>
+</body>
+</html> -->
