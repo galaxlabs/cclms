@@ -18,7 +18,8 @@ class ATMLeads(Document):
         # self.validate_lead_state()
 
     def validate_lead_state(self):
-        
+        pass
+
         if not self.company:
             frappe.throw(
                 _("Please select a company before saving the lead."),
@@ -70,10 +71,12 @@ class ATMLeads(Document):
                 _("Some leads are already exist for the selected company and location"),
                 title=_("Duplicate Location Error")
             )
+
     # get lead counts by workflow_state
     def get_leads_count_by_workflow_state(self, workflow_state):
-        if self.workflow_state == workflow_state:
-            doc_filters = {"company":self.company, "address": self.address, 'post_date': ['<', date.today()]}
+        if self.workflow_state == "Installed":
+            # doc_filters = {"company":self.company, "address": self.address, 'post_date': ['<', date.today()]}
+            doc_filters = {"company":self.company, "address": self.address, "workflow_state": "Installed"}
             leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
 
     # function for abstract given days from today date, and return abstracted date.
