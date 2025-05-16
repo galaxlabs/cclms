@@ -54,10 +54,8 @@ class ATMLeads(Document):
             )
 
         #check the location already used for the current company
-
         #filter out the ATM Leads docs using the following:
         doc_filters = { "company": self.company, "address": self.address }
-        # atm_leads = frappe.db.get_list("ATM Leads", filters = doc_filters, as_list = True)
         leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
         
         if leads_count > 0:
