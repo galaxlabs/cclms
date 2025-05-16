@@ -10,12 +10,14 @@ from datetime import datetime, date
 from datetime import timedelta
 
 class ATMLeads(Document):
+    pass
+    
     def validate(self):
         self.validate_lead_state()
 
     def before_save(self):
-        # self.update_dates_and_days()
-        # self.validate_lead_state()
+        #self.update_dates_and_days()
+        #self.validate_lead_state()
 
     def validate_lead_state(self):        
         if not self.company:
