@@ -17,9 +17,7 @@ class ATMLeads(Document):
         # self.update_dates_and_days()
         # self.validate_lead_state()
 
-    def validate_lead_state(self):
-        pass
-
+    def validate_lead_state(self):        
         if not self.company:
             frappe.throw(
                 _("Please select a company before saving the lead."),
@@ -64,7 +62,6 @@ class ATMLeads(Document):
         }
         # atm_leads = frappe.db.get_list("ATM Leads", filters = doc_filters, as_list = True)
         leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
-
         
         if leads_count > 0:
             frappe.throw(
@@ -73,19 +70,18 @@ class ATMLeads(Document):
             )
 
     # get lead counts by workflow_state
-    def get_leads_count_by_workflow_state(self, workflow_state):
-        if self.workflow_state == "Installed":
-            # doc_filters = {"company":self.company, "address": self.address, 'post_date': ['<', date.today()]}
-            doc_filters = {"company":self.company, "address": self.address, "workflow_state": "Installed"}
-            leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
+    # def get_leads_count_by_workflow_state(self, workflow_state):
+    #     if self.workflow_state == "Installed":
+    #         # doc_filters = {"company":self.company, "address": self.address, 'post_date': ['<', date.today()]}
+    #         doc_filters = {"company":self.company, "address": self.address, "workflow_state": "Installed"}
+    #         leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
 
-    # function for abstract given days from today date, and return abstracted date.
-    def get_abstracted_date_from_days(number_of_days):
-
-        today = datetime.date.today()
-        delta = timedelta(days = number_of_days)
-        abstracted_date = today - delta
-        return abstracted_date
+    # # function for abstract given days from today date, and return abstracted date.
+    # def get_abstracted_date_from_days(number_of_days):
+    #     today = datetime.date.today()
+    #     delta = timedelta(days = number_of_days)
+    #     abstracted_date = today - delta
+    #     return abstracted_date
 
 
     # def update_dates_and_days(self):
