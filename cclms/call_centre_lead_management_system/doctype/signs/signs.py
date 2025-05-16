@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class TelegramBot(Document):
+class Signs(Document):
 	pass

@@ -210,7 +210,7 @@
   },
   {
    "fieldname": "contract_terms",
-   "fieldtype": "HTML Editor",
+   "fieldtype": "Text Editor",
    "label": "Contract Terms",
    "options": "Jinja"
   },
@@ -269,7 +269,7 @@
  "has_web_view": 1,
  "is_published_field": "publish",
  "links": [],
- "modified": "2025-03-28 07:00:24.499430",
+ "modified": "2025-04-16 09:13:53.891305",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Agreement Sign Form",

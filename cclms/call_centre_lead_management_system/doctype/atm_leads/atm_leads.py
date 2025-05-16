@@ -6,14 +6,19 @@ from frappe.utils import date_diff, nowdate
 from frappe.model.document import Document
 from frappe.utils import today, add_days
 
+from datetime import datetime, date
+from datetime import timedelta
+
 class ATMLeads(Document):
     def validate(self):
         self.validate_lead_state()
 
-    # def before_save(self):
-    #     self.update_dates_and_days()
+    def before_save(self):
+        # self.update_dates_and_days()
+        # self.validate_lead_state()
 
     def validate_lead_state(self):
+        
         if not self.company:
             frappe.throw(
                 _("Please select a company before saving the lead."),
@@ -48,7 +53,38 @@ class ATMLeads(Document):
                 _("No restricted states specified for the selected company. All states are allowed."),
                 alert=True
             )
-    
+
+        #check the location already used for the current company
+
+        #filter out the ATM Leads docs using the following:
+        doc_filters = {
+            "company": self.company,
+            "address": self.address
+        }
+        # atm_leads = frappe.db.get_list("ATM Leads", filters = doc_filters, as_list = True)
+        leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
+
+        
+        if leads_count > 0:
+            frappe.throw(
+                _("Some leads are already exist for the selected company and location"),
+                title=_("Duplicate Location Error")
+            )
+    # get lead counts by workflow_state
+    def get_leads_count_by_workflow_state(self, workflow_state):
+        if self.workflow_state == workflow_state:
+            doc_filters = {"company":self.company, "address": self.address, 'post_date': ['<', date.today()]}
+            leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
+
+    # function for abstract given days from today date, and return abstracted date.
+    def get_abstracted_date_from_days(number_of_days):
+
+        today = datetime.date.today()
+        delta = timedelta(days = number_of_days)
+        abstracted_date = today - delta
+        return abstracted_date
+
+
     # def update_dates_and_days(self):
     #     """
     #     Update specific date fields based on workflow state only when the state changes.

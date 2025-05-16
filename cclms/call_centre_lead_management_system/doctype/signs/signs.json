@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{employee}-{#####}",
+ "creation": "2025-04-23 12:29:43.891745",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sign_date",
+  "atm_leads",
+  "employee",
+  "branch",
+  "address",
+  "company"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "sign_date",
+   "fieldtype": "Date",
+   "label": "Sign Date"
+  },
+  {
+   "fieldname": "atm_leads",
+   "fieldtype": "Link",
+   "label": "Atm Leads",
+   "link_filters": "[[\"ATM Leads\",\"workflow_state\",\"=\",\"Signed\"]]",
+   "options": "ATM Leads"
+  },
+  {
+   "fetch_from": "atm_leads.executive_name",
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Sales Agent"
+  },
+  {
+   "fetch_from": "atm_leads.branch",
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Branch"
+  },
+  {
+   "fetch_from": "atm_leads.full_address",
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fetch_from": "atm_leads.company",
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "ATM Leads",
+   "link_fieldname": "business_name"
+  }
+ ],
+ "modified": "2025-04-25 06:21:04.167043",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Signs",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

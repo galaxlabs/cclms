@@ -254,3 +254,5 @@ page_js = {
 #         "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.update_lead_days"
 #     ]
 # }
+
+#"create_batch_attendance_logs": "cclms.api.sync_attendance.create_batch_attendance_logs"
