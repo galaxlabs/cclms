@@ -126,7 +126,8 @@ class ATMLeads(Document):
             "zippostal_code": self.zippostal_code,
             "city": self.city,
             "country": self.country,
-            "workflow_state": ["Rejected", "Re Approval", "Agreement Sent", "Approved", "Pending", "Draft"]
+            "workflow_state": ["in", ["Rejected", "Re Approval", "Agreement Sent", "Approved", "Pending", "Draft"]],
+            "name": ("!=", self.name)
         })
 
         if other_status_exist:
