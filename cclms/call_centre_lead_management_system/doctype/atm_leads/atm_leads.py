@@ -1,14 +1,12 @@
 # Copyright (c) 2024, Galaxy and contributors
 # For license information, please see license.txt
 import frappe
+import datetime
 from frappe import _
 from frappe.utils import date_diff, nowdate
 from frappe.model.document import Document
-
-#from frappe.utils import today, add_days
-
-import datetime
 from datetime import timedelta
+#from frappe.utils import today, add_days
 
 class ATMLeads(Document):
 
@@ -18,107 +16,122 @@ class ATMLeads(Document):
     # def before_save(self):
     #   self.validate_lead_state()
 
-    def validate_lead_state(self):        
+    def validate_lead_state(self):
         if not self.company:
-            frappe.throw(
-                _("Please select a company before saving the lead."),
-                title=_("Company Not Selected")
-            )
+            frappe.throw(_("Please select a company before saving the lead."), title=_("Company Not Selected"))
+
         if not self.address:
-            frappe.throw(
-                _("Please enter valid address."),
-                title=_("Address required")
-            )
+            frappe.throw(_("Please enter a valid address."), title=_("Address Required"))
 
-        # Fetch the operator company details
+        # Validate company exists
         company = frappe.get_doc('Operator Companies', self.company)
-
         if not company:
-            frappe.throw(
-                _("The selected company does not exist."),
-                title=_("Invalid Company")
-            )
+            frappe.throw(_("The selected company does not exist."), title=_("Invalid Company"))
 
-        # Access the permitted states from the child table
-        permitted_states = company.get("permitted_states")  # Assuming child table is named "permitted_states"
-
+        # Check state permission from company
+        permitted_states = company.get("permitted_states")
         if permitted_states:
-            # Check if the lead's state_code is in the permitted states
-            state_permitted = any(
-                state.state_code == self.state_code
-                for state in permitted_states
-            )
+            state_permitted = any(state.state_code == self.state_code for state in permitted_states)
             if not state_permitted:
-                frappe.throw(
-                    _("The selected state ({0}) is not allowed for the company {1}. Please select a valid state.").format(self.state_code, self.company),
+                frappe.throw (
+                    _("The selected state ({0}) is not allowed for the company {1}.").format(self.state_code, self.company),
                     title=_("State Not Allowed")
                 )
         else:
-            frappe.msgprint(
-                _("No restricted states specified for the selected company. All states are allowed."),
-                alert=True
+            frappe.msgprint(_("No restricted states specified for this company. All states are allowed."), alert=True)
+
+        # duplication validation process based on three phases
+        # 1. firstly validation should be based on "Installed"
+        # 2. secondly validation should be based on "Signed" status
+        # 3. thirdly validateion should be on other status
+
+        # 1. check lead existance for validation based on address(location) only for any company.
+        installed_exist = frappe.db.exists("ATM Leads", {
+            "address": self.address,
+            "state": self.state,
+            "state_code": self.state_code,
+            "zippostal_code": self.zippostal_code,
+            "city": self.city,
+            "country": self.country,
+            "workflow_state": "Installed"
+        })
+
+        if installed_exist:
+            # find all leads with other status and try to remove them
+            documents_to_delete = frappe.get_list("ATM Leads", 
+                filters = {
+                    "address": self.address,
+                    "state": self.state,
+                    "state_code": self.state_code,
+                    "zippostal_code": self.zippostal_code,
+                    "city": self.city,
+                    "country": self.country,
+                    "workflow_state": ["in", ["Rejected", "Approved", "Pending", "Draft"]]
+                }
             )
 
-        # validate lead against duplicate location with workflow_state
-        
-        installed_leads_count = self.get_leads_count_by_workflow_state("Installed", 0)
-        signed_leads_count = self.get_leads_count_by_workflow_state("Signed", 0)
-        rejected_leads_count = self.get_leads_count_by_workflow_state("Rejected", 90)
-        approved_leads_count = self.get_leads_count_by_workflow_state("Approved", 30)
-        pending_leads_count = self.get_leads_count_by_workflow_state("Pending", 30)
-        draft_leads_count = self.get_leads_count_by_workflow_state("Draft", 7)
+            for doc in documents_to_delete:
+                frappe.delete_doc("ATM Leads", doc.name)
 
-        #frappe.throw("Installed:" + str(installed_leads_count) + ", Rejected:" + str(rejected_leads_count) + ", Approved:" + str(approved_leads_count) + ", Pending:" + str(pending_leads_count) + ", Draft:" + str(draft_leads_count), title="Counting")
-
-        if installed_leads_count > 0:
+            frappe.db.commit()
+            
             frappe.throw(
-                _("Some leads are already exist in Installed for the selected company and location"),
-                title=_("Duplicate Location Error")
+                _("❗ A lead already exists for the same address in a 'Installed' Lead."),
+                title=_("Duplicate location")
             )
 
-        if rejected_leads_count > 0:
+        # 2. check lead existance for validation based on address(location) and company.
+        signed_exist = frappe.db.exists("ATM Leads", {
+            "address": self.address,
+            "company": self.company,
+            "state": self.state,
+            "state_code": self.state_code,
+            "zippostal_code": self.zippostal_code,
+            "city": self.city,
+            "country": self.country,
+            "workflow_state": "Signed"
+        })
+
+        if signed_exist:
+            # find all leads with other status and try to remove them
+            documents_to_delete = frappe.get_list("ATM Leads", 
+                filters = {
+                    "address": self.address,
+                    "company": self.company,
+                    "state": self.state,
+                    "state_code": self.state_code,
+                    "zippostal_code": self.zippostal_code,
+                    "city": self.city,
+                    "country": self.country,
+                    "workflow_state": ["in", ["Rejected", "Approved", "Pending", "Draft"]]
+                }
+            )
+
+            for doc in documents_to_delete:
+                frappe.delete_doc("ATM Leads", doc.name)
+
+            frappe.db.commit()
+            
             frappe.throw(
-                _("Some leads are already exist in Rejected for the selected company and location"),
-                title=_("Duplicate Location Error")
+                _("❗ A lead already exists for the same address in a 'Signed' Lead."),
+                title=_("Duplicate location")
             )
+       
+        # 3. check lead existance for validation, based on address(location) and company with other status.
+        other_status_exist = frappe.db.exists("ATM Leads", {
+            "address": self.address,
+            "company": self.company,
+            "state": self.state,
+            "state_code": self.state_code,
+            "zippostal_code": self.zippostal_code,
+            "city": self.city,
+            "country": self.country,
+            "workflow_state": ["Rejected", "Re Approval", "Agreement Sent", "Approved", "Pending", "Draft"]
+        })
 
-        if approved_leads_count > 0:
+        if other_status_exist:
+            
             frappe.throw(
-                _("Some leads are already exist in Approved for the selected company and location"),
-                title=_("Duplicate Location Error")
+                _("❗ A lead already exists for the same address in another status."),
+                title=_("Duplicate location")
             )
-
-        if pending_leads_count > 0:
-            frappe.throw(
-                _("Some leads are already exist in Pending for the selected company and location"),
-                title=_("Duplicate Location Error")
-            )
-
-        if draft_leads_count > 0:
-            frappe.throw(
-                _("Some leads are already exist in Draft for the selected company and location"),
-                title=_("Duplicate Location Error")
-            )
-
-    #get lead counts by workflow_state with date span
-    def get_leads_count_by_workflow_state(self, workflow_state, number_of_days):
-        leads_count = 0
-        today = datetime.date.today()
-        delta = timedelta(days = number_of_days)
-        abstracted_date = today - delta
-
-        if workflow_state == "Installed":
-            doc_filters = {"company":self.company, "address": self.address, "workflow_state": workflow_state}
-            leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
-        elif workflow_state == "Signed":            
-            doc_filters = {"company":self.company, "address": self.address, "workflow_state": workflow_state}
-            leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
-        elif workflow_state == "Approved":            
-            doc_filters = {"company":self.company, "address": self.address, "workflow_state": workflow_state}
-            leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
-        else:            
-            # doc_filters = {"company":self.company, "address": self.address, "workflow_state": workflow_state, "post_date":['<', abstracted_date]}
-            doc_filters = {"company":self.company, "address": self.address, "workflow_state": workflow_state}
-            leads_count = frappe.db.count("ATM Leads", filters = doc_filters)
-
-        return leads_count
