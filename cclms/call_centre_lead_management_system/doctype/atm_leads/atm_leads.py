@@ -53,7 +53,8 @@ class ATMLeads(Document):
             "zippostal_code": self.zippostal_code,
             "city": self.city,
             "country": self.country,
-            "workflow_state": "Installed"
+            "workflow_state": "Installed",
+            "name": ("!=", self.name)
         })
 
         if installed_exist:
@@ -66,7 +67,8 @@ class ATMLeads(Document):
                     "zippostal_code": self.zippostal_code,
                     "city": self.city,
                     "country": self.country,
-                    "workflow_state": ["in", ["Rejected", "Approved", "Pending", "Draft"]]
+                    "workflow_state": ["in", ["Rejected", "Approved", "Pending", "Draft"]],
+                    "name": ("!=", self.name)
                 }
             )
 
@@ -89,7 +91,8 @@ class ATMLeads(Document):
             "zippostal_code": self.zippostal_code,
             "city": self.city,
             "country": self.country,
-            "workflow_state": "Signed"
+            "workflow_state": "Signed",
+            "name": ("!=", self.name)
         })
 
         if signed_exist:
@@ -103,7 +106,8 @@ class ATMLeads(Document):
                     "zippostal_code": self.zippostal_code,
                     "city": self.city,
                     "country": self.country,
-                    "workflow_state": ["in", ["Rejected", "Approved", "Pending", "Draft"]]
+                    "workflow_state": ["in", ["Rejected", "Re Approval", "Agreement Sent", "Approved", "Pending", "Draft"]],
+                    "name": ("!=", self.name)
                 }
             )
 
