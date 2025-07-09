@@ -6,6 +6,91 @@
 
 // 	},
 // });
+// frappe.ui.form.on('ATM Leads', {
+//     onload: function (frm) {
+//         loadGoogleMapsAutocomplete(frm);
+//     },
+
+//     refresh: function (frm) {
+//         // Show map if lat/lng present
+//         if (frm.doc.latitude && frm.doc.longitude) {
+//             frm.fields_dict.map_preview.$wrapper.html(`
+//                 <iframe width="100%" height="300" frameborder="0" style="border:0"
+//                 src="https://maps.google.com/maps?q=${frm.doc.latitude},${frm.doc.longitude}&z=18&output=embed" allowfullscreen></iframe>
+//             `);
+//         } else {
+//             frm.fields_dict.map_preview.$wrapper.html("<p>No map data available.</p>");
+//         }
+//     }
+// });
+
+// function loadGoogleMapsAutocomplete(frm) {
+//     if (!window.google || !google.maps) {
+//         let script = document.createElement('script');
+//         script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAcn3xy8cNCU167unCW0bPJiqn1AeFdBe8&libraries=places";
+//         script.defer = true;
+//         script.async = true;
+//         script.onload = function () {
+//             initAutocomplete(frm);
+//         };
+//         document.head.appendChild(script);
+//     } else {
+//         initAutocomplete(frm);
+//     }
+// }
+
+// function initAutocomplete(frm) {
+//     let input = frm.fields_dict.address.input;
+//     let autocomplete = new google.maps.places.Autocomplete(input, { types: ['geocode'] });
+
+//     autocomplete.addListener('place_changed', function () {
+//         let place = autocomplete.getPlace();
+
+//         if (!place.address_components) {
+//             frappe.msgprint(__('Invalid address. Please select from suggestions.'));
+//             return;
+//         }
+
+//         let fullAddress = place.formatted_address || input.value;
+
+//         let parsedAddress = {
+//             street_number: '',
+//             route: '',
+//             city: '',
+//             state_code: '',
+//             state: '',
+//             zip: '',
+//             country: ''
+//         };
+
+//         place.address_components.forEach(component => {
+//             const types = component.types;
+//             if (types.includes("street_number")) parsedAddress.street_number = component.long_name;
+//             if (types.includes("route")) parsedAddress.route = component.long_name;
+//             if (types.includes("locality")) parsedAddress.city = component.long_name;
+//             if (types.includes("administrative_area_level_1")) {
+//                 parsedAddress.state_code = component.short_name;
+//                 parsedAddress.state = component.long_name;
+//             }
+//             if (types.includes("postal_code")) parsedAddress.zip = component.long_name;
+//             if (types.includes("country")) parsedAddress.country = component.long_name;
+//         });
+
+//         frm.set_value('full_address', fullAddress);
+//         frm.set_value('address', parsedAddress.street_number + ' ' + parsedAddress.route);
+//         frm.set_value('city', parsedAddress.city);
+//         frm.set_value('state_code', parsedAddress.state_code);
+//         frm.set_value('state', parsedAddress.state);
+//         frm.set_value('zippostal_code', parsedAddress.zip);
+//         frm.set_value('country', parsedAddress.country);
+
+//         // Also set lat/lng if available
+//         if (place.geometry && place.geometry.location) {
+//             frm.set_value('latitude', place.geometry.location.lat());
+//             frm.set_value('longitude', place.geometry.location.lng());
+//         }
+//     });
+// }
 
 // frappe.ui.form.on('ATM Leads', {
 //     validate: function(frm) {
@@ -504,155 +589,155 @@
 //     frm.set_value('hours', `${roundedAverage} Hours`);
 // }
 
-frappe.ui.form.on('ATM Leads', {
-    refresh: function(frm) {
-        // Function to check if the user has the "Data Executive" role
-        function hasRole(role) {
-            return frappe.user_roles.includes(role);
-        }
+// frappe.ui.form.on('ATM Leads', {
+//     refresh: function(frm) {
+//         // Function to check if the user has the "Data Executive" role
+//         function hasRole(role) {
+//             return frappe.user_roles.includes(role);
+//         }
 
-        // Only show the buttons if the user has the "Data Executive" role
-        if (hasRole('Sales User')) {
-            // Create a wrapper for grouped buttons
-            frm.add_custom_button(__('Call Back'), function() {
-                copyToClipboard([
-                    frm.doc.field ||'',
-                    frm.doc.business_name || '',
-                    frm.doc.field ||'',
-                    frm.doc.business_type || '',
-                    frm.doc.owner_name || '',
-                    frm.doc.address || 'N/A',
-                    frm.doc.business_phone_number || 'N/A',
-                    frm.doc.personal_cell_phone || 'N/A',
-                    frm.doc.email || 'N/A'
-                ]);
-            }, __('Personal')); // Add to a group labeled "Data for Excel"
+//         // Only show the buttons if the user has the "Data Executive" role
+//         if (hasRole('Sales User')) {
+//             // Create a wrapper for grouped buttons
+//             frm.add_custom_button(__('Call Back'), function() {
+//                 copyToClipboard([
+//                     frm.doc.field ||'',
+//                     frm.doc.business_name || '',
+//                     frm.doc.field ||'',
+//                     frm.doc.business_type || '',
+//                     frm.doc.owner_name || '',
+//                     frm.doc.address || 'N/A',
+//                     frm.doc.business_phone_number || 'N/A',
+//                     frm.doc.personal_cell_phone || 'N/A',
+//                     frm.doc.email || 'N/A'
+//                 ]);
+//             }, __('Personal')); // Add to a group labeled "Data for Excel"
             
-            frm.add_custom_button(__('Approval Sent'), function() {
-                copyToClipboard([
-                    frm.doc.field ||'',
-                    frm.doc.field ||'',
-                    frm.doc.business_name || '',
-                    frm.doc.business_type || '',
-                    frm.doc.owner_name || '',
-                    frm.doc.company ||'',
-                    frm.doc.field ||'',
-                    frm.doc.address || 'N/A',
-                    frm.doc.business_phone_number || 'N/A',
-                    frm.doc.personal_cell_phone || 'N/A',
-                    frm.doc.email || 'N/A'
-                ]);
-            }, __('Personal')); // Add to the same group
+//             frm.add_custom_button(__('Approval Sent'), function() {
+//                 copyToClipboard([
+//                     frm.doc.field ||'',
+//                     frm.doc.field ||'',
+//                     frm.doc.business_name || '',
+//                     frm.doc.business_type || '',
+//                     frm.doc.owner_name || '',
+//                     frm.doc.company ||'',
+//                     frm.doc.field ||'',
+//                     frm.doc.address || 'N/A',
+//                     frm.doc.business_phone_number || 'N/A',
+//                     frm.doc.personal_cell_phone || 'N/A',
+//                     frm.doc.email || 'N/A'
+//                 ]);
+//             }, __('Personal')); // Add to the same group
 
-            frm.add_custom_button(__('Approved'), function() {
-                copyToClipboard([
-                    frm.doc.field ||'',
-                    frm.doc.field ||'',
-                    frm.doc.field ||'',
-                    frm.doc.business_name || '',
-                    frm.doc.business_type || '',
-                    frm.doc.owner_name || '',
-                    frm.doc.company ||'',
-                    frm.doc.field ||'',
-                    frm.doc.address || 'N/A',
-                    frm.doc.business_phone_number || 'N/A',
-                    frm.doc.personal_cell_phone || 'N/A',
-                    frm.doc.email || 'N/A'
-                ]);
-            }, __('Personal')); // Add to the same group
+//             frm.add_custom_button(__('Approved'), function() {
+//                 copyToClipboard([
+//                     frm.doc.field ||'',
+//                     frm.doc.field ||'',
+//                     frm.doc.field ||'',
+//                     frm.doc.business_name || '',
+//                     frm.doc.business_type || '',
+//                     frm.doc.owner_name || '',
+//                     frm.doc.company ||'',
+//                     frm.doc.field ||'',
+//                     frm.doc.address || 'N/A',
+//                     frm.doc.business_phone_number || 'N/A',
+//                     frm.doc.personal_cell_phone || 'N/A',
+//                     frm.doc.email || 'N/A'
+//                 ]);
+//             }, __('Personal')); // Add to the same group
 
 
-            frm.add_custom_button(__('Agreement Sent'), function() {
-                copyToClipboard([
-                    frm.doc.field ||'',
-                    frm.doc.business_name || '',
-                    frm.doc.business_type || '',
-                    frm.doc.field ||'',
-                    frm.doc.owner_name || '',
-                    frm.doc.company ||'',
-                    frm.doc.base_rent ||'',
-                    frm.doc.address || 'N/A',
-                    frm.doc.business_phone_number || 'N/A',
-                    frm.doc.personal_cell_phone || 'N/A',
-                    frm.doc.email || 'N/A'
-                ]);
-            }, __('Personal')); // Add to the same group
+//             frm.add_custom_button(__('Agreement Sent'), function() {
+//                 copyToClipboard([
+//                     frm.doc.field ||'',
+//                     frm.doc.business_name || '',
+//                     frm.doc.business_type || '',
+//                     frm.doc.field ||'',
+//                     frm.doc.owner_name || '',
+//                     frm.doc.company ||'',
+//                     frm.doc.base_rent ||'',
+//                     frm.doc.address || 'N/A',
+//                     frm.doc.business_phone_number || 'N/A',
+//                     frm.doc.personal_cell_phone || 'N/A',
+//                     frm.doc.email || 'N/A'
+//                 ]);
+//             }, __('Personal')); // Add to the same group
 
-            frm.add_custom_button(__('Signed'), function() {
-                copyToClipboard([
-                    frm.doc.field ||'',
-                    frm.doc.workflow_status || '',
-                    frm.doc.business_name || '',
-                    frm.doc.business_type || '',
-                    frm.doc.field ||'',
-                    frm.doc.owner_name || '',
-                    frm.doc.company ||'',
-                    frm.doc.base_rent ||'',
-                    frm.doc.address || 'N/A',
-                    frm.doc.business_phone_number || 'N/A',
-                    frm.doc.personal_cell_phone || 'N/A',
-                    frm.doc.email || 'N/A'
-                ]);
-            }, __('Personal')); // Add to the same group
+//             frm.add_custom_button(__('Signed'), function() {
+//                 copyToClipboard([
+//                     frm.doc.field ||'',
+//                     frm.doc.workflow_status || '',
+//                     frm.doc.business_name || '',
+//                     frm.doc.business_type || '',
+//                     frm.doc.field ||'',
+//                     frm.doc.owner_name || '',
+//                     frm.doc.company ||'',
+//                     frm.doc.base_rent ||'',
+//                     frm.doc.address || 'N/A',
+//                     frm.doc.business_phone_number || 'N/A',
+//                     frm.doc.personal_cell_phone || 'N/A',
+//                     frm.doc.email || 'N/A'
+//                 ]);
+//             }, __('Personal')); // Add to the same group
 
-            frm.add_custom_button(__('Not Intrested'), function() {
-                copyToClipboard([
-                    frm.doc.field ||'',
-                    frm.doc.field ||'',
-                    frm.doc.business_name || '',
-                    frm.doc.business_type || '',
-                    frm.doc.owner_name || '',
-                    frm.doc.company ||'',
-                    frm.doc.base_rent ||'',
-                    frm.doc.address || 'N/A',
-                    frm.doc.business_phone_number || 'N/A',
-                    frm.doc.personal_cell_phone || 'N/A',
-                    frm.doc.email || 'N/A'
-                ]);
-            }, __('Personal')); // Add to the same group
+//             frm.add_custom_button(__('Not Intrested'), function() {
+//                 copyToClipboard([
+//                     frm.doc.field ||'',
+//                     frm.doc.field ||'',
+//                     frm.doc.business_name || '',
+//                     frm.doc.business_type || '',
+//                     frm.doc.owner_name || '',
+//                     frm.doc.company ||'',
+//                     frm.doc.base_rent ||'',
+//                     frm.doc.address || 'N/A',
+//                     frm.doc.business_phone_number || 'N/A',
+//                     frm.doc.personal_cell_phone || 'N/A',
+//                     frm.doc.email || 'N/A'
+//                 ]);
+//             }, __('Personal')); // Add to the same group
 
-            frm.add_custom_button(__('Denied'), function() {
-                copyToClipboard([
-                    frm.doc.field ||'',
-                    frm.doc.field ||'',
-                    frm.doc.business_name || '',
-                    frm.doc.business_type || '',
-                    frm.doc.owner_name || '',
-                    frm.doc.company ||'',
-                    frm.doc.base_rent ||'',
-                    frm.doc.address || 'N/A',
-                    frm.doc.business_phone_number || 'N/A',
-                    frm.doc.personal_cell_phone || 'N/A',
-                    frm.doc.email || 'N/A'
-                ]);
-            }, __('Personal')); // Add to the same group
+//             frm.add_custom_button(__('Denied'), function() {
+//                 copyToClipboard([
+//                     frm.doc.field ||'',
+//                     frm.doc.field ||'',
+//                     frm.doc.business_name || '',
+//                     frm.doc.business_type || '',
+//                     frm.doc.owner_name || '',
+//                     frm.doc.company ||'',
+//                     frm.doc.base_rent ||'',
+//                     frm.doc.address || 'N/A',
+//                     frm.doc.business_phone_number || 'N/A',
+//                     frm.doc.personal_cell_phone || 'N/A',
+//                     frm.doc.email || 'N/A'
+//                 ]);
+//             }, __('Personal')); // Add to the same group
 
-        }
-    }
-});
+//         }
+//     }
+// });
 
-// Function to copy data to clipboard
-function copyToClipboard(dataArray) {
-    // Join the array with tab characters to separate into columns
-    let tabSeparatedData = dataArray.join('\t');
+// // Function to copy data to clipboard
+// function copyToClipboard(dataArray) {
+//     // Join the array with tab characters to separate into columns
+//     let tabSeparatedData = dataArray.join('\t');
 
-    // Create a temporary textarea element to hold the tab-separated text
-    let tempTextArea = document.createElement('textarea');
-    tempTextArea.value = tabSeparatedData;
-    document.body.appendChild(tempTextArea);
+//     // Create a temporary textarea element to hold the tab-separated text
+//     let tempTextArea = document.createElement('textarea');
+//     tempTextArea.value = tabSeparatedData;
+//     document.body.appendChild(tempTextArea);
 
-    // Select the text inside the textarea and copy it
-    tempTextArea.select();
-    tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+//     // Select the text inside the textarea and copy it
+//     tempTextArea.select();
+//     tempTextArea.setSelectionRange(0, 99999); // For mobile devices
 
-    try {
-        // Execute the copy command
-        document.execCommand('copy');
-        frappe.msgprint(__('Copied to clipboard!'));
-    } catch (err) {
-        frappe.msgprint(__('Failed to copy: ' + err));
-    }
+//     try {
+//         // Execute the copy command
+//         document.execCommand('copy');
+//         frappe.msgprint(__('Copied to clipboard!'));
+//     } catch (err) {
+//         frappe.msgprint(__('Failed to copy: ' + err));
+//     }
 
-    // Remove the temporary textarea
-    document.body.removeChild(tempTextArea);
-}
+//     // Remove the temporary textarea
+//     document.body.removeChild(tempTextArea);
+// }

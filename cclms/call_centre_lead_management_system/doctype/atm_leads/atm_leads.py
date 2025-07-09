@@ -6,6 +6,8 @@ from frappe import _
 from frappe.utils import date_diff, nowdate
 from frappe.model.document import Document
 from datetime import timedelta
+import requests
+
 #from frappe.utils import today, add_days
 
 class ATMLeads(Document):
@@ -140,3 +142,25 @@ class ATMLeads(Document):
                 _("❗ A lead already exists for the same address in another status."),
                 title=_("Duplicate location")
             )
+
+
+@frappe.whitelist()
+def validate(doc, method):
+    if not doc.latitude or not doc.longitude:
+        if doc.full_address:
+            # Geocode using Google Maps API
+            try:
+                from urllib.parse import urlencode
+                api_key = frappe.db.get_single_value("Google Maps Settings", "api_key")  # Store API key in Settings Doctype
+                base_url = "https://maps.googleapis.com/maps/api/geocode/json?"
+                params = urlencode({'address': doc.full_address, 'key': api_key})
+                url = base_url + params
+                response = requests.get(url)
+                data = response.json()
+
+                if data['status'] == 'OK':
+                    location = data['results'][0]['geometry']['location']
+                    doc.latitude = location['lat']
+                    doc.longitude = location['lng']
+            except Exception as e:
+                frappe.log_error(frappe.get_traceback(), "ATM Leads Geocode Error")
