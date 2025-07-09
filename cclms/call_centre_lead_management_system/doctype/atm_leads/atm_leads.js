@@ -27,7 +27,7 @@
 // function loadGoogleMapsAutocomplete(frm) {
 //     if (!window.google || !google.maps) {
 //         let script = document.createElement('script');
-//         script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAcn3xy8cNCU167unCW0bPJiqn1AeFdBe8&libraries=places";
+//         script.src = "https://maps.googleapis.com/maps/api/js?key=&libraries=places";
 //         script.defer = true;
 //         script.async = true;
 //         script.onload = function () {
