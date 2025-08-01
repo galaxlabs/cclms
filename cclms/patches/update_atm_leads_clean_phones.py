@@ -78,6 +78,76 @@ def execute():
     frappe.db.commit()
     print("🎯 Patch execution complete.")
 
+
+####full code clean
+# import re
+# import frappe
+
+# def extract_digits(phone):
+#     return re.sub(r'\D', '', phone or '')
+
+# def format_phone_number(phone, country):
+#     digits = extract_digits(phone)
+#     if country in ["USA", "Canada"] and len(digits) >= 10:
+#         return f"{digits[-10:-7]}-{digits[-7:-4]}-{digits[-4:]}"
+#     elif country == "Australia" and len(digits) >= 9:
+#         return f"{digits[-9:-6]}-{digits[-6:-3]}-{digits[-3:]}"
+#     return phone.strip()
+
+# def clean_text(value):
+#     if not value:
+#         return ""
+#     value = re.sub(r"\s{2,}", " ", value)       # collapse multiple spaces
+#     value = re.sub(r"\s*,\s*", ",", value)      # normalize commas
+#     value = re.sub(r"[.,:;]+$", "", value.strip())  # remove ending punctuations
+#     return value.strip()
+
+# def execute():
+#     leads = frappe.get_all("ATM Leads", fields=[
+#         "name",
+#         "branch",
+#         "country",
+#         "business_phone_number",
+#         "personal_cell_phone",
+#         "address",
+#         "city",
+#         "state",
+#         "state_code",
+#         "zippostal_code",
+#         "email"
+#     ])
+
+#     for lead in leads:
+#         if lead.country not in ["USA", "Canada", "Australia"]:
+#             continue
+
+#         updated_fields = {}
+
+#         # Clean and format phone numbers
+#         business_clean = format_phone_number(lead.business_phone_number, lead.country)
+#         if business_clean != (lead.business_phone_number or "").strip():
+#             updated_fields["business_phone_number"] = business_clean
+
+#         personal_clean = format_phone_number(lead.personal_cell_phone, lead.country)
+#         if personal_clean != (lead.personal_cell_phone or "").strip():
+#             updated_fields["personal_cell_phone"] = personal_clean
+
+#         # Clean text fields
+#         for field in ["address", "city", "state", "state_code", "zippostal_code", "email"]:
+#             original = lead.get(field) or ""
+#             cleaned = clean_text(original)
+#             if cleaned != original.strip():
+#                 updated_fields[field] = cleaned
+
+#         if updated_fields:
+#             frappe.db.set_value("ATM Leads", lead.name, updated_fields)
+#             print(f"✅ Updated {lead.name}: {updated_fields}")
+
+#     frappe.db.commit()
+#     print("🎯 Patch execution complete.")
+
+
+##old
 # import re
 # import frappe
 
