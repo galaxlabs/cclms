@@ -18,50 +18,57 @@ def format_phone_number(phone, country):
     return phone.strip()
 
 def clean_text(value):
-    if not value:
+    if not value or value.lower() in ["none", "na", "n/a"]:
         return ""
-
     value = value.strip()
-
-    # Convert common invalid entries to empty
-    if value.lower() in ["none", "na", "n/a"]:
-        return ""
-
-    value = re.sub(r"\s{2,}", " ", value)         # Collapse multiple spaces
-    value = re.sub(r"\s*,\s*", ",", value)        # Normalize comma spacing
-    value = re.sub(r",+", ",", value)             # Collapse multiple commas
-    value = re.sub(r"[.,:;]+$", "", value)        # Remove ending punctuation
+    value = re.sub(r"\s{2,}", " ", value)
+    value = re.sub(r"\s*,\s*", ",", value)
+    value = re.sub(r",+", ",", value)
+    value = re.sub(r"[.,:;]+$", "", value)
     return value.strip()
 
 def clean_name(value):
-    if not value:
+    if not value or value.lower() in ["none", "na", "n/a"]:
         return ""
-
     value = value.strip()
-
-    if value.lower() in ["none", "na", "n/a"]:
-        return ""
-
-    value = re.sub(r"\s{2,}", " ", value)         # Collapse multiple spaces
-    value = re.sub(r"[.,:;]+$", "", value)        # Remove trailing punctuation
+    value = re.sub(r"\s{2,}", " ", value)
+    value = re.sub(r"[.,:;]+$", "", value)
     return value.strip()
 
+def split_address_components(address_string):
+    """Try to split full address into components."""
+    parts = [p.strip() for p in address_string.split(",") if p.strip()]
+    parsed = {
+        "address": "",
+        "city": "",
+        "state_code": "",
+        "zippostal_code": "",
+        "country": ""
+    }
+
+    # Minimum expected: street, city, state+zip, country
+    if len(parts) >= 4:
+        parsed["address"] = parts[0]
+        parsed["city"] = parts[1]
+
+        # State code and ZIP (e.g., CA 90001)
+        state_zip = parts[2].split()
+        if len(state_zip) == 2:
+            parsed["state_code"] = state_zip[0]
+            parsed["zippostal_code"] = state_zip[1]
+        else:
+            parsed["state_code"] = parts[2]
+
+        parsed["country"] = parts[3]
+    return parsed
+
 def execute():
-    print("🚀 Running patch to clean ATM Leads...")
+    print("🚀 Running patch to clean and split ATM Leads...")
 
     leads = frappe.get_all("ATM Leads", fields=[
-        "name",
-        "country",
-        "business_phone_number",
-        "personal_cell_phone",
-        "address",
-        "city",
-        "state",
-        "state_code",
-        "zippostal_code",
-        "email",
-        "owner_name",
-        "business_name"
+        "name", "country", "business_phone_number", "personal_cell_phone",
+        "address", "city", "state", "state_code", "zippostal_code", "email",
+        "owner_name", "business_name"
     ])
 
     updated_count = 0
@@ -73,7 +80,7 @@ def execute():
 
         updated_fields = {}
 
-        # Phone numbers
+        # Clean & format phones
         business_clean = format_phone_number(lead.business_phone_number, country)
         if business_clean != (lead.business_phone_number or "").strip():
             updated_fields["business_phone_number"] = business_clean
@@ -82,30 +89,138 @@ def execute():
         if personal_clean != (lead.personal_cell_phone or "").strip():
             updated_fields["personal_cell_phone"] = personal_clean
 
-        # Text cleanup
-        text_fields = ["address", "city", "state", "state_code", "zippostal_code", "email"]
-        for field in text_fields:
+        # Split full address if other fields are empty
+        if lead.address and not (lead.city or lead.state_code or lead.zippostal_code):
+            parsed = split_address_components(lead.address)
+            for key in parsed:
+                if parsed[key] and not (lead.get(key) or "").strip():
+                    updated_fields[key] = parsed[key]
+
+        # Clean text fields
+        for field in ["address", "city", "state", "state_code", "zippostal_code", "email"]:
             original = (lead.get(field) or "").strip()
             cleaned = clean_text(original)
             if cleaned != original:
                 updated_fields[field] = cleaned
 
-        # Name cleanup
-        name_fields = ["owner_name", "business_name"]
-        for field in name_fields:
+        for field in ["owner_name", "business_name"]:
             original = (lead.get(field) or "").strip()
             cleaned = clean_name(original)
             if cleaned != original:
                 updated_fields[field] = cleaned
 
-        # Apply updates
         if updated_fields:
             frappe.db.set_value("ATM Leads", lead.name, updated_fields)
             print(f"✅ Updated {lead.name}: {updated_fields}")
             updated_count += 1
 
     frappe.db.commit()
-    print(f"🎯 Patch execution complete. Total updated records: {updated_count}")
+    print(f"🎯 Patch finished. Total updated records: {updated_count}")
+
+    
+
+# def extract_digits(phone):
+#     return re.sub(r'\D', '', phone or '')
+
+# def format_phone_number(phone, country):
+#     if not phone:
+#         return ""
+#     digits = extract_digits(phone)
+#     if country in ["USA", "Canada"] and len(digits) >= 10:
+#         return f"{digits[-10:-7]}-{digits[-7:-4]}-{digits[-4:]}"
+#     elif country == "Australia" and len(digits) >= 9:
+#         return f"{digits[-9:-6]}-{digits[-6:-3]}-{digits[-3:]}"
+#     return phone.strip()
+
+# def clean_text(value):
+#     if not value:
+#         return ""
+
+#     value = value.strip()
+
+#     # Convert common invalid entries to empty
+#     if value.lower() in ["none", "na", "n/a"]:
+#         return ""
+
+#     value = re.sub(r"\s{2,}", " ", value)         # Collapse multiple spaces
+#     value = re.sub(r"\s*,\s*", ",", value)        # Normalize comma spacing
+#     value = re.sub(r",+", ",", value)             # Collapse multiple commas
+#     value = re.sub(r"[.,:;]+$", "", value)        # Remove ending punctuation
+#     return value.strip()
+
+# def clean_name(value):
+#     if not value:
+#         return ""
+
+#     value = value.strip()
+
+#     if value.lower() in ["none", "na", "n/a"]:
+#         return ""
+
+#     value = re.sub(r"\s{2,}", " ", value)         # Collapse multiple spaces
+#     value = re.sub(r"[.,:;]+$", "", value)        # Remove trailing punctuation
+#     return value.strip()
+
+# def execute():
+#     print("🚀 Running patch to clean ATM Leads...")
+
+#     leads = frappe.get_all("ATM Leads", fields=[
+#         "name",
+#         "country",
+#         "business_phone_number",
+#         "personal_cell_phone",
+#         "address",
+#         "city",
+#         "state",
+#         "state_code",
+#         "zippostal_code",
+#         "email",
+#         "owner_name",
+#         "business_name"
+#     ])
+
+#     updated_count = 0
+
+#     for lead in leads:
+#         country = lead.get("country") or ""
+#         if country not in ["USA", "Canada", "Australia"]:
+#             continue
+
+#         updated_fields = {}
+
+#         # Phone numbers
+#         business_clean = format_phone_number(lead.business_phone_number, country)
+#         if business_clean != (lead.business_phone_number or "").strip():
+#             updated_fields["business_phone_number"] = business_clean
+
+#         personal_clean = format_phone_number(lead.personal_cell_phone, country)
+#         if personal_clean != (lead.personal_cell_phone or "").strip():
+#             updated_fields["personal_cell_phone"] = personal_clean
+
+#         # Text cleanup
+#         text_fields = ["address", "city", "state", "state_code", "zippostal_code", "email"]
+#         for field in text_fields:
+#             original = (lead.get(field) or "").strip()
+#             cleaned = clean_text(original)
+#             if cleaned != original:
+#                 updated_fields[field] = cleaned
+
+#         # Name cleanup
+#         name_fields = ["owner_name", "business_name"]
+#         for field in name_fields:
+#             original = (lead.get(field) or "").strip()
+#             cleaned = clean_name(original)
+#             if cleaned != original:
+#                 updated_fields[field] = cleaned
+
+#         # Apply updates
+#         if updated_fields:
+#             frappe.db.set_value("ATM Leads", lead.name, updated_fields)
+#             print(f"✅ Updated {lead.name}: {updated_fields}")
+#             updated_count += 1
+
+#     frappe.db.commit()
+#     print(f"🎯 Patch execution complete. Total updated records: {updated_count}")
 
 
 
