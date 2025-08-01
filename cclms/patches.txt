@@ -6,4 +6,3 @@
 # Patches added in this section will be executed after doctypes are migrated
 
 cclms.patches.update_atm_leads_clean_phones
-

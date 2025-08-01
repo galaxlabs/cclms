@@ -1,10 +1,15 @@
 import re
 import frappe
 
+def execute():
+    print("🚀 Patch is executing!")  # Confirm if it even starts
+
 def extract_digits(phone):
     return re.sub(r'\D', '', phone or '')
 
 def format_phone_number(phone, country):
+    if not phone:
+        return ""
     digits = extract_digits(phone)
     if country in ["USA", "Canada"] and len(digits) >= 10:
         return f"{digits[-10:-7]}-{digits[-7:-4]}-{digits[-4:]}"
@@ -15,22 +20,35 @@ def format_phone_number(phone, country):
 def clean_text(value):
     if not value:
         return ""
+
     value = value.strip()
-    value = re.sub(r"\s{2,}", " ", value)                   # Collapse multiple spaces
-    value = re.sub(r"\s*,\s*", ",", value)                  # Normalize commas
-    value = re.sub(r"[.,:;]+$", "", value.strip())          # Remove ending punctuations
+
+    # Convert common invalid entries to empty
+    if value.lower() in ["none", "na", "n/a"]:
+        return ""
+
+    value = re.sub(r"\s{2,}", " ", value)         # Collapse multiple spaces
+    value = re.sub(r"\s*,\s*", ",", value)        # Normalize comma spacing
+    value = re.sub(r",+", ",", value)             # Collapse multiple commas
+    value = re.sub(r"[.,:;]+$", "", value)        # Remove ending punctuation
     return value.strip()
 
 def clean_name(value):
-    """Specific cleaner for names, business names, etc."""
     if not value:
         return ""
+
     value = value.strip()
-    value = re.sub(r"[.,:;]+$", "", value.strip())         # Remove trailing punctuation
-    value = re.sub(r"\s{2,}", " ", value)                  # Remove extra spaces
+
+    if value.lower() in ["none", "na", "n/a"]:
+        return ""
+
+    value = re.sub(r"\s{2,}", " ", value)         # Collapse multiple spaces
+    value = re.sub(r"[.,:;]+$", "", value)        # Remove trailing punctuation
     return value.strip()
 
 def execute():
+    print("🚀 Running patch to clean ATM Leads...")
+
     leads = frappe.get_all("ATM Leads", fields=[
         "name",
         "country",
@@ -43,52 +61,53 @@ def execute():
         "zippostal_code",
         "email",
         "owner_name",
-        "business_name",
-        "lead_owner",
-        "refrence",
-        "map"
+        "business_name"
     ])
 
+    updated_count = 0
+
     for lead in leads:
-        if lead.country not in ["USA", "Canada", "Australia"]:
+        country = lead.get("country") or ""
+        if country not in ["USA", "Canada", "Australia"]:
             continue
 
         updated_fields = {}
 
-        # Clean and format phone numbers
-        business_clean = format_phone_number(lead.business_phone_number, lead.country)
+        # Phone numbers
+        business_clean = format_phone_number(lead.business_phone_number, country)
         if business_clean != (lead.business_phone_number or "").strip():
             updated_fields["business_phone_number"] = business_clean
 
-        personal_clean = format_phone_number(lead.personal_cell_phone, lead.country)
+        personal_clean = format_phone_number(lead.personal_cell_phone, country)
         if personal_clean != (lead.personal_cell_phone or "").strip():
             updated_fields["personal_cell_phone"] = personal_clean
 
-        # Text fields cleaning
-        text_fields = [
-            "address", "city", "state", "state_code", "zippostal_code",
-            "email", "map"
-        ]
+        # Text cleanup
+        text_fields = ["address", "city", "state", "state_code", "zippostal_code", "email"]
         for field in text_fields:
-            original = lead.get(field) or ""
+            original = (lead.get(field) or "").strip()
             cleaned = clean_text(original)
-            if cleaned != original.strip():
+            if cleaned != original:
                 updated_fields[field] = cleaned
 
-        # Fields that need special cleaning (names, owner, etc.)
-        name_fields = ["owner_name", "business_name", "lead_owner", "refrence"]
+        # Name cleanup
+        name_fields = ["owner_name", "business_name"]
         for field in name_fields:
-            original = lead.get(field) or ""
+            original = (lead.get(field) or "").strip()
             cleaned = clean_name(original)
-            if cleaned != original.strip():
+            if cleaned != original:
                 updated_fields[field] = cleaned
 
+        # Apply updates
         if updated_fields:
             frappe.db.set_value("ATM Leads", lead.name, updated_fields)
             print(f"✅ Updated {lead.name}: {updated_fields}")
+            updated_count += 1
 
     frappe.db.commit()
-    print("🎯 Patch execution complete.")
+    print(f"🎯 Patch execution complete. Total updated records: {updated_count}")
+
+
 
 # import re
 # import frappe
