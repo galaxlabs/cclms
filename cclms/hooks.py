@@ -256,3 +256,9 @@ page_js = {
 # }
 
 #"create_batch_attendance_logs": "cclms.api.sync_attendance.create_batch_attendance_logs"
+
+scheduler_events = {
+    "daily": [
+        "cclms.patches.scheduled_tasks.daily_atm_leads_clean"
+    ]
+}
