@@ -4,9 +4,20 @@ import frappe
 def clean_email(email):
     if not email or email.strip().lower() in ['na', 'n/a', 'none']:
         return ''
-    email = email.replace(" ", "")
-    if "@" in email and "." not in email.split("@")[1]:
-        email += ".com"
+
+    email = email.strip().lower().replace(" ", "")
+    email = email.rstrip(".")  # Remove trailing dot
+
+    # Fix missing dot before TLD (.com, .au, etc.)
+    email = re.sub(
+        r'@([a-z0-9]+)(com|net|org|gov|edu|in|ca|au|pk)(\.com|\.net|\.org|\.gov|\.edu|\.in|\.ca|\.au|\.pk)?$',
+        r'@\1.\2',
+        email
+    )
+
+    # Remove duplicate .com.com etc.
+    email = re.sub(r'(\.com|\.net|\.org|\.gov|\.edu|\.in|\.ca|\.au|\.pk)+$', lambda m: m.group(1), email)
+
     return email
 
 def clean_text(value):
@@ -18,13 +29,14 @@ def extract_digits(phone):
     return re.sub(r'\D', '', phone or '')
 
 def format_phone_by_country(phone, country):
-    digits = extract_digits(phone or '')
+    digits = extract_digits(phone)
     if not digits:
         return ''
 
     if country:
-        country = country.lower()
-
+        country = country.strip().lower()
+    
+    # Format for Australia
     if country == 'australia':
         if digits.startswith('04') and len(digits) == 10:
             return f"+61 {digits[1:4]} {digits[4:7]} {digits[7:]}"
@@ -32,6 +44,8 @@ def format_phone_by_country(phone, country):
             return f"+61 {digits[0:3]} {digits[3:6]} {digits[6:]}"
         else:
             return digits
+
+    # Format for US/Canada
     elif country in ['canada', 'united states', 'usa', 'us']:
         if len(digits) == 10:
             return f"{digits[:3]}-{digits[3:6]}-{digits[6:]}"
@@ -39,11 +53,12 @@ def format_phone_by_country(phone, country):
             return f"{digits[1:4]}-{digits[4:7]}-{digits[7:]}"
         else:
             return digits
-    else:
-        return digits
+
+    # Return raw digits for unknown countries
+    return digits
 
 def execute():
-    print("🚀 Running full cleanup patch for ATM Leads...")
+    print("🚀 Running enhanced cleanup patch for ATM Leads...")
 
     leads = frappe.get_all("ATM Leads", fields=[
         "name", "business_phone_number", "personal_cell_phone", "email",
@@ -59,28 +74,113 @@ def execute():
             formatted = format_phone_by_country(original, lead.country)
             if formatted != (original or ""):
                 updated_fields[field] = formatted
-                print(f"📞 Updated {field}: '{original}' ➜ '{formatted}'")
+                print(f"📞 {field}: '{original}' ➜ '{formatted}'")
 
-        # Email
+        # Email cleanup
         email = lead.get("email")
         cleaned_email = clean_email(email)
         if cleaned_email != (email or ""):
             updated_fields["email"] = cleaned_email
-            print(f"📧 Cleaned email: '{email}' ➜ '{cleaned_email}'")
+            print(f"📧 email: '{email}' ➜ '{cleaned_email}'")
 
-        # Address cleanup
+        # Address field cleanup
         for field in ["address", "city", "state", "state_code", "zippostal_code"]:
             val = lead.get(field)
             cleaned = clean_text(val)
             if cleaned != (val or ""):
                 updated_fields[field] = cleaned
-                print(f"📍 Cleaned {field}: '{val}' ➜ '{cleaned}'")
+                print(f"🏠 {field}: '{val}' ➜ '{cleaned}'")
 
+        # Save only if anything changed
         if updated_fields:
             frappe.db.set_value("ATM Leads", lead.name, updated_fields)
 
     frappe.db.commit()
-    print("✅ Done: All lead records processed.")
+    print("✅ All records cleaned and updated successfully.")
+
+# import re
+# import frappe
+
+# def clean_email(email):
+#     if not email or email.strip().lower() in ['na', 'n/a', 'none']:
+#         return ''
+#     email = email.replace(" ", "")
+#     if "@" in email and "." not in email.split("@")[1]:
+#         email += ".com"
+#     return email
+
+# def clean_text(value):
+#     if not value or value.strip().lower() in ['na', 'n/a', 'none']:
+#         return ''
+#     return re.sub(r'\s{2,}', ' ', value.strip())
+
+# def extract_digits(phone):
+#     return re.sub(r'\D', '', phone or '')
+
+# def format_phone_by_country(phone, country):
+#     digits = extract_digits(phone or '')
+#     if not digits:
+#         return ''
+
+#     if country:
+#         country = country.lower()
+
+#     if country == 'australia':
+#         if digits.startswith('04') and len(digits) == 10:
+#             return f"+61 {digits[1:4]} {digits[4:7]} {digits[7:]}"
+#         elif len(digits) == 9 and digits.startswith('4'):
+#             return f"+61 {digits[0:3]} {digits[3:6]} {digits[6:]}"
+#         else:
+#             return digits
+#     elif country in ['canada', 'united states', 'usa', 'us']:
+#         if len(digits) == 10:
+#             return f"{digits[:3]}-{digits[3:6]}-{digits[6:]}"
+#         elif len(digits) == 11 and digits.startswith('1'):
+#             return f"{digits[1:4]}-{digits[4:7]}-{digits[7:]}"
+#         else:
+#             return digits
+#     else:
+#         return digits
+
+# def execute():
+#     print("🚀 Running full cleanup patch for ATM Leads...")
+
+#     leads = frappe.get_all("ATM Leads", fields=[
+#         "name", "business_phone_number", "personal_cell_phone", "email",
+#         "address", "city", "state", "state_code", "zippostal_code", "country"
+#     ])
+
+#     for lead in leads:
+#         updated_fields = {}
+
+#         # Phone fields
+#         for field in ["business_phone_number", "personal_cell_phone"]:
+#             original = lead.get(field)
+#             formatted = format_phone_by_country(original, lead.country)
+#             if formatted != (original or ""):
+#                 updated_fields[field] = formatted
+#                 print(f"📞 Updated {field}: '{original}' ➜ '{formatted}'")
+
+#         # Email
+#         email = lead.get("email")
+#         cleaned_email = clean_email(email)
+#         if cleaned_email != (email or ""):
+#             updated_fields["email"] = cleaned_email
+#             print(f"📧 Cleaned email: '{email}' ➜ '{cleaned_email}'")
+
+#         # Address cleanup
+#         for field in ["address", "city", "state", "state_code", "zippostal_code"]:
+#             val = lead.get(field)
+#             cleaned = clean_text(val)
+#             if cleaned != (val or ""):
+#                 updated_fields[field] = cleaned
+#                 print(f"📍 Cleaned {field}: '{val}' ➜ '{cleaned}'")
+
+#         if updated_fields:
+#             frappe.db.set_value("ATM Leads", lead.name, updated_fields)
+
+#     frappe.db.commit()
+#     print("✅ Done: All lead records processed.")
 
 # import re
 # import frappe
