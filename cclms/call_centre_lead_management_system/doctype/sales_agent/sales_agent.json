@@ -19,6 +19,7 @@
   "address",
   "company_address",
   "left_date",
+  "kpi_maximum",
   "column_break_zgsg",
   "last_name",
   "user_name",
@@ -31,7 +32,8 @@
   "id",
   "nic",
   "salary",
-  "department"
+  "department",
+  "kpi_minimum"
  ],
  "fields": [
   {
@@ -159,6 +161,16 @@
    "fieldname": "department",
    "fieldtype": "Data",
    "label": "Department"
+  },
+  {
+   "fieldname": "kpi_minimum",
+   "fieldtype": "Int",
+   "label": "KPI Min"
+  },
+  {
+   "fieldname": "kpi_maximum",
+   "fieldtype": "Int",
+   "label": "KPI Max"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -184,7 +196,7 @@
    "link_fieldname": "employee"
   }
  ],
- "modified": "2025-07-28 10:34:37.587638",
+ "modified": "2025-08-05 06:37:59.549243",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",

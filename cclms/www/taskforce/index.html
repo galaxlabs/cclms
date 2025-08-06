@@ -1,0 +1,60 @@
+{% extends "templates/web.html" %}
+{% block page_content %}
+
+<!-- <div class="container mt-4">
+  <h3>Task Force</h3>
+  <div id="atm-leads-summary"></div>
+</div> -->
+<!-- <div class="container">
+  <h1>Taskforce KPI Report</h1>
+  <table class="table table-bordered" id="kpi-table">
+      <thead id="table-head"></thead>
+      <tbody id="table-body"></tbody>
+      <tfoot id="table-foot"></tfoot>
+  </table>
+</div> -->
+<div class="container">
+    <h3>KPI Report</h3>
+    <div class="table-responsive">
+        <table id="kpiTable" class="table table-bordered table-striped">
+            <thead class="thead-dark"></thead>
+            <tbody></tbody>
+            <tfoot class="font-weight-bold"></tfoot>
+        </table>
+    </div>
+</div>
+
+<!-- Include Frappe assets and your JS -->
+<!-- <table id="kpiTable" class="table table-bordered">
+    <thead></thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+</table> -->
+
+<!-- <div id="atmLeads">
+  <h3>ATM Leads</h3>
+  <table>
+      <thead>
+          <tr>
+              <th>Name</th>
+              <th>Agent Name</th>
+              <th>Company</th>
+              <th>Workflow State</th>
+              <th>KPI Min</th>
+              <th>KPI Max</th>
+          </tr>
+      </thead>
+      <tbody id="atmLeadsTable">
+
+ <div style="margin: 20px;">
+  <label>Select Month:</label>
+  <input type="month" id="monthPicker" />
+  <button onclick="fetchKPITable()">Get KPI Table</button>
+</div>
+
+<table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 20px;">
+  <thead id="kpi-table-head"></thead>
+  <tbody id="kpi-table-body"></tbody>
+</table> -->
+
+{% endblock %}

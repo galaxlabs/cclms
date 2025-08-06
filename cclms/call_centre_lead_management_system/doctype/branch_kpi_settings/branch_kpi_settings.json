@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:KPI{branch}",
+ "creation": "2025-08-05 07:29:52.001955",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "branch",
+  "kpi_min_percentage",
+  "kpi_max_percentage"
+ ],
+ "fields": [
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "kpi_min_percentage",
+   "fieldtype": "Float",
+   "label": "KPI Min Percentage"
+  },
+  {
+   "fieldname": "kpi_max_percentage",
+   "fieldtype": "Float",
+   "label": "KPI Max Percentage"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-05 07:32:18.258423",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Branch KPI Settings",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,83 @@
+{% extends "templates/web.html" %}
+{% block page_content %}
+
+<div class="container-fluid">
+  <h3>Bitcoin Depot Performance Report</h3>
+  <div class="table-responsive" style="overflow-x: auto; width: 100%">
+      <table id="bitcoinDepotTable" class="table table-bordered table-striped" style="table-layout: auto; white-space: nowrap">
+          <thead class="thead-dark"></thead>
+          <tbody></tbody>
+          <tfoot class="font-weight-bold"></tfoot>
+      </table>
+  </div>
+</div>
+
+<style>
+  #bitcoinDepotTable {
+    font-size: 14px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#bitcoinDepotTable th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 10;
+}
+
+#bitcoinDepotTable thead tr:first-child th {
+    top: 0;
+    background: #343a40;
+    color: white;
+}
+
+#bitcoinDepotTable thead tr:nth-child(2) th {
+    top: 38px;
+    background: #e9ecef;
+    color: #495057;
+}
+
+#bitcoinDepotTable th, #bitcoinDepotTable td {
+    padding: 8px 10px;
+    border: 1px solid #dee2e6;
+    vertical-align: middle;
+}
+
+#bitcoinDepotTable .text-center {
+    text-align: center;
+}
+
+.footer-row {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.footer-notes {
+    background-color: #e9ecef;
+    font-size: 0.85em;
+}
+
+/* Zebra striping */
+#bitcoinDepotTable tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+</style>
+<!-- <style>
+  #bitcoinDepotTable th, #bitcoinDepotTable td {
+      padding: 8px 12px;
+      text-align: center;
+  }
+  #bitcoinDepotTable .text-center {
+      text-align: center;
+  }
+  .footer-row {
+      background-color: #f8f9fa;
+      border-top: 2px solid #dee2e6;
+  }
+  .footer-notes {
+      background-color: #e9ecef;
+      font-size: 0.9em;
+  }
+</style> -->
+{% endblock %}

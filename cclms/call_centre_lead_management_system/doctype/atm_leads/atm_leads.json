@@ -86,7 +86,9 @@
   "executive_name_ps",
   "sign_by",
   "lead_owner",
-  "status"
+  "status",
+  "kpi_max",
+  "kpi_min"
  ],
  "fields": [
   {
@@ -528,6 +530,20 @@
    "fieldname": "map_preview",
    "fieldtype": "HTML",
    "label": "Google Maps Preview"
+  },
+  {
+   "fetch_from": "executive_name.kpi_maximum",
+   "fieldname": "kpi_max",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "KPI Max"
+  },
+  {
+   "fetch_from": "executive_name.kpi_minimum",
+   "fieldname": "kpi_min",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "KPI Min"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -541,7 +557,7 @@
    "link_fieldname": "atm_leads"
   }
  ],
- "modified": "2025-08-01 07:00:15.715832",
+ "modified": "2025-08-05 10:33:47.948075",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",
