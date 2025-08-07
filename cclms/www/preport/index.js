@@ -1,4 +1,8 @@
 frappe.ready(function() {
+    if (frappe.session.user === "Guest") {
+        frappe.msgprint("Please login to view this report");
+        return;
+    }
     frappe.call({
         method: "cclms.api.bitcoin_depot_report.get_bitcoin_depot_report",
         callback: function(response) {
@@ -143,8 +147,12 @@ frappe.ready(function() {
             applyConditionalFormatting();
         },
         error: function(error) {
-            console.error("Error loading report:", error);
-            frappe.msgprint("Error loading data. Please try again.");
+            if (error.status === 403) {
+                frappe.msgprint("Authentication failed. Please login.");
+            } else {
+                console.error("Error loading report:", error);
+                frappe.msgprint("Error loading data. Please try again.");
+            }
         }
     });
 
