@@ -61,7 +61,9 @@
   {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "Email"
+   "in_list_view": 1,
+   "label": "Email",
+   "reqd": 1
   },
   {
    "fieldname": "company",
@@ -184,7 +186,7 @@
   {
    "group": "Track",
    "link_doctype": "Employee",
-   "link_fieldname": "custom_employee_full_name"
+   "link_fieldname": "employee_name"
   },
   {
    "group": "Track",
@@ -196,7 +198,7 @@
    "link_fieldname": "employee"
   }
  ],
- "modified": "2025-08-05 06:37:59.549243",
+ "modified": "2025-08-26 06:39:19.846914",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
