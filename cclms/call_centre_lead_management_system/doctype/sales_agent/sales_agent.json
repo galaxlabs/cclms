@@ -99,8 +99,9 @@
   },
   {
    "fieldname": "designation",
-   "fieldtype": "Data",
-   "label": "Designation"
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation"
   },
   {
    "fieldname": "phone",
@@ -161,8 +162,9 @@
   },
   {
    "fieldname": "department",
-   "fieldtype": "Data",
-   "label": "Department"
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
   },
   {
    "fieldname": "kpi_minimum",
@@ -198,7 +200,7 @@
    "link_fieldname": "employee"
   }
  ],
- "modified": "2025-08-26 12:27:48.689380",
+ "modified": "2025-08-26 12:30:37.924178",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
