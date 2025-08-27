@@ -160,17 +160,6 @@ class SalesAgent(Document):
 			add_user_permission("Branch", self.branch, self.email, ignore_permissions=True)
 		frappe.msgprint("User permissions set.")
 
-	def update_user_permissions(self):
-		"""Remove existing permissions and re-assign to reflect latest updates"""
-		# Remove old permissions
-		remove_user_permission("Sales Agent", self.name, self.email, ignore_permissions=True)
-		if self.employee:
-			remove_user_permission("Employee", self.employee, self.email, ignore_permissions=True)
-		if self.company:
-			remove_user_permission("Company", self.company, self.email, ignore_permissions=True)
-		if self.branch:
-			remove_user_permission("Branch", self.branch, self.email, ignore_permissions=True)
-
 		# Re-assign fresh
 		self.assign_user_permissions()
 		frappe.msgprint("User permissions refreshed.")
