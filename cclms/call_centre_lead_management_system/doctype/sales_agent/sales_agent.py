@@ -4,24 +4,23 @@ from frappe.permissions import (
 	add_user_permission,
 	remove_user_permission,
 )
-from frappe.utils import cstr, getdate, today, validate_email_address
+from frappe.utils import nowdate
 
 
 class SalesAgent(Document):
 	def after_insert(self):
-		# Create everything when a Sales Agent is first inserted
+		# Create or link user + employee on first insert
 		self.create_self_user_and_employee()
-		self.assign_user_permissions()
+		self.update_user_permissions()
 
 	def on_update(self):
-		# Always sync user, employee and permissions on update
+		# Sync data + permissions on update
 		self.sync_user()
+		self.ensure_employee()
 		self.sync_employee()
 		self.update_user_permissions()
 
-	# -----------------------
-	# USER & EMPLOYEE CREATION
-	# -----------------------
+	# ---------------- USER LOGIC ----------------
 	def create_self_user_and_employee(self):
 		if not self.email:
 			frappe.throw("Email is required to create a user.")
@@ -44,64 +43,20 @@ class SalesAgent(Document):
 		else:
 			frappe.msgprint(f"User already exists: {self.email}")
 
-		# --- Assign Role Profile ---
+		# Assign Role Profile
 		role_profile = self.get_role_profile_for_branch()
 		if role_profile:
 			user.role_profile_name = role_profile
 			frappe.msgprint(f"Assigned Role Profile: {role_profile}")
-		else:
-			frappe.msgprint("No matching Role Profile found for the selected branch.")
 
-		# --- Static Module Profile ---
+		# Assign Module Profile
 		user.module_profile = "Sales Executive"
 		user.save(ignore_permissions=True)
 		frappe.msgprint("Assigned Module Profile: Sales Executive")
 
-		# --- Create Employee if not linked ---
-		if not self.employee:
-			full_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
+		# Ensure Employee
+		self.ensure_employee()
 
-			existing_employee = (
-				frappe.db.get_value("Employee", {"user_id": self.email}, "name")
-				or frappe.db.get_value("Employee", {"employee_name": full_name}, "name")
-				or frappe.db.get_value("Employee", {"custom_pseudo_name": self.agent_name}, "name")
-			)
-
-			if existing_employee:
-				self.db_set("employee", existing_employee)
-				frappe.msgprint(f"Existing Employee linked: {existing_employee}")
-			else:
-				employee = frappe.get_doc({
-					"doctype": "Employee",
-					"employee_name": full_name,
-					"first_name": self.first_name,
-					"last_name": self.last_name,
-					"user_id": self.email,
-					"company": self.company,
-					"gender": self.gender,
-					"date_of_birth": self.date_off_berth,
-					"date_of_joining": self.join_date,
-					"cell_number": self.phone,
-					"designation": self.designation,
-					"department": self.department,
-					"branch": self.branch,
-					# --- custom fields ---
-					"custom_employee_id": self.id,
-					"custom_father_name": self.father_name,
-					"current_address": self.address,
-					"passport_number": self.nic,
-					"custom_pseudo_name": self.agent_name,
-				})
-				employee.insert(ignore_permissions=True)
-
-				self.db_set("employee", employee.name)
-				frappe.msgprint(f"Employee created and linked: {employee.name}")
-		else:
-			frappe.msgprint(f"Sales Agent already linked to Employee: {self.employee}")
-
-	# -----------------------
-	# SYNC LOGIC
-	# -----------------------
 	def sync_user(self):
 		if not frappe.db.exists("User", self.email):
 			frappe.msgprint("User does not exist to sync.")
@@ -116,6 +71,52 @@ class SalesAgent(Document):
 		user.save(ignore_permissions=True)
 		frappe.msgprint("User updated with latest Sales Agent data.")
 
+	# ---------------- EMPLOYEE LOGIC ----------------
+	def ensure_employee(self):
+		"""Ensure Sales Agent is linked to a valid Employee"""
+
+		emp_id = None
+
+		# Case 1: already linked to Employee ID (EMP-xxxx)
+		if self.employee and frappe.db.exists("Employee", self.employee):
+			emp_id = self.employee
+
+		# Case 2: try to match by pseudo name or email
+		if not emp_id:
+			emp_id = frappe.db.get_value("Employee", {"custom_pseudo_name": self.agent_name}, "name") \
+				or frappe.db.get_value("Employee", {"user_id": self.email}, "name")
+
+		# Case 3: Create new employee if still not found
+		if not emp_id:
+			employee = frappe.get_doc({
+				"doctype": "Employee",
+				"employee_name": self.custom_pseudo_name or self.agent_name,
+				"first_name": self.first_name,
+				"last_name": self.last_name,
+				"user_id": self.email,
+				"company": self.company,
+				"gender": self.gender,
+				"date_of_birth": self.date_off_berth,
+				"date_of_joining": self.join_date or nowdate(),
+				"cell_number": self.phone,
+				"designation": self.designation,
+				"department": self.department,
+				"custom_employee_id": self.id,
+				"custom_father_name": self.father_name,
+				"current_address": self.address,
+				"passport_number": self.nic,
+				"custom_pseudo_name": self.agent_name,
+				"branch": self.branch
+			})
+			employee.insert(ignore_permissions=True)
+			emp_id = employee.name
+			frappe.msgprint(f"Employee created and linked: {emp_id}")
+
+		# Link back to Sales Agent
+		if emp_id:
+			self.db_set("employee", emp_id)
+			frappe.msgprint(f"Sales Agent linked to Employee: {emp_id}")
+
 	def sync_employee(self):
 		if not self.employee:
 			frappe.msgprint("No linked employee to update.")
@@ -127,7 +128,7 @@ class SalesAgent(Document):
 
 		employee = frappe.get_doc("Employee", self.employee)
 		employee.custom_pseudo_name = self.agent_name
-		employee.employee_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
+		employee.employee_name = self.custom_pseudo_name or self.agent_name
 		employee.first_name = self.first_name
 		employee.last_name = self.last_name
 		employee.company = self.company
@@ -146,42 +147,32 @@ class SalesAgent(Document):
 		employee.save(ignore_permissions=True)
 		frappe.msgprint("Employee updated with latest Sales Agent data.")
 
-	# -----------------------
-	# PERMISSIONS LOGIC
-	# -----------------------
-	def assign_user_permissions(self):
-		"""Assign fresh permissions when Sales Agent is first created"""
-		add_user_permission("Sales Agent", self.name, self.email, ignore_permissions=True)
-		if self.employee:
-			add_user_permission("Employee", self.employee, self.email, ignore_permissions=True)
-		if self.company:
-			add_user_permission("Company", self.company, self.email, ignore_permissions=True)
-		if self.branch:
-			add_user_permission("Branch", self.branch, self.email, ignore_permissions=True)
-		frappe.msgprint("User permissions set.")
-
+	# ---------------- PERMISSIONS ----------------
 	def update_user_permissions(self):
-		"""Remove existing permissions and re-assign to reflect latest updates"""
-		# Remove old permissions
-		remove_user_permission("Sales Agent", self.name, self.email, ignore_permissions=True)
+		# Clean old permissions (updated for Frappe v15 signature)
+		remove_user_permission("Sales Agent", self.name, self.email)
 		if self.employee:
-			remove_user_permission("Employee", self.employee, self.email, ignore_permissions=True)
+			remove_user_permission("Employee", self.employee, self.email)
 		if self.company:
-			remove_user_permission("Company", self.company, self.email, ignore_permissions=True)
+			remove_user_permission("Company", self.company, self.email)
 		if self.branch:
-			remove_user_permission("Branch", self.branch, self.email, ignore_permissions=True)
+			remove_user_permission("Branch", self.branch, self.email)
 
-		# Re-assign fresh
-		self.assign_user_permissions()
-		frappe.msgprint("User permissions refreshed.")
+		# Re-add permissions
+		add_user_permission("Sales Agent", self.name, self.email)
+		if self.employee:
+			add_user_permission("Employee", self.employee, self.email)
+		if self.company:
+			add_user_permission("Company", self.company, self.email)
+		if self.branch:
+			add_user_permission("Branch", self.branch, self.email)
 
-	# -----------------------
-	# BRANCH → ROLE PROFILE MAP
-	# -----------------------
+		frappe.msgprint("User permissions updated.")
+
+	# ---------------- HELPER ----------------
 	def get_role_profile_for_branch(self):
 		if not self.branch:
 			return None
-
 		branch_map = {
 			"Karachi": "Karachi Team",
 			"Lahore": "Lahore Team",
