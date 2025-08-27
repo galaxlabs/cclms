@@ -134,6 +134,8 @@ class SalesAgent(Document):
     def assign_user_permissions(self):
         if not self.email:
             return
+
+		add_user_permission("User", self.email, self.email)
         add_user_permission("Sales Agent", self.name, self.email)
         if self.employee:
             add_user_permission("Employee", self.employee, self.email)
@@ -149,6 +151,7 @@ class SalesAgent(Document):
     def remove_user_permissions(self):
         if not self.email:
             return
+		remove_user_permission("User", self.email, self.email)
         remove_user_permission("Sales Agent", self.name, self.email)
         if self.employee:
             remove_user_permission("Employee", self.employee, self.email)

@@ -50,7 +50,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-21 08:36:58.064524",
+ "modified": "2025-08-27 12:33:57.030300",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Agent Activity",
@@ -66,6 +66,17 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Agent",
    "share": 1,
    "write": 1
   }

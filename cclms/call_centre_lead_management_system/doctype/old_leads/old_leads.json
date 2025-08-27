@@ -357,7 +357,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-07 13:43:47.265733",
+ "modified": "2025-08-27 12:35:02.011164",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Old Leads",
@@ -424,6 +424,17 @@
    "report": 1,
    "role": "Data Executive",
    "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Agent",
    "share": 1,
    "write": 1
   }
