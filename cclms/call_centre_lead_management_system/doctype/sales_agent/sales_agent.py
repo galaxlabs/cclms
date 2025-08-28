@@ -131,19 +131,32 @@ class SalesAgent(Document):
     # -----------------------------
     # Assign Permissions
     # -----------------------------
+        # -----------------------------
+    # Assign Permissions
+    # -----------------------------
     def assign_user_permissions(self):
         if not self.email:
             return
 
-		add_user_permission("User", self.email, self.email)
+        # --- Give access to themselves as User ---
+        add_user_permission("User", self.email, self.email)
+
+        # --- Sales Agent Permission ---
         add_user_permission("Sales Agent", self.name, self.email)
+
+        # --- Employee Permission ---
         if self.employee:
             add_user_permission("Employee", self.employee, self.email)
+
+        # --- Company Permission ---
         if self.company:
             add_user_permission("Company", self.company, self.email)
+
+        # --- Branch Permission ---
         if self.branch:
             add_user_permission("Branch", self.branch, self.email)
-        frappe.msgprint("User permissions set.")
+
+        frappe.msgprint(f"User permissions set for {self.email}.")
 
     # -----------------------------
     # Remove Permissions on Delete
@@ -151,15 +164,24 @@ class SalesAgent(Document):
     def remove_user_permissions(self):
         if not self.email:
             return
-		remove_user_permission("User", self.email, self.email)
+
+        # --- Remove self User Permission ---
+        remove_user_permission("User", self.email, self.email)
+
+        # --- Remove related permissions ---
         remove_user_permission("Sales Agent", self.name, self.email)
+
         if self.employee:
             remove_user_permission("Employee", self.employee, self.email)
+
         if self.company:
             remove_user_permission("Company", self.company, self.email)
+
         if self.branch:
             remove_user_permission("Branch", self.branch, self.email)
-        frappe.msgprint("User permissions removed.")
+
+        frappe.msgprint(f"User permissions removed for {self.email}.")
+
 
     # -----------------------------
     # Role Profile Mapping
