@@ -196,11 +196,17 @@
    "link_fieldname": "executive_name"
   },
   {
+   "group": "Track",
    "link_doctype": "Signs",
    "link_fieldname": "employee"
+  },
+  {
+   "group": "Track",
+   "link_doctype": "User",
+   "link_fieldname": "email"
   }
  ],
- "modified": "2025-08-27 08:10:57.359709",
+ "modified": "2025-08-29 09:03:47.478710",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",

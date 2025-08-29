@@ -12,12 +12,12 @@ app_license = "mit"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/cclms/css/cclms.css"
 # app_include_js = "/assets/cclms/js/cclms.js"
-app_include_css = [
+# app_include_css = [
 
-]
+# ]
 
-app_include_js = [
-]
+# app_include_js = [
+# ]
 
 
 # include js, css files in header of web template
