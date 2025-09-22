@@ -1,32 +1,19 @@
 {
  "charts": [],
-<<<<<<< HEAD
- "content": "[{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ca6wUKYxT_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Import Leads\",\"col\":3}},{\"id\":\"l0ErdydTkD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads Submissions\",\"col\":3}},{\"id\":\"5wIcBEbF78\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Today Leads\",\"col\":3}},{\"id\":\"ZbKh_I8teU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Companies\",\"col\":3}},{\"id\":\"r8bNFeHfTy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"j89ak_q9vG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance Tool\",\"col\":3}},{\"id\":\"z0yFN9X7h5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Check In\",\"col\":3}},{\"id\":\"jODKFdRKEY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Application\",\"col\":3}},{\"id\":\"UsdBBNkd-M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Call Record\",\"col\":3}},{\"id\":\"RH5nobRF7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Old Data\",\"col\":3}},{\"id\":\"z4KaRjd6n7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Submit Leave\",\"col\":3}},{\"id\":\"uhm4TTyDxf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"yp1pBTF5-z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Profile\",\"col\":3}},{\"id\":\"aBjdlR2dtS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Brake Record\",\"col\":3}},{\"id\":\"u_aDM1nBUG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads By Status</b></span>\",\"col\":12}},{\"id\":\"eA3CtedX_G\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Approved Leads\",\"col\":3}},{\"id\":\"g8Z3_A7UR2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pending Leads\",\"col\":3}},{\"id\":\"Ci8ZRIQ5YT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Signed Leads\",\"col\":3}},{\"id\":\"OJx3Rh3uWQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Installed Leads\",\"col\":3}},{\"id\":\"6XNrSFzXjp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Pending</b></span>\",\"col\":12}},{\"id\":\"9PzejdGyv_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bitcoin Depot\",\"col\":3}},{\"id\":\"VF4xrbzrAI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Local Coin\",\"col\":3}},{\"id\":\"QRpoOYwbEY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Un Bank \",\"col\":3}},{\"id\":\"YqWfeZijR7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bit Stop\",\"col\":3}},{\"id\":\"e4KrOecITl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Budget Coinz\",\"col\":3}},{\"id\":\"LkKL6FLoN6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coin Works\",\"col\":3}},{\"id\":\"2sO7iHqeLe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Crypto Base\",\"col\":3}},{\"id\":\"Q6NhUs6iNx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Rocket Coin\",\"col\":3}},{\"id\":\"9JPBOzE-pS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Instant Coin Bank\",\"col\":3}},{\"id\":\"TaUwrFpmTH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lucky Unicorn\",\"col\":3}},{\"id\":\"cHeN724Qzl\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QlSuGQIZhe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tools</b></span>\",\"col\":12}},{\"id\":\"3HNtjJSlb7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calendar\",\"col\":3}},{\"id\":\"tqeM5-Kdge\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coming Events \",\"col\":3}},{\"id\":\"6brBBEBmRh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Notes \",\"col\":3}},{\"id\":\"ixZdx7O6Gp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"ToDo\",\"col\":3}}]",
- "creation": "2024-07-17 09:32:26.293533",
-=======
- "content": "[{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ca6wUKYxT_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Import Leads\",\"col\":3}},{\"id\":\"l0ErdydTkD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads Submissions\",\"col\":3}},{\"id\":\"5wIcBEbF78\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Today Leads\",\"col\":3}},{\"id\":\"ZbKh_I8teU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Companies\",\"col\":3}},{\"id\":\"r8bNFeHfTy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"j89ak_q9vG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance Tool\",\"col\":3}},{\"id\":\"z0yFN9X7h5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Check In\",\"col\":3}},{\"id\":\"jODKFdRKEY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Application\",\"col\":3}},{\"id\":\"UsdBBNkd-M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Call Record\",\"col\":3}},{\"id\":\"RH5nobRF7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Old Data\",\"col\":3}},{\"id\":\"z4KaRjd6n7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Submit Leave\",\"col\":3}},{\"id\":\"uhm4TTyDxf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"yp1pBTF5-z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Profile\",\"col\":3}},{\"id\":\"aBjdlR2dtS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Brake Record\",\"col\":3}},{\"id\":\"u_aDM1nBUG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads By Status</b></span>\",\"col\":12}},{\"id\":\"eA3CtedX_G\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Approved Leads\",\"col\":3}},{\"id\":\"g8Z3_A7UR2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pending Leads\",\"col\":3}},{\"id\":\"Ci8ZRIQ5YT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Signed Leads\",\"col\":3}},{\"id\":\"OJx3Rh3uWQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Installed Leads\",\"col\":3}},{\"id\":\"6XNrSFzXjp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Pending</b></span>\",\"col\":12}},{\"id\":\"YqWfeZijR7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bit Stop\",\"col\":3}},{\"id\":\"e4KrOecITl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Budget Coinz\",\"col\":3}},{\"id\":\"LkKL6FLoN6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coin Works\",\"col\":3}},{\"id\":\"2sO7iHqeLe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Crypto Base\",\"col\":3}},{\"id\":\"9JPBOzE-pS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Instant Coin Bank\",\"col\":3}},{\"id\":\"TaUwrFpmTH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lucky Unicorn\",\"col\":3}},{\"id\":\"cHeN724Qzl\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QlSuGQIZhe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tools</b></span>\",\"col\":12}},{\"id\":\"3HNtjJSlb7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calendar\",\"col\":3}},{\"id\":\"tqeM5-Kdge\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coming Events \",\"col\":3}},{\"id\":\"6brBBEBmRh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Notes \",\"col\":3}},{\"id\":\"ixZdx7O6Gp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"ToDo\",\"col\":3}}]",
+ "content": "[{\"id\":\"C4tyl1It4y\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads\",\"col\":3}},{\"id\":\"ca6wUKYxT_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Import Leads\",\"col\":3}},{\"id\":\"l0ErdydTkD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leads Submissions\",\"col\":3}},{\"id\":\"5wIcBEbF78\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Today Leads\",\"col\":3}},{\"id\":\"ZbKh_I8teU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Companies\",\"col\":3}},{\"id\":\"r8bNFeHfTy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"j89ak_q9vG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance Tool\",\"col\":3}},{\"id\":\"z0yFN9X7h5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Check In\",\"col\":3}},{\"id\":\"jODKFdRKEY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Application\",\"col\":3}},{\"id\":\"RH5nobRF7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Old Data\",\"col\":3}},{\"id\":\"z4KaRjd6n7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Submit Leave\",\"col\":3}},{\"id\":\"uhm4TTyDxf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"yp1pBTF5-z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Profile\",\"col\":3}},{\"id\":\"u_aDM1nBUG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Leads By Status</b></span>\",\"col\":12}},{\"id\":\"eA3CtedX_G\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Approved Leads\",\"col\":3}},{\"id\":\"g8Z3_A7UR2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pending Leads\",\"col\":3}},{\"id\":\"Ci8ZRIQ5YT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Signed Leads\",\"col\":3}},{\"id\":\"OJx3Rh3uWQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Installed Leads\",\"col\":3}},{\"id\":\"6XNrSFzXjp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Pending</b></span>\",\"col\":12}},{\"id\":\"YqWfeZijR7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bit Stop\",\"col\":3}},{\"id\":\"e4KrOecITl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Budget Coinz\",\"col\":3}},{\"id\":\"LkKL6FLoN6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coin Works\",\"col\":3}},{\"id\":\"2sO7iHqeLe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Crypto Base\",\"col\":3}},{\"id\":\"9JPBOzE-pS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Instant Coin Bank\",\"col\":3}},{\"id\":\"TaUwrFpmTH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lucky Unicorn\",\"col\":3}},{\"id\":\"cHeN724Qzl\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QlSuGQIZhe\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Tools</b></span>\",\"col\":12}},{\"id\":\"3HNtjJSlb7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calendar\",\"col\":3}},{\"id\":\"tqeM5-Kdge\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Coming Events \",\"col\":3}},{\"id\":\"6brBBEBmRh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Notes \",\"col\":3}},{\"id\":\"ixZdx7O6Gp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"ToDo\",\"col\":3}}]",
  "creation": "2025-08-28 02:57:16.126004",
->>>>>>> 160bb4f (work space)
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
  "icon": "gantt",
-<<<<<<< HEAD
- "idx": 228,
-=======
  "idx": 0,
->>>>>>> 160bb4f (work space)
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "PW",
  "links": [],
-<<<<<<< HEAD
- "modified": "2025-09-21 18:29:17.196625",
-=======
- "modified": "2025-09-22 08:06:47.042898",
->>>>>>> 160bb4f (work space)
+ "modified": "2025-09-22 09:29:23.171089",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
@@ -81,27 +68,11 @@
    "type": "DocType"
   },
   {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Brake Record",
-   "link_to": "Agent Activity",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
    "color": "Green",
    "doc_view": "List",
    "label": "Installed Leads",
    "link_to": "ATM Leads",
    "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Installed\"],false],[\"ATM Leads\",\"install_date\",\">\",\"2025-08-15\",false]]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Lucky Unicorn",
-   "link_to": "ATM Leads",
-   "stats_filter": "[[\"ATM Leads\",\"company\",\"=\",\"Lucky Unicorn\",false]]",
    "type": "DocType"
   },
   {
