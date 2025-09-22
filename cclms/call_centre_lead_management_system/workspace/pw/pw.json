@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "PW",
  "links": [],
- "modified": "2025-02-13 05:37:34.682543",
+ "modified": "2025-09-12 18:13:28.170499",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW",
@@ -131,14 +131,6 @@
    "label": "Pending Leads",
    "link_to": "ATM Leads",
    "stats_filter": "[[\"ATM Leads\",\"workflow_state\",\"in\",[\"Pending\"],false]]",
-   "type": "DocType"
-  },
-  {
-   "color": "Cyan",
-   "doc_view": "List",
-   "label": "Old Data",
-   "link_to": "Old Leads",
-   "stats_filter": "[]",
    "type": "DocType"
   },
   {

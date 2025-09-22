@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class Incident(Document):
+class ATMCriteria(Document):
 	pass

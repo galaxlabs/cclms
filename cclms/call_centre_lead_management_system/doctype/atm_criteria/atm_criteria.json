@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-09-12 17:22:28.725797",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "min_population",
+  "min_margin",
+  "min_density",
+  "max_distance",
+  "column_break_bwml",
+  "max_removal_rate",
+  "max_margin",
+  "max_density",
+  "require_installed"
+ ],
+ "fields": [
+  {
+   "fieldname": "min_population",
+   "fieldtype": "Int",
+   "label": "Min Population"
+  },
+  {
+   "fieldname": "min_margin",
+   "fieldtype": "Float",
+   "label": "Min Margin"
+  },
+  {
+   "fieldname": "min_density",
+   "fieldtype": "Int",
+   "label": "Min Density"
+  },
+  {
+   "fieldname": "max_removal_rate",
+   "fieldtype": "Float",
+   "label": "Max Removal Rate"
+  },
+  {
+   "default": "0",
+   "fieldname": "require_installed",
+   "fieldtype": "Check",
+   "label": "Require Installed"
+  },
+  {
+   "fieldname": "max_distance",
+   "fieldtype": "Float",
+   "label": "Max Distance"
+  },
+  {
+   "fieldname": "column_break_bwml",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "max_margin",
+   "fieldtype": "Float",
+   "label": "Max Margin"
+  },
+  {
+   "fieldname": "max_density",
+   "fieldtype": "Int",
+   "label": "Max Density"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-09-12 17:29:40.957520",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "ATM Criteria",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
