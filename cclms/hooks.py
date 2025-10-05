@@ -16,8 +16,9 @@ app_license = "mit"
 app_include_js = ["assets/cclms/js/workflow_dashboard.js"]
 # ]
 
-# app_include_js = [
-# ]
+app_include_js = [
+"/assets/cclms/js/chart.umd.js"
+ ]
 
 
 # include js, css files in header of web template
