@@ -1,17 +1,8 @@
-// Workflow Dashboard — single-file page script
-// Place at: cclms/call_centre_lead_management_system/page/workflow_dashboard/workflow_dashboard.js
-// If your Page name is "workflow-dashboard" (hyphen), use: frappe.pages["workflow-dashboard"] instead.
+// Workflow Dashboard — modern UI + KPI conversions (using post_date)
 frappe.pages["workflow_dashboard"].on_page_load = function (wrapper) {
   // -------- CONFIG --------
-  const DATE_FIELD = "sign_date"; // <-- analysis date field
-  const SHOW_STATES_IN_ORDER = [
-    "Submitted",
-    "Approved",
-    "Rejected",
-    "Agreement Sent",
-    "Signed",
-    "Installed",
-  ]; // Draft intentionally excluded
+  const DATE_FIELD = "post_date"; // <-- analyze by post_date
+  const SHOW_STATES = ["Submitted", "Approved", "Rejected", "Agreement Sent", "Signed", "Installed"]; // no "Draft"
 
   // -------- PAGE SHELL --------
   const page = frappe.ui.make_app_page({
@@ -21,42 +12,74 @@ frappe.pages["workflow_dashboard"].on_page_load = function (wrapper) {
   });
 
   page.body.html(`
-    <div id="wd-root" class="p-4">
-      <div class="flex items-end gap-3 my-4" id="wd-filters">
+    <style>
+      .wd-panel { padding: 1rem 1rem 0.5rem; }
+      .wd-row { display:flex; flex-wrap:wrap; align-items:end; gap:.75rem; }
+      .wd-input, .wd-btn {
+        height: 40px; border-radius: 12px;
+      }
+      .wd-input {
+        border:1px solid var(--border-color, #e5e7eb);
+        padding: 0 .75rem; min-width: 190px;
+      }
+      .wd-btn {
+        display:inline-flex; align-items:center; gap:.5rem;
+        padding: 0 .9rem;
+      }
+      .wd-grid { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:.75rem; }
+      @media (min-width: 768px){ .wd-grid{ grid-template-columns: repeat(4,minmax(0,1fr)); } }
+      .wd-card { border-radius: 14px; box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,.06)); padding: 1rem; }
+      .wd-muted { color: var(--text-muted, #6b7280); font-size: .8rem; }
+      .wd-big { font-size: 1.6rem; font-weight: 600; }
+      .wd-kpi { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:.75rem; }
+      @media (max-width: 700px){ .wd-kpi{ grid-template-columns: repeat(1,minmax(0,1fr)); } }
+      .wd-ratio { font-size:.85rem; color: var(--text-muted, #6b7280); }
+      .wd-link { text-decoration:none }
+    </style>
+
+    <div id="wd-root" class="wd-panel">
+      <div class="wd-row" id="wd-filters">
         <div>
-          <label class="text-xs text-muted">Start</label><br/>
-          <input type="date" id="start_date" class="input input-xs" />
+          <label class="wd-muted">Start</label><br/>
+          <input type="date" id="start_date" class="wd-input" />
         </div>
         <div>
-          <label class="text-xs text-muted">End</label><br/>
-          <input type="date" id="end_date" class="input input-xs" />
+          <label class="wd-muted">End</label><br/>
+          <input type="date" id="end_date" class="wd-input" />
         </div>
         <div>
-          <label class="text-xs text-muted">Company</label><br/>
-          <input type="text" id="company" class="input input-xs" placeholder="Company" />
+          <label class="wd-muted">Company</label><br/>
+          <input type="text" id="company" class="wd-input" placeholder="Company" />
         </div>
         <div>
-          <label class="text-xs text-muted">Executive</label><br/>
-          <input type="text" id="executive_name" class="input input-xs" placeholder="Agent pseudo name" />
+          <label class="wd-muted">Executive</label><br/>
+          <input type="text" id="executive_name" class="wd-input" placeholder="Agent name" />
         </div>
-        <button id="apply" class="btn btn-primary btn-sm">Apply</button>
-        <button id="reset" class="btn btn-default btn-sm">Reset</button>
+        <button id="apply" class="btn btn-primary wd-btn">Apply</button>
+        <button id="reset" class="btn btn-default wd-btn">Reset</button>
+        <a class="btn btn-secondary wd-btn wd-link" href="/preport" target="_blank" rel="noopener">Agent Performance (Web)</a>
       </div>
 
-      <div id="cards" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+      <div class="wd-grid" id="cards"></div>
 
-      <h3 class="mt-6">Leaderboard (Signed)</h3>
-      <div id="leaderboard" class="mt-2"></div>
+      <h3 class="mt-6">Conversions</h3>
+      <div id="kpis" class="wd-kpi mt-2">
+        <div class="wd-card"><div class="wd-muted">Total Leads (by Post Date)</div><div id="kpi_total" class="wd-big">—</div></div>
+        <div class="wd-card"><div class="wd-muted">Rejected vs Total</div><div class="wd-big"><span id="kpi_rej">—</span> <span class="wd-ratio" id="kpi_rej_pct"></span></div></div>
+        <div class="wd-card"><div class="wd-muted">Approved vs Total</div><div class="wd-big"><span id="kpi_appr">—</span> <span class="wd-ratio" id="kpi_appr_pct"></span></div></div>
+        <div class="wd-card"><div class="wd-muted">Agreement Sent vs Approved</div><div class="wd-big"><span id="kpi_agrsent">—</span> <span class="wd-ratio" id="kpi_agrsent_pct"></span></div></div>
+        <div class="wd-card"><div class="wd-muted">Signed vs Total</div><div class="wd-big"><span id="kpi_sign">—</span> <span class="wd-ratio" id="kpi_sign_total_pct"></span></div></div>
+        <div class="wd-card"><div class="wd-muted">Signed vs Approved</div><div class="wd-big"><span id="kpi_sign2">—</span> <span class="wd-ratio" id="kpi_sign_appr_pct"></span></div></div>
+        <div class="wd-card"><div class="wd-muted">Signed vs Agreement Sent</div><div class="wd-big"><span id="kpi_sign3">—</span> <span class="wd-ratio" id="kpi_sign_agrsent_pct"></span></div></div>
+      </div>
 
       <h3 class="mt-6">Monthly Trend (Signed)</h3>
-      <div class="mt-2">
-        <canvas id="trend_chart" height="140"></canvas>
-      </div>
+      <div class="mt-2"><canvas id="trend_chart" height="160"></canvas></div>
     </div>
   `);
 
   // -------- STATE --------
-  const state = { chart: null };
+  const state = { chart: null, lastSummary: null };
 
   // -------- HELPERS --------
   function todayISO(d = new Date()) {
@@ -74,159 +97,106 @@ frappe.pages["workflow_dashboard"].on_page_load = function (wrapper) {
     if ($s && !$s.value) $s.value = firstOfMonthISO();
     if ($e && !$e.value) $e.value = todayISO();
   }
-  function val(id) {
-    return (document.getElementById(id)?.value || "").trim() || null;
-  }
-  function getFilters() {
-    return {
-      start_date: val("start_date"),
-      end_date: val("end_date"),
-      company: val("company"),
-      executive_name: val("executive_name"),
-      date_field: DATE_FIELD,
-    };
-  }
+  const v = (id) => (document.getElementById(id)?.value || "").trim() || null;
+  const getFilters = () => ({
+    start_date: v("start_date"),
+    end_date: v("end_date"),
+    company: v("company"),
+    executive_name: v("executive_name"),
+    date_field: DATE_FIELD,
+  });
   async function call(method, args = {}) {
     try {
-      const res = await frappe.call({ method, args, freeze: false });
-      return res?.message;
+      const r = await frappe.call({ method, args });
+      return r?.message;
     } catch (e) {
-      console.error("[Workflow Dashboard] API error:", method, e);
-      frappe.msgprint({
-        title: "API Error",
-        message: `Failed calling <b>${frappe.utils.escape_html(method)}</b>. See console for details.`,
-        indicator: "red",
-      });
+      const rj = e?.xhr?.responseJSON || {};
+      const msg = rj.exception || rj.message || "Server error";
+      console.error("[Workflow Dashboard] API error:", method, rj);
+      frappe.msgprint({ title: "API Error", message: `<b>${frappe.utils.escape_html(method)}</b><br>${msg}`, indicator: "red" });
       return null;
     }
   }
-  function skeleton() {
-    const cards = document.getElementById("cards");
-    if (cards) {
-      cards.innerHTML = Array.from({ length: 6 })
-        .map(
-          () => `
-          <div class="rounded-xl shadow p-4">
-            <div class="text-sm text-muted">Loading…</div>
-            <div class="text-2xl font-semibold">—</div>
-          </div>`
-        )
-        .join("");
-    }
-    const lb = document.getElementById("leaderboard");
-    if (lb) lb.innerHTML = `<div class="text-sm text-muted">Loading…</div>`;
-    const canvas = document.getElementById("trend_chart");
-    if (canvas && canvas.getContext) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-    }
+  function pct(num, den) {
+    if (!den || den <= 0) return "0%";
+    return `${Math.round((num / den) * 100)}%`;
   }
 
   // -------- RENDERERS --------
   async function renderCards() {
-    const args = getFilters();
-    const data = await call("cclms.api.reports.workflow_summary.get_workflow_summary", args);
+    const data = await call("cclms.api.reports.workflow_summary.get_workflow_summary", getFilters());
     const el = document.getElementById("cards");
     if (!el) return;
 
     if (!data || !data.summary) {
-      el.innerHTML = `<div class="text-sm text-muted">No data.</div>`;
+      el.innerHTML = `<div class="wd-muted">No data.</div>`;
       return;
     }
 
-    // Remove Drafts and compute total without Draft
+    // Remove Drafts and order known states
     const summary = { ...data.summary };
-    delete summary["Draft"]; // <- hide "Draft" everywhere
+    delete summary["Draft"];
+    state.lastSummary = summary;
 
-    // Create cards in our desired order; include any unexpected states at the end
     const ordered = [];
-    SHOW_STATES_IN_ORDER.forEach((s) => {
-      if (summary[s] != null) ordered.push({ state: s, total: summary[s] });
-    });
-    Object.keys(summary).forEach((s) => {
-      if (!SHOW_STATES_IN_ORDER.includes(s)) {
-        ordered.push({ state: s, total: summary[s] });
-      }
-    });
+    SHOW_STATES.forEach((s) => { if (summary[s] != null) ordered.push({ state: s, total: summary[s] }); });
+    Object.keys(summary).forEach((s) => { if (!SHOW_STATES.includes(s)) ordered.push({ state: s, total: summary[s] }); });
 
-    // Compute total without drafts
-    const totalNoDraft = ordered.reduce((a, b) => a + (parseInt(b.total, 10) || 0), 0);
+    const total = ordered.reduce((a, b) => a + (parseInt(b.total, 10) || 0), 0);
 
-    el.innerHTML = "";
-    ordered.forEach((row) => {
-      const val = parseInt(row.total, 10) || 0;
-      el.innerHTML += `
-        <div class="rounded-xl shadow p-4">
-          <div class="text-sm text-gray-500">${frappe.utils.escape_html(row.state)}</div>
-          <div class="text-2xl font-semibold">${val}</div>
-        </div>`;
-    });
-    el.innerHTML += `
-      <div class="rounded-xl shadow p-4">
-        <div class="text-sm text-gray-500">Total (No Draft)</div>
-        <div class="text-2xl font-semibold">${totalNoDraft}</div>
+    // Cards
+    el.innerHTML = ordered.map((r) => `
+      <div class="wd-card">
+        <div class="wd-muted">${frappe.utils.escape_html(r.state)}</div>
+        <div class="wd-big">${r.total}</div>
+      </div>
+    `).join("") + `
+      <div class="wd-card">
+        <div class="wd-muted">Total (No Draft)</div>
+        <div class="wd-big">${total}</div>
       </div>`;
-  }
 
-  async function renderLeaderboard() {
-    const args = getFilters();
-    const data = await call("cclms.api.reports.agent_performance.get_agent_performance", {
-      ...args,
-      state: "Signed",
-    });
-    const el = document.getElementById("leaderboard");
-    if (!el) return;
+    // KPIs (by post_date)
+    const rej = summary["Rejected"] || 0;
+    const appr = summary["Approved"] || 0;
+    const agr = summary["Agreement Sent"] || 0;
+    const sign = summary["Signed"] || 0;
 
-    const rows = (data && data.rows) || [];
-    if (!rows.length) {
-      el.innerHTML = `<div class="text-sm text-muted">No data for current filters.</div>`;
-      return;
-    }
+    document.getElementById("kpi_total").textContent = total;
+    document.getElementById("kpi_rej").textContent = rej;
+    document.getElementById("kpi_rej_pct").textContent = `(${pct(rej, total)})`;
 
-    el.innerHTML = `
-      <table class="w-full table-bordered">
-        <thead>
-          <tr>
-            <th class="p-2 text-left">Executive</th>
-            <th class="p-2 text-right">Signed</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows
-            .map(
-              (r) => `
-            <tr>
-              <td class="p-2">${frappe.utils.escape_html(r.executive_name || "-")}</td>
-              <td class="p-2 text-right">${r.total}</td>
-            </tr>`
-            )
-            .join("")}
-        </tbody>
-      </table>`;
+    document.getElementById("kpi_appr").textContent = appr;
+    document.getElementById("kpi_appr_pct").textContent = `(${pct(appr, total)})`;
+
+    document.getElementById("kpi_agrsent").textContent = agr;
+    document.getElementById("kpi_agrsent_pct").textContent = `(${pct(agr, Math.max(appr, 0))})`;
+
+    document.getElementById("kpi_sign").textContent = sign;
+    document.getElementById("kpi_sign_total_pct").textContent = `(${pct(sign, total)})`;
+
+    document.getElementById("kpi_sign2").textContent = sign;
+    document.getElementById("kpi_sign_appr_pct").textContent = `(${pct(sign, Math.max(appr, 0))})`;
+
+    document.getElementById("kpi_sign3").textContent = sign;
+    document.getElementById("kpi_sign_agrsent_pct").textContent = `(${pct(sign, Math.max(agr, 0))})`;
   }
 
   async function renderTrend() {
     const args = getFilters();
-    const data = await call("cclms.api.reports.timeline_trends.get_timeline_trends", {
-      ...args,
-      state: "Signed",
-      months: 6,
-    });
+    const data = await call("cclms.api.reports.timeline_trends.get_timeline_trends", { ...args, state: "Signed", months: 6 });
 
     const canvas = document.getElementById("trend_chart");
     if (!canvas) return;
 
     if (!data || !data.points || !data.points.length) {
-      canvas.outerHTML = `<div class="text-sm text-muted">No trend data for current filters.</div>`;
+      canvas.outerHTML = `<div class="wd-muted">No trend data for current filters.</div>`;
       return;
     }
 
     const labels = data.points.map((p) => p.bucket);
     const values = data.points.map((p) => p.total);
 
-    // Prefer Chart.js if present; fallback to frappe-charts; else show note
     if (window.Chart && canvas.getContext) {
       const ctx = canvas.getContext("2d");
       if (state.chart) state.chart.destroy();
@@ -237,20 +207,14 @@ frappe.pages["workflow_dashboard"].on_page_load = function (wrapper) {
       });
     } else if (window.frappe && frappe.Chart) {
       // eslint-disable-next-line no-new
-      new frappe.Chart(canvas, {
-        type: "line",
-        data: { labels, datasets: [{ name: "Signed", values }] },
-        height: 220,
-      });
+      new frappe.Chart(canvas, { type: "line", data: { labels, datasets: [{ name: "Signed", values }] }, height: 220 });
     } else {
-      canvas.outerHTML = `<div class="text-sm text-muted">Chart library not loaded — cards & table are shown.</div>`;
+      canvas.outerHTML = `<div class="wd-muted">Chart library not loaded — cards & KPIs are shown.</div>`;
     }
   }
 
   async function refreshAll() {
-    skeleton();
     await renderCards();
-    await renderLeaderboard();
     await renderTrend();
   }
 
@@ -265,12 +229,5 @@ frappe.pages["workflow_dashboard"].on_page_load = function (wrapper) {
   setDefaultDates();
   page.body.on("click", "#apply", refreshAll);
   page.body.on("click", "#reset", resetFilters);
-
-  // initial run
   refreshAll();
-};
-
-// (Optional) refresh every time the page is shown
-frappe.pages["workflow_dashboard"].on_page_show = function () {
-  // You can call refreshAll() here if you want to auto-refresh on revisit.
 };
