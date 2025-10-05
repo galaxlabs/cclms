@@ -1,0 +1,39 @@
+<div class="p-4">
+  <h2>Workflow Analytics</h2>
+
+  <!-- Filters -->
+  <div class="flex gap-3 items-end my-4">
+    <div>
+      <label>Start</label>
+      <input type="date" id="start_date" class="input" />
+    </div>
+    <div>
+      <label>End</label>
+      <input type="date" id="end_date" class="input" />
+    </div>
+    <div>
+      <label>Branch</label>
+      <input type="text" id="branch" placeholder="Lahore/Karachi" class="input" />
+    </div>
+    <div>
+      <label>Company</label>
+      <input type="text" id="company" placeholder="Bitcoin Depot" class="input" />
+    </div>
+    <div>
+      <label>Executive</label>
+      <input type="text" id="executive_name" placeholder="Agent Pseudo" class="input" />
+    </div>
+    <button id="apply" class="btn btn-primary">Apply</button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div id="cards" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+
+  <!-- Agent Leaderboard -->
+  <h3 class="mt-6">Leaderboard (Signed)</h3>
+  <div id="leaderboard"></div>
+
+  <!-- Trend -->
+  <h3 class="mt-6">Monthly Trend (Signed)</h3>
+  <canvas id="trend_chart" height="120"></canvas>
+</div>
