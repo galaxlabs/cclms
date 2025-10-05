@@ -111,7 +111,8 @@ class SalesAgent(Document):
             return
         employee = frappe.get_doc("Employee", self.employee)
         employee.custom_pseudo_name = self.agent_name
-        employee.employee_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
+        employee.first_name = self.first_name
+        employee.last_name = self.last_name
         employee.company = self.company
         employee.user_id = self.email
         employee.gender = self.gender
