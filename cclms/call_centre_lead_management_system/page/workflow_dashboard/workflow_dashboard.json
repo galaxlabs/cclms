@@ -1,0 +1,29 @@
+{
+ "content": null,
+ "creation": "2025-10-05 09:49:10.592750",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-10-05 09:49:10.592750",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "workflow-dashboard",
+ "owner": "Administrator",
+ "page_name": "workflow-dashboard",
+ "roles": [
+  {
+   "role": "Data Executive"
+  },
+  {
+   "role": "Manager"
+  },
+  {
+   "role": "Sales Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Analytics Dashboard"
+}
