@@ -1,28 +1,114 @@
 import frappe
 
-@frappe.whitelist()
-def get_timeline_trends(state="Signed", months=6, branch=None, company=None, executive_name=None):
-    conds = ["workflow_state = %(state)s"]
-    params = {"state": state}
+def _safe_date_field(df: str) -> str:
+    return df if frappe.db.has_column("ATM Leads", df) else "creation"
 
-    if branch:
-        conds.append("branch = %(branch)s")
-        params["branch"] = branch
+@frappe.whitelist()
+def get_timeline_trends(state="Signed", months=6, company=None, executive_name=None, date_field="sign_date"):
+    """
+    Monthly trend for a workflow_state, grouped on the chosen date field (default sign_date).
+    """
+    df = _safe_date_field(date_field)
+
+    conds = ["workflow_state = %s"]
+    vals = [state]
+
     if company:
-        conds.append("company = %(company)s")
-        params["company"] = company
+        conds.append("company = %s")
+        vals.append(company)
+
     if executive_name:
-        conds.append("executive_name = %(executive_name)s")
-        params["executive_name"] = executive_name
+        conds.append("executive_name = %s")
+        vals.append(executive_name)
+
+    # group by month of the chosen field (fallback to creation if null)
+    date_expr = f"COALESCE({df}, creation)"
+    where_sql = f"WHERE {' AND '.join(conds)}"
 
     sql = f"""
-        SELECT DATE_FORMAT(creation, '%%Y-%%m') AS bucket, COUNT(name) AS total
+        SELECT DATE_FORMAT({date_expr}, '%%Y-%%m') AS bucket, COUNT(name) AS total
         FROM `tabATM Leads`
-        WHERE {" AND ".join(conds)}
+        {where_sql}
         GROUP BY bucket
         ORDER BY bucket DESC
         LIMIT {int(months)}
     """
-    rows = frappe.db.sql(sql, params=params, as_dict=True)
-    rows.reverse()
+    rows = frappe.db.sql(sql, values=vals, as_dict=True)
+    rows.reverse()  # oldest → newest
+    return {"state": state, "points": rows}
+import frappe
+
+def _safe_date_field(df: str) -> str:
+    return df if frappe.db.has_column("ATM Leads", df) else "creation"
+
+@frappe.whitelist()
+def get_timeline_trends(state="Signed", months=6, company=None, executive_name=None, date_field="sign_date"):
+    """
+    Monthly trend for a workflow_state, grouped on the chosen date field (default sign_date).
+    """
+    df = _safe_date_field(date_field)
+
+    conds = ["workflow_state = %s"]
+    vals = [state]
+
+    if company:
+        conds.append("company = %s")
+        vals.append(company)
+
+    if executive_name:
+        conds.append("executive_name = %s")
+        vals.append(executive_name)
+
+    # group by month of the chosen field (fallback to creation if null)
+    date_expr = f"COALESCE({df}, creation)"
+    where_sql = f"WHERE {' AND '.join(conds)}"
+
+    sql = f"""
+        SELECT DATE_FORMAT({date_expr}, '%%Y-%%m') AS bucket, COUNT(name) AS total
+        FROM `tabATM Leads`
+        {where_sql}
+        GROUP BY bucket
+        ORDER BY bucket DESC
+        LIMIT {int(months)}
+    """
+    rows = frappe.db.sql(sql, values=vals, as_dict=True)
+    rows.reverse()  # oldest → newest
+    return {"state": state, "points": rows}
+import frappe
+
+def _safe_date_field(df: str) -> str:
+    return df if frappe.db.has_column("ATM Leads", df) else "creation"
+
+@frappe.whitelist()
+def get_timeline_trends(state="Signed", months=6, company=None, executive_name=None, date_field="sign_date"):
+    """
+    Monthly trend for a workflow_state, grouped on the chosen date field (default sign_date).
+    """
+    df = _safe_date_field(date_field)
+
+    conds = ["workflow_state = %s"]
+    vals = [state]
+
+    if company:
+        conds.append("company = %s")
+        vals.append(company)
+
+    if executive_name:
+        conds.append("executive_name = %s")
+        vals.append(executive_name)
+
+    # group by month of the chosen field (fallback to creation if null)
+    date_expr = f"COALESCE({df}, creation)"
+    where_sql = f"WHERE {' AND '.join(conds)}"
+
+    sql = f"""
+        SELECT DATE_FORMAT({date_expr}, '%%Y-%%m') AS bucket, COUNT(name) AS total
+        FROM `tabATM Leads`
+        {where_sql}
+        GROUP BY bucket
+        ORDER BY bucket DESC
+        LIMIT {int(months)}
+    """
+    rows = frappe.db.sql(sql, values=vals, as_dict=True)
+    rows.reverse()  # oldest → newest
     return {"state": state, "points": rows}

@@ -1,176 +1,43 @@
 import frappe
 
-def _build_filters(args):
-    filters = {}
-    start = args.get("start_date")
-    end = args.get("end_date")
-
-    # Use creation if you don't have post_date
-    if start and end:
-        # If you have a date field like "post_date", switch to that
-        filters["creation"] = ["between", [start, end]]
-
-    if args.get("branch"):
-        filters["branch"] = args["branch"]
-    if args.get("company"):
-        filters["company"] = args["company"]
-    if args.get("executive_name"):
-        filters["executive_name"] = args["executive_name"]
-    return filters
+def _safe_date_field(df: str) -> str:
+    # fallback to creation if the custom field doesn't exist
+    if frappe.db.has_column("ATM Leads", df):
+        return df
+    return "creation"
 
 @frappe.whitelist()
-def get_workflow_summary(start_date=None, end_date=None, branch=None, company=None, executive_name=None):
-    args = frappe._dict(
-        start_date=start_date,
-        end_date=end_date,
-        branch=branch,
-        company=company,
-        executive_name=executive_name,
-    )
-    filters = _build_filters(args)
+def get_workflow_summary(start_date=None, end_date=None, company=None, executive_name=None, date_field="sign_date"):
+    """
+    Count leads grouped by workflow_state.
+    Date filter is applied to the selected event date field (default: sign_date).
+    """
+    df = _safe_date_field(date_field)
 
-    # Use SQL for reliable GROUP BY across Frappe versions
-    where, vals = frappe.db.build_conditions("ATM Leads", filters)
+    conds = []
+    vals = []
+
+    if company:
+        conds.append("company = %s")
+        vals.append(company)
+
+    if executive_name:
+        conds.append("executive_name = %s")
+        vals.append(executive_name)
+
+    if start_date and end_date:
+        conds.append(f"COALESCE({df}, creation) BETWEEN %s AND %s")
+        vals.extend([start_date, end_date])
+
+    where_sql = f"WHERE {' AND '.join(conds)}" if conds else ""
+
     sql = f"""
-        SELECT IFNULL(workflow_state, 'Unknown') AS state, COUNT(name) AS total
+        SELECT IFNULL(workflow_state,'Unknown') AS state, COUNT(name) AS total
         FROM `tabATM Leads`
-        {f"WHERE {where}" if where else ""}
+        {where_sql}
         GROUP BY state
     """
-    rows = frappe.db.sql(sql, vals, as_dict=True)
+    rows = frappe.db.sql(sql, values=vals, as_dict=True)
     summary = {r.state: int(r.total) for r in rows}
-
-    total = frappe.db.count("ATM Leads", filters=filters)
-    return {"summary": summary, "total": total}
-import frappe
-
-def _build_filters(args):
-    filters = {}
-    start = args.get("start_date")
-    end = args.get("end_date")
-
-    # Use creation if you don't have post_date
-    if start and end:
-        # If you have a date field like "post_date", switch to that
-        filters["creation"] = ["between", [start, end]]
-
-    if args.get("branch"):
-        filters["branch"] = args["branch"]
-    if args.get("company"):
-        filters["company"] = args["company"]
-    if args.get("executive_name"):
-        filters["executive_name"] = args["executive_name"]
-    return filters
-
-@frappe.whitelist()
-def get_workflow_summary(start_date=None, end_date=None, branch=None, company=None, executive_name=None):
-    args = frappe._dict(
-        start_date=start_date,
-        end_date=end_date,
-        branch=branch,
-        company=company,
-        executive_name=executive_name,
-    )
-    filters = _build_filters(args)
-
-    # Use SQL for reliable GROUP BY across Frappe versions
-    where, vals = frappe.db.build_conditions("ATM Leads", filters)
-    sql = f"""
-        SELECT IFNULL(workflow_state, 'Unknown') AS state, COUNT(name) AS total
-        FROM `tabATM Leads`
-        {f"WHERE {where}" if where else ""}
-        GROUP BY state
-    """
-    rows = frappe.db.sql(sql, vals, as_dict=True)
-    summary = {r.state: int(r.total) for r in rows}
-
-    total = frappe.db.count("ATM Leads", filters=filters)
-    return {"summary": summary, "total": total}
-import frappe
-
-def _build_filters(args):
-    filters = {}
-    start = args.get("start_date")
-    end = args.get("end_date")
-
-    # Use creation if you don't have post_date
-    if start and end:
-        # If you have a date field like "post_date", switch to that
-        filters["creation"] = ["between", [start, end]]
-
-    if args.get("branch"):
-        filters["branch"] = args["branch"]
-    if args.get("company"):
-        filters["company"] = args["company"]
-    if args.get("executive_name"):
-        filters["executive_name"] = args["executive_name"]
-    return filters
-
-@frappe.whitelist()
-def get_workflow_summary(start_date=None, end_date=None, branch=None, company=None, executive_name=None):
-    args = frappe._dict(
-        start_date=start_date,
-        end_date=end_date,
-        branch=branch,
-        company=company,
-        executive_name=executive_name,
-    )
-    filters = _build_filters(args)
-
-    # Use SQL for reliable GROUP BY across Frappe versions
-    where, vals = frappe.db.build_conditions("ATM Leads", filters)
-    sql = f"""
-        SELECT IFNULL(workflow_state, 'Unknown') AS state, COUNT(name) AS total
-        FROM `tabATM Leads`
-        {f"WHERE {where}" if where else ""}
-        GROUP BY state
-    """
-    rows = frappe.db.sql(sql, vals, as_dict=True)
-    summary = {r.state: int(r.total) for r in rows}
-
-    total = frappe.db.count("ATM Leads", filters=filters)
-    return {"summary": summary, "total": total}
-import frappe
-
-def _build_filters(args):
-    filters = {}
-    start = args.get("start_date")
-    end = args.get("end_date")
-
-    # Use creation if you don't have post_date
-    if start and end:
-        # If you have a date field like "post_date", switch to that
-        filters["creation"] = ["between", [start, end]]
-
-    if args.get("branch"):
-        filters["branch"] = args["branch"]
-    if args.get("company"):
-        filters["company"] = args["company"]
-    if args.get("executive_name"):
-        filters["executive_name"] = args["executive_name"]
-    return filters
-
-@frappe.whitelist()
-def get_workflow_summary(start_date=None, end_date=None, branch=None, company=None, executive_name=None):
-    args = frappe._dict(
-        start_date=start_date,
-        end_date=end_date,
-        branch=branch,
-        company=company,
-        executive_name=executive_name,
-    )
-    filters = _build_filters(args)
-
-    # Use SQL for reliable GROUP BY across Frappe versions
-    where, vals = frappe.db.build_conditions("ATM Leads", filters)
-    sql = f"""
-        SELECT IFNULL(workflow_state, 'Unknown') AS state, COUNT(name) AS total
-        FROM `tabATM Leads`
-        {f"WHERE {where}" if where else ""}
-        GROUP BY state
-    """
-    rows = frappe.db.sql(sql, vals, as_dict=True)
-    summary = {r.state: int(r.total) for r in rows}
-
-    total = frappe.db.count("ATM Leads", filters=filters)
+    total = sum(summary.values())
     return {"summary": summary, "total": total}
