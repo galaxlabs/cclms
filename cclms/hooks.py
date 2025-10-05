@@ -13,7 +13,7 @@ app_license = "mit"
 # app_include_css = "/assets/cclms/css/cclms.css"
 # app_include_js = "/assets/cclms/js/cclms.js"
 # app_include_css = [
-
+app_include_js = ["assets/cclms/js/workflow_dashboard.js"]
 # ]
 
 # app_include_js = [

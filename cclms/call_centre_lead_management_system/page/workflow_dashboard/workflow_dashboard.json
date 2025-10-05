@@ -7,9 +7,10 @@
  "modified": "2025-10-05 09:49:10.592750",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
- "name": "workflow-dashboard",
+ "icon": "octicon octicon-graph",
+ "name": "workflow_dashboard",
  "owner": "Administrator",
- "page_name": "workflow-dashboard",
+ "page_name": "workflow_dashboard",
  "roles": [
   {
    "role": "Data Executive"
