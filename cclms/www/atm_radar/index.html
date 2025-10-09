@@ -1,0 +1,61 @@
+<!-- www/atm-radar/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ATM Radar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind (you said you will use CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="./index.css" />
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-7xl mx-auto p-4 space-y-4">
+    <!-- Controls -->
+    <div class="bg-white shadow rounded-xl p-4">
+      <div class="flex flex-col md:flex-row md:items-end gap-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">US State / Code</label>
+          <input id="state_input" type="text" placeholder="e.g., CA or California"
+                 class="w-48 h-10 rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Company (Operator Companies)</label>
+          <input id="company_input" type="text" placeholder="Optional"
+                 class="w-64 h-10 rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Executive (Sales Agent)</label>
+          <input id="exec_input" type="text" placeholder="Optional"
+                 class="w-64 h-10 rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Statuses (CSV)</label>
+          <input id="status_input" type="text" placeholder="Approved,Signed,Converted"
+                 class="w-72 h-10 rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+        </div>
+        <div class="flex gap-2">
+          <button id="apply_btn" class="h-10 px-4 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700">Apply</button>
+          <button id="reset_btn" class="h-10 px-4 rounded-xl border border-gray-300 hover:bg-gray-100">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div class="bg-white shadow rounded-xl overflow-hidden">
+      <div id="map" class="h-[70vh] w-full"></div>
+    </div>
+
+    <!-- Meta / Counts -->
+    <div class="bg-white shadow rounded-xl p-4">
+      <div id="meta" class="text-sm text-gray-700">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Page JS -->
+  <script src="./index.js"></script>
+</body>
+</html>

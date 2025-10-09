@@ -1,0 +1,4 @@
+/* www/atm-radar/index.css */
+html, body { height: 100%; }
+#map { min-height: 60vh; }
+.gm-style .gm-ui-hover-effect { opacity: .8; }

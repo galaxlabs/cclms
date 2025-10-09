@@ -3,7 +3,7 @@ import frappe
 def _safe_date_field(df: str) -> str:
     return df if frappe.db.has_column("ATM Leads", df) else "creation"
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_agent_performance(state="Signed", start_date=None, end_date=None, company=None, date_field="sign_date"):
     df = _safe_date_field(date_field)
 

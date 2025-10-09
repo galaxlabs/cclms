@@ -1,83 +1,201 @@
 {% extends "templates/web.html" %}
 {% block page_content %}
 
-<div class="container-fluid">
-  <h3>Bitcoin Depot Performance Report</h3>
-  <div class="table-responsive" style="overflow-x: auto; width: 100%">
-      <table id="bitcoinDepotTable" class="table table-bordered table-striped" style="table-layout: auto; white-space: nowrap">
-          <thead class="thead-dark"></thead>
-          <tbody></tbody>
-          <tfoot class="font-weight-bold"></tfoot>
-      </table>
-  </div>
-</div>
+<!-- cclms/www/preport/index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Agent Performance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<style>
-  #bitcoinDepotTable {
-    font-size: 14px;
-    border-collapse: separate;
-    border-spacing: 0;
-}
+    <!-- Tailwind (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-#bitcoinDepotTable th {
-    position: sticky;
-    top: 0;
-    background: #f8f9fa;
-    z-index: 10;
-}
+    <!-- Highcharts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+  </head>
+  <body class="bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-#bitcoinDepotTable thead tr:first-child th {
-    top: 0;
-    background: #343a40;
-    color: white;
-}
+      <h2 class="text-2xl font-semibold text-slate-800 mb-4">Agent Performance</h2>
 
-#bitcoinDepotTable thead tr:nth-child(2) th {
-    top: 38px;
-    background: #e9ecef;
-    color: #495057;
-}
+      <!-- Filters -->
+      <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end">
+          <div class="flex flex-col">
+            <label class="text-sm text-slate-500 mb-1">Start</label>
+            <input id="sdate" type="date"
+              class="h-10 rounded-xl border border-slate-200 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-sm text-slate-500 mb-1">End</label>
+            <input id="edate" type="date"
+              class="h-10 rounded-xl border border-slate-200 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-sm text-slate-500 mb-1">Operator Company</label>
+            <input id="company" type="text" placeholder="Operator Company name"
+              class="h-10 rounded-xl border border-slate-200 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-sm text-slate-500 mb-1">Executive</label>
+            <input id="executive" type="text" placeholder="Sales Agent name"
+              class="h-10 rounded-xl border border-slate-200 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
 
-#bitcoinDepotTable th, #bitcoinDepotTable td {
-    padding: 8px 10px;
-    border: 1px solid #dee2e6;
-    vertical-align: middle;
-}
+          <button id="apply"
+            class="h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium px-4">
+            Apply
+          </button>
+          <button id="reset"
+            class="h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-medium px-4">
+            Reset
+          </button>
+        </div>
+      </div>
 
-#bitcoinDepotTable .text-center {
-    text-align: center;
-}
+      <!-- Conversions (cohort) -->
+      <section class="mb-6">
+        <h3 class="text-lg font-semibold text-slate-800 mb-2">Conversions</h3>
+        <!-- JS fills this with Tailwind-styled cards -->
+        <div id="conv_kpis" class="space-y-3"></div>
+      </section>
 
-.footer-row {
-    background-color: #f8f9fa;
-    font-weight: bold;
-}
+      <!-- Executives table -->
+      <section class="mb-6">
+        <h3 class="text-lg font-semibold text-slate-800 mb-2">Executives</h3>
+        <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-2">
+          <div class="overflow-x-auto">
+            <table id="exec_table" class="min-w-full text-sm">
+              <thead>
+                <tr class="text-left text-slate-500">
+                  <th class="px-3 py-2 font-medium">Executive</th>
+                  <th class="px-3 py-2 font-medium text-right">Total</th>
+                  <th class="px-3 py-2 font-medium text-right">Approved</th>
+                  <th class="px-3 py-2 font-medium text-right">Agreement Sent</th>
+                  <th class="px-3 py-2 font-medium text-right">Signed</th>
+                  <th class="px-3 py-2 font-medium text-right">Converted</th>
+                  <th class="px-3 py-2 font-medium text-right">Signed+Converted</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td colspan="7" class="px-3 py-3 text-slate-500">Loading…</td>
+                </tr>
+              </tbody>
+              <tfoot></tfoot>
+            </table>
+          </div>
+        </div>
+      </section>
 
-.footer-notes {
-    background-color: #e9ecef;
-    font-size: 0.85em;
-}
+      <!-- States by Executive (Highcharts) -->
+      <section class="mb-6">
+        <h3 class="text-lg font-semibold text-slate-800 mb-2">States by Executive</h3>
+        <div id="state_exec_chart"
+             class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4 min-h-[360px]"></div>
+      </section>
 
-/* Zebra striping */
-#bitcoinDepotTable tbody tr:nth-child(odd) {
-    background-color: #f8f9fa;
-}
-</style>
-<!-- <style>
-  #bitcoinDepotTable th, #bitcoinDepotTable td {
-      padding: 8px 12px;
-      text-align: center;
-  }
-  #bitcoinDepotTable .text-center {
-      text-align: center;
-  }
-  .footer-row {
-      background-color: #f8f9fa;
-      border-top: 2px solid #dee2e6;
-  }
-  .footer-notes {
-      background-color: #e9ecef;
-      font-size: 0.9em;
-  }
-</style> -->
+      <!-- Monthly Trend (Highcharts) -->
+      <section class="mb-6">
+        <h3 class="text-lg font-semibold text-slate-800 mb-2">Monthly Trend</h3>
+        <div id="trend_chart"
+             class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4 min-h-[360px]"></div>
+      </section>
+
+      <!-- Monthly Performance -->
+      <section class="mb-2">
+        <h3 class="text-lg font-semibold text-slate-800 mb-2">Monthly Performance</h3>
+
+        <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4 mb-3">
+          <div class="flex flex-wrap gap-3 items-end">
+            <div class="flex flex-col">
+              <label class="text-sm text-slate-500 mb-1">Month</label>
+              <input id="mp_month" type="month"
+                class="h-10 rounded-xl border border-slate-200 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <button id="run_mp"
+              class="h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium px-4">
+              Run Monthly Performance
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+          
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Total Leads </div>
+            <div id="mp_total" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Approved</div>
+            <div id="mp_appr" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Signed</div>
+            <div id="mp_signed" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Converted</div>
+            <div id="mp_converted" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Signed + Converted</div>
+            <div id="mp_signed_plus" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Same-month Signed</div>
+            <div id="mp_same" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+
+          <div class="bg-amber-50 ring-1 ring-amber-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Carry-in Signed</div>
+            <div id="mp_carry" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Same-month Converted</div>
+            <div id="mp_conv_same" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-amber-50 ring-1 ring-amber-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Carry-in Converted</div>
+            <div id="mp_conv_carry" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+        
+
+          
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Agreement Sent in Month</div>
+            <div id="mp_sent" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Signed / Total</div>
+            <div id="mp_s_t" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Converted / Total</div>
+            <div id="mp_c_t" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+          <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+            <div class="text-sm text-slate-500">Signed+Converted / Total</div>
+            <div id="mp_sc_t" class="mt-1 text-2xl font-semibold">—</div>
+          </div>
+        </div>
+
+        <div class="bg-white ring-1 ring-slate-200 rounded-2xl shadow-sm p-4">
+          <div class="text-sm text-slate-500">Sign Lag (days from post_date → sign_date for signatures in month)</div>
+          <div id="mp_lag" class="mt-1 text-base leading-7 font-medium text-slate-900">
+            0–7: — | 8–30: — | 31–60: — | 61–90: — | 90+: —
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Page logic -->
+    <script src="./index.js"></script>
+  </body>
+</html>
+
 {% endblock %}

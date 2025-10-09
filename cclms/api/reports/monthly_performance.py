@@ -20,7 +20,7 @@ def _month_window(ym: str | None):
 def _where(clauses):
     return f"WHERE {' AND '.join(clauses)}" if clauses else ""
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_monthly_performance(
     month: str | None = None,
     company: str | None = None,

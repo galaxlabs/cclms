@@ -1,0 +1,57 @@
+{
+ "add_total_row": 1,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2025-10-08 22:02:11.131747",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letterhead": null,
+ "modified": "2025-10-08 22:59:54.085130",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Revenue Trend",
+ "owner": "alyandhinc@gmail.com",
+ "prepared_report": 0,
+ "query": "/* Revenue Trend \u2013 ATM Leads (last 12 months, no filters)\r\n   Notes:\r\n   1) DATE_FORMAT uses %% to avoid Python string-formatting.\r\n   2) Column labels avoid the % character; use \"pct:Percent\" so Frappe renders as percent.\r\n   3) Excludes Draft.\r\n*/\r\n\r\nWITH months AS (\r\n    /* Build a 12-month list from oldest to current without recursion */\r\n    SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 11 MONTH), '%%Y-%%m') AS ym,\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 11 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d') AS ym_start,\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 11 MONTH)) AS ym_end\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 10 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 10 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 10 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 9 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 9 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 9 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 8 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 8 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 8 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 7 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 7 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 7 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 6 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 6 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 6 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 5 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 4 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 4 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 4 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 3 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 2 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 2 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 2 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))\r\n    UNION ALL SELECT\r\n        DATE_FORMAT(CURDATE(), '%%Y-%%m'),\r\n        STR_TO_DATE(DATE_FORMAT(CURDATE(), '%%Y-%%m-01'), '%%Y-%%m-%%d'),\r\n        LAST_DAY(CURDATE())\r\n),\r\nlead_events AS (\r\n    SELECT\r\n        a.name,\r\n        DATE(a.post_date)             AS post_date,\r\n        DATE(a.creation)              AS creation_date,\r\n        DATE(a.approve_date)          AS approve_date,\r\n        DATE(a.agreement_sent_date)   AS agreement_sent_date,\r\n        DATE(a.sign_date)             AS sign_date,\r\n        DATE(a.converted_date)        AS converted_date,\r\n        DATE(a.install_date)          AS install_date,\r\n        IFNULL(a.workflow_state,'')   AS workflow_state\r\n    FROM `tabATM Leads` a\r\n    WHERE IFNULL(a.workflow_state,'') <> 'Draft'\r\n    /* fields referenced above exist in your repo\u2019s config / cards */\r\n)\r\n\r\nSELECT\r\n    m.ym AS \"Month:Data:90\",\r\n\r\n    /* Two creation baselines */\r\n    SUM(CASE WHEN le.post_date     BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END) AS \"Created (post_date):Int:120\",\r\n    SUM(CASE WHEN le.creation_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END) AS \"Created (creation):Int:130\",\r\n\r\n    /* Event buckets by their own dates */\r\n    SUM(CASE WHEN le.approve_date          BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END) AS \"Approved:Int:110\",\r\n    SUM(CASE WHEN le.agreement_sent_date   BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END) AS \"Agreement Sent:Int:140\",\r\n    SUM(CASE WHEN le.sign_date             BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END) AS \"Signed:Int:100\",\r\n    SUM(CASE WHEN le.converted_date        BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END) AS \"Converted:Int:110\",\r\n    SUM(CASE WHEN le.install_date          BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END) AS \"Installed:Int:110\",\r\n\r\n    /* Stage\u2192Stage conversion PCT (safe labels, Percent type) */\r\n    ROUND(\r\n        100 * SUM(CASE WHEN le.approve_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END)\r\n            / NULLIF(SUM(CASE WHEN le.post_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END), 0)\r\n    , 2) AS \"Created\u2192Approved pct:Percent\",\r\n\r\n    ROUND(\r\n        100 * SUM(CASE WHEN le.agreement_sent_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END)\r\n            / NULLIF(SUM(CASE WHEN le.approve_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END), 0)\r\n    , 2) AS \"Approved\u2192Sent pct:Percent\",\r\n\r\n    ROUND(\r\n        100 * SUM(CASE WHEN le.sign_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END)\r\n            / NULLIF(SUM(CASE WHEN le.agreement_sent_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END), 0)\r\n    , 2) AS \"Sent\u2192Signed pct:Percent\",\r\n\r\n    ROUND(\r\n        100 * SUM(CASE WHEN le.converted_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END)\r\n            / NULLIF(SUM(CASE WHEN le.sign_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END), 0)\r\n    , 2) AS \"Signed\u2192Converted pct:Percent\",\r\n\r\n    ROUND(\r\n        100 * SUM(CASE WHEN le.install_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END)\r\n            / NULLIF(SUM(CASE WHEN le.converted_date BETWEEN m.ym_start AND m.ym_end THEN 1 ELSE 0 END), 0)\r\n    , 2) AS \"Converted\u2192Installed pct:Percent\"\r\n\r\nFROM months m\r\nLEFT JOIN lead_events le ON 1=1\r\nGROUP BY m.ym\r\nORDER BY m.ym;\r\n\r\n\r\n",
+ "ref_doctype": "ATM Leads",
+ "report_name": "Revenue Trend",
+ "report_script": "{\r\n  \"type\": \"bar\",\r\n  \"colors\": [\"#64748b\", \"#94a3b8\", \"#16a34a\", \"#005c08\", \"#0ea5e9\", \"#a855f7\"],\r\n  \"data\": {\r\n    \"labels\": \"Month\",\r\n    \"datasets\": [\r\n      { \"name\": \"Created (post_date)\", \"values\": \"Created (post_date)\" },\r\n      { \"name\": \"Approved\",            \"values\": \"Approved\" },\r\n      { \"name\": \"Signed\",              \"values\": \"Signed\" },\r\n      { \"name\": \"Agreement Sent\",      \"values\": \"Agreement Sent\" }\r\n    ]\r\n  }\r\n}\r\n",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Data Executive"
+  },
+  {
+   "role": "Sales Executive"
+  },
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Karachi Team"
+  },
+  {
+   "role": "India Team"
+  },
+  {
+   "role": "Onboarding Executive"
+  },
+  {
+   "role": "OC"
+  }
+ ],
+ "timeout": 0
+}

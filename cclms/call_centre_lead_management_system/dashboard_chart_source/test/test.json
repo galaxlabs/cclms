@@ -1,0 +1,13 @@
+{
+ "creation": "2025-10-07 23:06:40.223345",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2025-10-07 23:06:40.223345",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "test",
+ "owner": "Administrator",
+ "source_name": "test",
+ "timeseries": 0
+}

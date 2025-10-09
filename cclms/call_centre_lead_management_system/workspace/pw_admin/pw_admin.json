@@ -29,7 +29,7 @@
  "is_hidden": 0,
  "label": "PW Admin",
  "links": [],
- "modified": "2025-10-01 19:19:25.163936",
+ "modified": "2025-10-07 22:51:22.806921",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "PW Admin",
@@ -47,6 +47,12 @@
   },
   {
    "role": "OMK"
+  },
+  {
+   "role": "Data Executive"
+  },
+  {
+   "role": "Onboarding Executive"
   }
  ],
  "sequence_id": 32.0,
