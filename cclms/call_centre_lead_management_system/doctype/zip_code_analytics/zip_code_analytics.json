@@ -1,6 +1,8 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
+ "autoname": "field:zip_code",
  "creation": "2025-10-15 17:20:15.470407",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -22,7 +24,8 @@
   {
    "fieldname": "zip_code",
    "fieldtype": "Data",
-   "label": "Zip Code"
+   "label": "Zip Code",
+   "unique": 1
   },
   {
    "fieldname": "column_break_mfyu",
@@ -82,10 +85,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-15 17:28:56.968256",
+ "modified": "2025-10-15 17:35:25.927205",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Zip Code Analytics",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
