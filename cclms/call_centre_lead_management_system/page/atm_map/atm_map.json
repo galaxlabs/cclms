@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2025-10-16 02:45:28.341813",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-10-16 02:45:28.341813",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "atm-map",
+ "owner": "Administrator",
+ "page_name": "atm-map",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "ATM Map"
+}

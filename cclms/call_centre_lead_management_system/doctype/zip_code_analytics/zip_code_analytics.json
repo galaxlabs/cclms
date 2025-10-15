@@ -11,13 +11,20 @@
   "kiosks_installed",
   "margin",
   "last_score_update",
+  "city",
+  "square_miles",
   "column_break_mfyu",
   "state",
   "kiosks_removed",
   "location_flag",
+  "population_density",
+  "company_kiosks",
+  "kiosks_pending_removal",
   "column_break_hxlg",
   "population",
   "removal_rate",
+  "zone_color",
+  "total_kiosks",
   "zone"
  ],
  "fields": [
@@ -77,15 +84,50 @@
   },
   {
    "fieldname": "zone",
+   "fieldtype": "Data",
+   "label": "Zone"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "population_density",
+   "fieldtype": "Data",
+   "label": "Population Density"
+  },
+  {
+   "fieldname": "company_kiosks",
+   "fieldtype": "Data",
+   "label": "Company Kiosks"
+  },
+  {
+   "fieldname": "total_kiosks",
+   "fieldtype": "Data",
+   "label": "Total Kiosks"
+  },
+  {
+   "fieldname": "zone_color",
    "fieldtype": "Select",
    "label": "Zone",
    "options": "Green\nYellow\nRed"
+  },
+  {
+   "fieldname": "square_miles",
+   "fieldtype": "Float",
+   "label": "Square Miles"
+  },
+  {
+   "fieldname": "kiosks_pending_removal",
+   "fieldtype": "Int",
+   "label": "Kiosks Pending Removal"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-15 17:35:25.927205",
+ "modified": "2025-10-16 02:32:33.600793",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Zip Code Analytics",

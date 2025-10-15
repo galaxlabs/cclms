@@ -1,0 +1,124 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:rule_name",
+ "creation": "2025-10-16 01:37:47.701017",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rule_name",
+  "density_min",
+  "density_max",
+  "competitor_max",
+  "column_break_vqmq",
+  "color_code",
+  "margin_min",
+  "margin_max",
+  "priority",
+  "column_break_tvpq",
+  "population_min",
+  "population_max",
+  "removal_ratio_max",
+  "active"
+ ],
+ "fields": [
+  {
+   "fieldname": "rule_name",
+   "fieldtype": "Data",
+   "label": "Rule Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_vqmq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "color_code",
+   "fieldtype": "Color",
+   "label": "Color Code"
+  },
+  {
+   "fieldname": "margin_min",
+   "fieldtype": "Float",
+   "label": "Min Margin"
+  },
+  {
+   "fieldname": "margin_max",
+   "fieldtype": "Float",
+   "label": "Max Margin"
+  },
+  {
+   "fieldname": "column_break_tvpq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "population_min",
+   "fieldtype": "Int",
+   "label": "Min Population"
+  },
+  {
+   "fieldname": "population_max",
+   "fieldtype": "Int",
+   "label": "Max Population"
+  },
+  {
+   "fieldname": "density_min",
+   "fieldtype": "Float",
+   "label": "Min Density"
+  },
+  {
+   "fieldname": "density_max",
+   "fieldtype": "Float",
+   "label": "Max Density"
+  },
+  {
+   "fieldname": "removal_ratio_max",
+   "fieldtype": "Float",
+   "label": "Removal Ratio Max"
+  },
+  {
+   "fieldname": "competitor_max",
+   "fieldtype": "Int",
+   "label": "Max Competitor"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority"
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-10-16 01:51:26.615023",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "ATM Criteria Rule Set",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
