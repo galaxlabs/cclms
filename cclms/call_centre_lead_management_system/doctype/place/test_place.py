@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestZipCodeAnalytics(FrappeTestCase):
+class TestPlace(FrappeTestCase):
 	pass

@@ -1,0 +1,49 @@
+<div class="atm-scouting h-100" style="display:flex; gap:12px;">
+  <div class="map-wrap" style="flex: 1 1 auto; min-width: 60%;">
+    <div id="atm-map" style="height: calc(100vh - 220px); width: 100%; border-radius: 8px; border: 1px solid var(--border-color);"></div>
+
+    <div class="legend" style="margin-top:8px; display:flex; gap:16px; flex-wrap:wrap;">
+      <span><b>Zones:</b></span>
+      <span style="color:#16a34a;">● Green</span>
+      <span style="color:#86efac;">● Light Green</span>
+      <span style="color:#facc15;">● Yellow</span>
+      <span style="color:#ef4444;">● Red</span>
+      <span style="color:#9ca3af;">● Unclassified</span>
+    </div>
+  </div>
+
+  <div class="side-panel" style="flex: 0 0 380px;">
+    <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+      <input id="search_box" class="input-with-feedback form-control" placeholder="Search by name / zip / type"/>
+      <button id="refresh_btn" class="btn btn-default btn-sm">Refresh</button>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+      <select id="wf_filter" class="form-control">
+        <option value="">All Statuses</option>
+        <option>Draft</option>
+        <option>Submitted</option>
+        <option>Approved</option>
+        <option>Signed</option>
+        <option>Installed</option>
+        <option>Rejected</option>
+      </select>
+      <select id="zone_filter" class="form-control">
+        <option value="">All Zones</option>
+        <option>Green</option>
+        <option>Light Green</option>
+        <option>Yellow</option>
+        <option>Red</option>
+        <option>Unclassified</option>
+      </select>
+      <label style="display:flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="show_zone_circles" checked />
+        Show zone circles
+      </label>
+    </div>
+
+    <div id="list_container" style="height: calc(100vh - 260px); overflow:auto; border:1px solid var(--border-color); border-radius:8px; padding:8px;">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>

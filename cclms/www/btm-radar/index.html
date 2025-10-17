@@ -1,0 +1,15 @@
+<!-- cclms/www/atm-map-view.html -->
+{% extends "templates/web.html" %}
+
+{% block title %}ATM Map Viewer{% endblock %}
+
+{% block page_content %}
+<h2>ATM Leads Map</h2>
+<div id="atm-map" style="height: 80vh; width: 100%; border: 1px solid #ccc; border-radius: 8px;"></div>
+<div id="atm-map-legend" style="margin-top: 10px;">
+    <span style="color: #28a745;">● Green</span> &nbsp;
+    <span style="color: #ffc107;">● Yellow</span> &nbsp;
+    <span style="color: #dc3545;">● Red</span> &nbsp;
+</div>
+<script src="/assets/cclms/js/atm_map_public.js"></script>
+{% endblock %}

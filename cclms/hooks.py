@@ -13,11 +13,16 @@ app_license = "mit"
 # app_include_css = "/assets/cclms/css/cclms.css"
 # app_include_js = "/assets/cclms/js/cclms.js"
 # app_include_css = [
-app_include_js = ["assets/cclms/js/workflow_dashboard.js"]
+app_include_js = [
+    "assets/cclms/js/workflow_dashboard.js",
+    "https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places",
+  "public/js/atm_map.js"
+                  ]
 # ]
 
 app_include_js = [
 "/assets/cclms/js/chart.umd.js"
+
  ]
 
 
@@ -257,3 +262,7 @@ page_js = {
 # }
 
 #"create_batch_attendance_logs": "cclms.api.sync_attendance.create_batch_attendance_logs"
+website_route_rules = [
+    {"from_route": "/btm-radar", "to_route": "btm-radar"}
+]
+

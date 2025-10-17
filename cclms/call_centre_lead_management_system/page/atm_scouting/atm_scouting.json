@@ -1,29 +1,26 @@
 {
  "content": null,
- "creation": "2025-10-05 09:49:10.592750",
+ "creation": "2025-10-16 19:43:30.229609",
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2025-10-16 20:17:44.911543",
+ "modified": "2025-10-16 20:21:38.249859",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
- "name": "workflow_dashboard",
+ "name": "atm_scouting",
  "owner": "Administrator",
- "page_name": "workflow_dashboard",
+ "page_name": "atm_scouting",
  "roles": [
   {
-   "role": "Data Executive"
+   "role": "Administrator"
   },
   {
-   "role": "Manager"
-  },
-  {
-   "role": "Sales Manager"
+   "role": "System Manager"
   }
  ],
  "script": null,
  "standard": "Yes",
  "style": null,
  "system_page": 0,
- "title": "Analytics Dashboard"
+ "title": "Atm Scouting"
 }

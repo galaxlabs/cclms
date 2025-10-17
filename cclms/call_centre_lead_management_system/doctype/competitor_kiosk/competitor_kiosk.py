@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ZipCodeAnalytics(Document):
+class CompetitorKiosk(Document):
 	pass
