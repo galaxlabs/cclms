@@ -1,12 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:place_id",
  "creation": "2025-10-17 08:49:00.360608",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "place_id",
-  "name1",
+  "display_name",
   "business_type",
   "zip_code",
   "longitude",
@@ -22,11 +23,6 @@
    "fieldtype": "Data",
    "label": "Place Id",
    "unique": 1
-  },
-  {
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "label": "name"
   },
   {
    "fieldname": "business_type",
@@ -72,15 +68,21 @@
    "fieldname": "source",
    "fieldtype": "Data",
    "label": "Source"
+  },
+  {
+   "fieldname": "display_name",
+   "fieldtype": "Data",
+   "label": "Display Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-17 09:15:48.200897",
+ "modified": "2025-10-17 20:03:29.254404",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Place",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

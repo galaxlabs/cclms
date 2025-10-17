@@ -58,7 +58,7 @@ def refresh_competitor_kiosks(zip_code: str, force: int | bool = 0, radius_m: in
         except Exception:
             radius_m = 15_000
 
-    keywords = ["bitcoin atm", "crypto atm", "bitcoin kiosk"]
+    keywords = ["bitcoin atm", "crypto atm", "bitcoin kiosk", "crypto kiosk", "bitcoin machine", "cryptocurrency atm"]
     saved = 0
     seen = set()  # place_ids seen this run
 
@@ -230,34 +230,40 @@ def backfill_kiosk_actual_zip(limit: int = 2000, rate_ms: int = 250):
 @frappe.whitelist()
 def update_competitor_density(zips: list[str] | None = None):
     """
-    Count kiosks per ZIP using actual_zip_code when available, else fallback to anchor zip_code.
+    Count kiosks per ZIP using actual_zip_code when available, else fallback to zip_code.
     Writes Zip Code Analytics.competitor_density.
     """
-    where = ""
+    # Build WHERE that accepts either field and ignores blanks
+    where = "WHERE COALESCE(NULLIF(actual_zip_code,''), NULLIF(zip_code,'')) IS NOT NULL"
     params = {}
+
     if zips:
-        zlist = [str(z).zfill(5) for z in zips]
-        where = "AND (COALESCE(actual_zip_code, zip_code)) IN %(zips)s"
-        params["zips"] = tuple(zlist)
+        zlist = tuple(str(z).zfill(5) for z in zips)
+        where += " AND COALESCE(NULLIF(actual_zip_code,''), zip_code) IN %(zips)s"
+        params["zips"] = zlist
 
     rows = frappe.db.sql(
-        """
-        SELECT COALESCE(NULLIF(actual_zip_code,''), zip_code) AS zc, COUNT(*) AS cnt
+        f"""
+        SELECT COALESCE(NULLIF(actual_zip_code,''), zip_code) AS zc,
+               COUNT(*) AS cnt
         FROM `tabCompetitor Kiosk`
-        WHERE IFNULL(zip_code,'') <> ''
         {where}
         GROUP BY COALESCE(NULLIF(actual_zip_code,''), zip_code)
-        """.format(where=where),
-        params, as_dict=True
+        """,
+        params,
+        as_dict=True
     )
-    counts = { (r["zc"] or "").zfill(5): int(r["cnt"]) for r in rows }
 
-    targets = counts.keys() if not zips else [str(z).zfill(5) for z in zips]
+    counts = {(r["zc"] or "").zfill(5): int(r["cnt"]) for r in rows}
+
     updated = 0
+    targets = counts.keys() if not zips else [str(z).zfill(5) for z in zips]
     for z in targets:
         name = frappe.db.get_value("Zip Code Analytics", {"zip_code": z}, "name")
-        if not name: continue
+        if not name:
+            continue
         frappe.db.set_value("Zip Code Analytics", name, "competitor_density", counts.get(z, 0))
         updated += 1
+
     frappe.db.commit()
     return {"updated": updated, "zips_with_counts": len(counts)}

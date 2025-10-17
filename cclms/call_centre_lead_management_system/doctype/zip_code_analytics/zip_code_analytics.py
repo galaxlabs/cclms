@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ZCA(Document):
+class ZipCodeAnalytics(Document):
 	pass
