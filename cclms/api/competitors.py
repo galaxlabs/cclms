@@ -11,12 +11,12 @@ def _zip_centroid(zip_code: str):
     row = frappe.db.get_value(
         "Zip Code Analytics",
         {"zip_code": zip_code},
-        ["centroid_latitude", "centroid_longitude", "square_miles"],
+        ["latitude", "longitude", "square_miles"],
         as_dict=True,
     )
-    if not row or not row.centroid_latitude or not row.centroid_longitude:
+    if not row or not row.latitude or not row.longitude:
         return None, None, None
-    return float(row.centroid_latitude), float(row.centroid_longitude), (row.square_miles or None)
+    return float(row.latitude), float(row.longitude), (row.square_miles or None)
 
 @frappe.whitelist()
 def refresh_competitor_kiosks(zip_code: str, force: int | bool = 0, radius_m: int | None = None):
@@ -130,17 +130,17 @@ def refresh_competitors_around_zip(zip_code: str, km: float = 20.0, force: int |
     anchor = frappe.db.get_value(
         "Zip Code Analytics",
         {"zip_code": zip_code},
-        ["centroid_latitude", "centroid_longitude"],
+        ["latitude", "longitude"],
         as_dict=True,
     )
-    if not anchor or not anchor.centroid_latitude or not anchor.centroid_longitude:
+    if not anchor or not anchor.latitude or not anchor.longitude:
         frappe.throw(f"No centroid for ZIP {zip_code}")
 
-    la, lo = float(anchor.centroid_latitude), float(anchor.centroid_longitude)
+    la, lo = float(anchor.latitude), float(anchor.longitude)
 
     zips = frappe.get_all(
         "Zip Code Analytics",
-        fields=["zip_code", "centroid_latitude", "centroid_longitude"],
+        fields=["zip_code", "latitude", "longitude"],
         limit_page_length=50000,
     )
 
@@ -154,8 +154,8 @@ def refresh_competitors_around_zip(zip_code: str, km: float = 20.0, force: int |
 
     nearby = [
         r["zip_code"] for r in zips
-        if r.get("centroid_latitude") and r.get("centroid_longitude")
-        and hav_km(la, lo, float(r["centroid_latitude"]), float(r["centroid_longitude"])) <= float(km)
+        if r.get("latitude") and r.get("longitude")
+        and hav_km(la, lo, float(r["latitude"]), float(r["longitude"])) <= float(km)
     ]
 
     total_saved = 0

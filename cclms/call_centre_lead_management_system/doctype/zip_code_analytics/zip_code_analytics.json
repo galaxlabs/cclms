@@ -15,6 +15,7 @@
   "square_miles",
   "competitor_kiosks",
   "total_kiosks",
+  "kiosk_penetration_pct",
   "column_break_mfyu",
   "state_code",
   "kiosks_removed",
@@ -24,13 +25,21 @@
   "kiosks_pending_removal",
   "zip_score",
   "competitor_density",
+  "kiosk_density_company",
+  "saturation_rate",
   "column_break_hxlg",
   "population",
   "removal_rate",
   "zone_color",
   "zone",
-  "centroid_longitude",
-  "centroid_latitude"
+  "longitude",
+  "latitude",
+  "kiosk_density_total",
+  "land_sq_mi",
+  "water_sq_mi",
+  "geo_id_fq",
+  "section_break_zzge",
+  "demo_json"
  ],
  "fields": [
   {
@@ -42,7 +51,9 @@
   {
    "fieldname": "kiosks_installed",
    "fieldtype": "Int",
-   "label": "Kiosks Installed"
+   "in_standard_filter": 1,
+   "label": "Kiosks Installed",
+   "search_index": 1
   },
   {
    "fieldname": "margin",
@@ -67,6 +78,7 @@
   {
    "fieldname": "competitor_kiosks",
    "fieldtype": "Int",
+   "in_standard_filter": 1,
    "label": "Competitor Kiosks"
   },
   {
@@ -81,6 +93,8 @@
   {
    "fieldname": "state_code",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "State",
    "search_index": 1
   },
@@ -92,11 +106,14 @@
   {
    "fieldname": "location_flag",
    "fieldtype": "Data",
+   "in_standard_filter": 1,
    "label": "Location Flag"
   },
   {
    "fieldname": "population_density",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
+   "in_filter": 1,
+   "in_standard_filter": 1,
    "label": "Population Density"
   },
   {
@@ -126,16 +143,20 @@
   {
    "fieldname": "population",
    "fieldtype": "Int",
-   "label": "Population"
+   "in_standard_filter": 1,
+   "label": "Population",
+   "search_index": 1
   },
   {
    "fieldname": "removal_rate",
-   "fieldtype": "Float",
+   "fieldtype": "Percent",
+   "in_standard_filter": 1,
    "label": "Removal Rate"
   },
   {
    "fieldname": "zone_color",
    "fieldtype": "Select",
+   "in_standard_filter": 1,
    "label": "Zone",
    "options": "\nGreen\nLight Green\nYellow\nRed"
   },
@@ -145,20 +166,64 @@
    "label": "Zone"
   },
   {
-   "fieldname": "centroid_longitude",
+   "fieldname": "longitude",
    "fieldtype": "Float",
    "label": "Longitude"
   },
   {
-   "fieldname": "centroid_latitude",
+   "fieldname": "latitude",
    "fieldtype": "Float",
    "label": "Latitude"
+  },
+  {
+   "fieldname": "kiosk_density_total",
+   "fieldtype": "Float",
+   "label": "Kiosk Density Total"
+  },
+  {
+   "fieldname": "land_sq_mi",
+   "fieldtype": "Float",
+   "label": "Land Area"
+  },
+  {
+   "fieldname": "water_sq_mi",
+   "fieldtype": "Float",
+   "label": "Water Area"
+  },
+  {
+   "fieldname": "kiosk_density_company",
+   "fieldtype": "Float",
+   "label": "Kiosk Density Company"
+  },
+  {
+   "fieldname": "kiosk_penetration_pct",
+   "fieldtype": "Float",
+   "label": "Kiosk Penetration pct"
+  },
+  {
+   "fieldname": "saturation_rate",
+   "fieldtype": "Float",
+   "label": "Saturation Rate"
+  },
+  {
+   "fieldname": "section_break_zzge",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "demo_json",
+   "fieldtype": "Long Text",
+   "label": "JSon"
+  },
+  {
+   "fieldname": "geo_id_fq",
+   "fieldtype": "Data",
+   "label": "Geo Id FQ"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-17 14:10:14.701760",
+ "modified": "2025-10-19 10:30:05.819138",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Zip Code Analytics",

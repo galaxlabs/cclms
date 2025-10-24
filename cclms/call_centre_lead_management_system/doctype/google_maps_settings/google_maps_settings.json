@@ -5,19 +5,25 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "api_key"
+  "api_key",
+  "map_id"
  ],
  "fields": [
   {
    "fieldname": "api_key",
    "fieldtype": "Data",
    "label": "API Key"
+  },
+  {
+   "fieldname": "map_id",
+   "fieldtype": "Data",
+   "label": "Map ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-07-09 12:42:19.208943",
+ "modified": "2025-10-18 01:00:32.896622",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Google Maps Settings",
@@ -34,6 +40,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

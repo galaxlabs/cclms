@@ -1,49 +1,68 @@
-<div class="atm-scouting h-100" style="display:flex; gap:12px;">
-  <div class="map-wrap" style="flex: 1 1 auto; min-width: 60%;">
-    <div id="atm-map" style="height: calc(100vh - 220px); width: 100%; border-radius: 8px; border: 1px solid var(--border-color);"></div>
+<div style="height: calc(100vh - 120px); position: relative;">
+  <div id="gm-map" style="position:absolute; inset:0; border:1px solid var(--border-color); border-radius:8px;"></div>
 
-    <div class="legend" style="margin-top:8px; display:flex; gap:16px; flex-wrap:wrap;">
-      <span><b>Zones:</b></span>
-      <span style="color:#16a34a;">● Green</span>
-      <span style="color:#86efac;">● Light Green</span>
-      <span style="color:#facc15;">● Yellow</span>
-      <span style="color:#ef4444;">● Red</span>
-      <span style="color:#9ca3af;">● Unclassified</span>
-    </div>
+  <div id="gm-toolbar" style="
+    position:absolute; top:10px; left:10px; z-index:5; display:flex; gap:8px; flex-wrap:wrap;
+    background: rgba(255,255,255,.92); padding:8px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.12);
+  ">
+    <input id="q" class="form-control" placeholder="Search name / zip / type" style="width:220px; height:30px;">
+    <select id="wf" class="form-control" style="height:30px;">
+      <option value="">All Status</option>
+      <option>Installed</option>
+      <option>Signed</option>
+      <option>Approved</option>
+      <option>Submitted</option>
+      <option>Draft</option>
+      <option>Rejected</option>
+    </select>
+    <label style="display:flex; align-items:center; gap:6px;">
+      <input type="checkbox" id="toggle_zip" checked> ZIP Circles
+    </label>
+    <label style="display:flex; align-items:center; gap:6px;">
+      <input type="checkbox" id="toggle_comp"> Competitors
+    </label>
+    <button id="btn_installed" class="btn btn-default btn-sm">Installed</button>
+    <button id="btn_signed" class="btn btn-default btn-sm">Signed</button>
+    <button id="btn_refresh" class="btn btn-default btn-sm">Refresh</button>
+    <button id="btn_backfill" class="btn btn-default btn-sm" title="Geocode missing ZIP centroids">Backfill ZIP</button>
+    <label style="display:flex; align-items:center; gap:6px;">
+      <input type="checkbox" id="only_us" checked> US only
+    </label>
+    <label style="display:flex; align-items:center; gap:6px;">
+      <input type="checkbox" id="non_red" checked> Non-Red only
+    </label>
+    <label style="display:flex; align-items:center; gap:6px;">
+  <input type="checkbox" id="viewport_only"> Viewport only
+</label>
+
   </div>
 
-  <div class="side-panel" style="flex: 0 0 380px;">
-    <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-      <input id="search_box" class="input-with-feedback form-control" placeholder="Search by name / zip / type"/>
-      <button id="refresh_btn" class="btn btn-default btn-sm">Refresh</button>
-    </div>
+  <div style="
+    position:absolute; right:10px; bottom:10px; z-index:5;
+    background: rgba(255,255,255,.92); padding:6px 10px; border-radius:8px; display:flex; gap:12px; align-items:center; font-size:12px;">
+    <span><b>Zones</b></span>
+    <span style="display:inline-flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:50%;background:#16a34a;display:inline-block;"></i>Green</span>
+    <span style="display:inline-flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:50%;background:#86efac;display:inline-block;"></i>Light Green</span>
+    <span style="display:inline-flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:50%;background:#facc15;display:inline-block;"></i>Yellow</span>
+    <span style="display:inline-flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></i>Red</span>
+  </div>
 
-    <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
-      <select id="wf_filter" class="form-control">
-        <option value="">All Statuses</option>
-        <option>Draft</option>
-        <option>Submitted</option>
-        <option>Approved</option>
-        <option>Signed</option>
-        <option>Installed</option>
-        <option>Rejected</option>
-      </select>
-      <select id="zone_filter" class="form-control">
-        <option value="">All Zones</option>
-        <option>Green</option>
-        <option>Light Green</option>
-        <option>Yellow</option>
-        <option>Red</option>
-        <option>Unclassified</option>
-      </select>
-      <label style="display:flex; align-items:center; gap:6px;">
-        <input type="checkbox" id="show_zone_circles" checked />
-        Show zone circles
-      </label>
-    </div>
-
-    <div id="list_container" style="height: calc(100vh - 260px); overflow:auto; border:1px solid var(--border-color); border-radius:8px; padding:8px;">
-      <!-- Filled by JS -->
-    </div>
+  <!-- Left results drawer -->
+  <div id="results_panel" style="
+    position:absolute; left:10px; bottom:10px; top:70px; width:360px; max-width:42vw; z-index:5;
+    background: rgba(255,255,255,.96); border:1px solid #e5e7eb; border-radius:8px; padding:8px; overflow:auto;">
+    <div class="muted" id="results_meta">0 results</div>
+    <div id="results_list"></div>
   </div>
 </div>
+
+<style>
+  .muted { color:#6b7280; font-size:12px; }
+  .card { border:1px solid #e5e7eb; border-radius:8px; padding:10px; margin:8px 0; }
+  .card h4 { margin:0 0 4px 0; font-size:14px; }
+  .pill { display:inline-block; padding:2px 6px; border-radius:9999px; font-size:11px; margin-left:6px; border:1px solid #e5e7eb; }
+  .pill.green { background:#ecfdf5; border-color:#10b98155; }
+  .pill.yellow{ background:#fffbeb; border-color:#f59e0b55; }
+  .pill.red   { background:#fef2f2; border-color:#ef444455; }
+  .goto { cursor:pointer; color:#2563eb; font-weight:600; }
+</style>

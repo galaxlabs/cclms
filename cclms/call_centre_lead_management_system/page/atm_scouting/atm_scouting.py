@@ -1,175 +1,378 @@
-# apps/cclms/cclms/call_centre_lead_management_system/page/atm_scouting/atm_scouting.py
 import frappe
 from frappe import _
+import requests
 
-# ------------------------------
-# Google Maps API Key
-# ------------------------------
-@frappe.whitelist()
-def get_google_maps_key():
-    """Return Google Maps API key from Single doctype."""
-    key = frappe.db.get_single_value("Google Maps Settings", "api_key")
-    return {"api_key": key}
+# ---------- helpers ----------
 
-# ------------------------------
-# Leads for Map
-# ------------------------------
-@frappe.whitelist()
-def get_leads_for_map():
-    """Return ATM Leads with lat/lng + zone (uses your existing API if available)."""
+def _google_key():
+    return frappe.db.get_single_value("Google Maps Settings", "api_key")
+
+def _safe_zip(z):
+    if not z:
+        return ""
+    z = str(z).strip()
+    # keep 5-char “ZIP” for US, don’t over-pad if non-US – we still LPAD in SQL
+    return z.zfill(5) if z.isdigit() else z
+
+# Geocode a single lead row into latitude/longitude using address fields
+def _geocode_lead_row(row):
+    key = _google_key()
+    if not key:
+        return None
+    # build a best-effort address
+    address = row.get("full_address") or row.get("address") or row.get("business_name") or ""
+    city    = row.get("city") or ""
+    state   = row.get("state") or row.get("state_code") or ""
+    zipc    = row.get("zippostal_code") or row.get("zip") or ""
+    country = row.get("country") or "USA"
+
+    q = ", ".join([p for p in [address, city, state, _safe_zip(zipc), country] if p])
+    if not q:
+        return None
+
     try:
-        data = frappe.get_attr("cclms.api.map_data.get_map_data")() or []
-        leads = []
-        for l in data:
-            leads.append({
-                "name": l.get("name"),
-                "business_name": l.get("business_name"),
-                "business_type": l.get("business_type"),
-                "workflow_state": l.get("workflow_state"),
-                "zip": l.get("zip"),
-                "zone": l.get("zone") or "Unclassified",
-                "latitude": float(l.get("latitude")) if l.get("latitude") else None,
-                "longitude": float(l.get("longitude")) if l.get("longitude") else None,
-                "score": l.get("score")
-            })
-        return leads
+        resp = requests.get(
+            "https://maps.googleapis.com/maps/api/geocode/json",
+            params={"address": q, "key": key},
+            timeout=12
+        ).json()
+        res = (resp.get("results") or [])
+        if not res:
+            return None
+        loc = res[0].get("geometry", {}).get("location", {})
+        lat, lng = loc.get("lat"), loc.get("lng")
+        if lat is None or lng is None:
+            return None
+        return float(lat), float(lng)
     except Exception:
-        # Fallback direct query
-        fields = ["name","business_name","business_type","workflow_state","zip","zone","latitude","longitude"]
-        leads = frappe.get_all("ATM Leads", fields=fields)
-        for x in leads:
-            x["latitude"] = float(x["latitude"]) if x.get("latitude") else None
-            x["longitude"] = float(x["longitude"]) if x.get("longitude") else None
-            x["zone"] = x.get("zone") or "Unclassified"
-        return leads
+        return None
 
-# ------------------------------
-# Zone Circles (defensive against missing fields)
-# ------------------------------
+
+# ---------- whitelisted methods you already call from JS ----------
+
 @frappe.whitelist()
-def get_zone_circles():
+def get_google_maps_settings():
+    api_key = _google_key()
+    map_id  = None
+    try:
+        map_id = frappe.db.get_single_value("Google Maps Settings", "map_id")
+    except Exception:
+        pass
+    return {"api_key": api_key, "map_id": map_id}
+
+
+@frappe.whitelist()
+def get_zip_circles():
     """
-    Return zip-level zone circles for overlays.
-    - Queries only existing fields on Zip Code Analytics.
-    - Computes competitor_kiosks = total_kiosks - company_kiosks when possible.
-    - Uses centroid_latitude/longitude or falls back to latitude/longitude.
-    - Derives radius from square_miles if radius_meters missing.
+    Returns centroid circles for Zip Code Analytics.
+    - No hard dependency on 'radius_meters' column.
+    - Computes a friendly radius from square_miles; defaults to ~8km.
     """
-    doctype = "Zip Code Analytics"
-    meta = frappe.get_meta(doctype)
+    dt = "Zip Code Analytics"
+    meta = frappe.get_meta(dt)
 
-    def has(fieldname: str) -> bool:
-        return any(df.fieldname == fieldname for df in meta.fields)
+    def has(field):
+        try: return bool(meta.get_field(field))
+        except Exception: return False
 
-    # Pick lat/lng fields
-    lat_field = "centroid_latitude" if has("centroid_latitude") else ("latitude" if has("latitude") else None)
-    lng_field = "centroid_longitude" if has("centroid_longitude") else ("longitude" if has("longitude") else None)
-    if not lat_field or not lng_field:
-        return []
+    base = ["zip_code", "latitude", "longitude"]
+    optional = ["zone_color", "zone", "square_miles", "population",
+                "margin", "competitor_kiosks", "zip_score", "state_code"]
+    fields = base + [f for f in optional if has(f)]
 
-    # Safe field list
-    fields = ["zip_code"]
-    for f in ("zone", "population", "margin", "radius_meters", "square_miles",
-              "total_kiosks", "company_kiosks"):
-        if has(f):
-            fields.append(f)
-    fields.extend([lat_field, lng_field])
-
-    rows = frappe.get_all(doctype, fields=fields, limit_page_length=20000)
+    rows = frappe.get_all(dt, fields=fields, limit_page_length=200000)
 
     out = []
+    import math
     for r in rows:
-        lat = r.get(lat_field)
-        lng = r.get(lng_field)
-        if not lat or not lng:
+        lat, lng = r.get("latitude"), r.get("longitude")
+        if lat is None or lng is None:
             continue
-        try:
-            lat = float(lat); lng = float(lng)
-        except Exception:
-            continue
-
-        # Compute competitors if we can
-        competitor_kiosks = None
-        if "total_kiosks" in r and "company_kiosks" in r:
+        sqmi = r.get("square_miles")
+        if sqmi:
             try:
-                total_k = int(r.get("total_kiosks") or 0)
-                our_k  = int(r.get("company_kiosks") or 0)
-                competitor_kiosks = max(total_k - our_k, 0)
+                eq_r_m = math.sqrt(float(sqmi)/math.pi) * 1609.34
+                radius = int(max(5_000, min(25_000, eq_r_m * 2)))
             except Exception:
-                competitor_kiosks = None
-
-        # Radius choice
-        radius_meters = None
-        if "radius_meters" in r and r.get("radius_meters"):
-            try:
-                radius_meters = float(r.get("radius_meters"))
-            except Exception:
-                radius_meters = None
-        if not radius_meters and "square_miles" in r and r.get("square_miles"):
-            try:
-                import math
-                area_mi2 = float(r.get("square_miles"))
-                radius_meters = math.sqrt(max(area_mi2, 0.0) / math.pi) * 1609.34
-            except Exception:
-                radius_meters = None
-        if not radius_meters:
-            radius_meters = 8000  # ~5 miles
+                radius = 8_000
+        else:
+            radius = 8_000
 
         out.append({
             "zip_code": r.get("zip_code"),
-            "zone": (r.get("zone") or "Unclassified") if "zone" in r else "Unclassified",
-            "population": r.get("population") if "population" in r else None,
-            "margin": r.get("margin") if "margin" in r else None,
-            "competitor_kiosks": competitor_kiosks,
-            "latitude": lat,
-            "longitude": lng,
-            "radius_meters": radius_meters,
+            "zone_color": r.get("zone_color") or r.get("zone") or "Unclassified",
+            "latitude": float(lat), "longitude": float(lng),
+            "radius_meters": radius,
+            "population": r.get("population"),
+            "margin": r.get("margin"),
+            "competitor_kiosks": r.get("competitor_kiosks"),
+            "zip_score": r.get("zip_score"),
+            "state_code": r.get("state_code"),
         })
     return out
 
-# ------------------------------
-# Create Lead from Map (with dedupe)
-# ------------------------------
+
 @frappe.whitelist()
-def create_lead_from_map(lat: float, lng: float, formatted_address: str = "", zip: str = ""):
-    """Create Draft ATM Lead at lat/lng if not near-duplicate."""
-    lat = float(lat); lng = float(lng)
+def get_leads_non_red(filter_non_red: int = 0, us_only: int = 0, limit: int = 50000):
+    params = {}
+    conds = ["l.name is not null"]
+    if int(us_only or 0):
+        conds.append("(l.country is null or l.country = 'USA')")
+    where_sql = " and ".join(conds)
 
-    near = nearest_existing_lead(lat, lng, radius_km=0.05)
-    if near:
-        frappe.throw(_("Lead already exists nearby: {0} ({1})").format(near.get("name"), near.get("workflow_state")))
+    rows = frappe.db.sql(
+        f"""
+        select
+          l.name,
+          l.business_name,
+          l.business_type,
+          l.workflow_state,
+          l.zippostal_code as zip,          -- <— use ONLY zippostal_code
+          l.latitude,
+          l.longitude
+        from `tabATM Leads` l
+        where {where_sql}
+        order by l.modified desc
+        limit %(lim)s
+        """,
+        {"lim": int(limit)},
+        as_dict=True,
+    )
 
-    doc = frappe.get_doc({
-        "doctype": "ATM Leads",
-        "business_name": formatted_address or "Map Prospect",
-        "address": formatted_address,
-        "zip": zip,
-        "latitude": lat,
-        "longitude": lng,
-        "workflow_state": "Draft"
-    })
-    doc.insert(ignore_permissions=True)
-    return {"name": doc.name}
+    # zone map (optional) — pad ZIP safely
+    zmap = {}
+    if int(filter_non_red or 0):
+        zrows = frappe.get_all("Zip Code Analytics",
+                               fields=["zip_code", "zone_color"],
+                               limit_page_length=200000)
+        zmap = {str(r["zip_code"]).zfill(5): (r.get("zone_color") or "") for r in zrows}
 
-# ------------------------------
-# Helper: nearest lead (fixed filters)
-# ------------------------------
-def nearest_existing_lead(lat, lng, radius_km=0.05):
-    """
-    Bounding-box prefilter + haversine precise check.
-    Uses list-of-lists filter syntax to avoid SQL generation issues.
-    """
-    lat = float(lat); lng = float(lng)
-    lat_min = min(lat - 0.01, lat + 0.01)
-    lat_max = max(lat - 0.01, lat + 0.01)
-    lng_min = min(lng - 0.01, lng + 0.01)
-    lng_max = max(lng - 0.01, lng + 0.01)
+    out = []
+    for r in rows:
+        lat, lng = r.get("latitude"), r.get("longitude")
+        if lat is None or lng is None:
+            got = _geocode_lead_row(r)     # best-effort geocode once
+            if got:
+                lat, lng = got
+                try:
+                    frappe.db.set_value("ATM Leads", r["name"],
+                                        {"latitude": lat, "longitude": lng})
+                except Exception:
+                    pass
+        if lat is None or lng is None:
+            continue
 
-    filters = [
-        ["ATM Leads", "latitude", "between", [lat_min, lat_max]],
-        ["ATM Leads", "longitude", "between", [lng_min, lng_max]],
-        ["ATM Leads", "latitude", "is", "set"],
-        ["ATM Leads", "longitude", "is", "set"],
+        z = (str(r.get("zip") or "").strip().zfill(5)) if (r.get("zip") or "").strip().isdigit() else (r.get("zip") or "")
+        zone = zmap.get(z, "") if zmap else ""
+        if int(filter_non_red or 0) and zone == "Red":
+            continue
+
+        out.append({
+            "name": r["name"],
+            "business_name": r.get("business_name") or r["name"],
+            "business_type": r.get("business_type") or "",
+            "workflow_state": r.get("workflow_state") or "",
+            "zip": z,
+            "zone_color": zone,
+            "latitude": float(lat),
+            "longitude": float(lng),
+        })
+    return out
+
+
+@frappe.whitelist()
+def get_leads_in_viewport(north: float, south: float, east: float, west: float,
+                          filter_non_red: int = 0, us_only: int = 0, limit: int = 50000):
+    north, south = float(north), float(south)
+    east, west   = float(east), float(west)
+
+    params = {"n": north, "s": south}
+    if west <= east:
+        lng_cond = "l.longitude between %(w)s and %(e)s"
+        params["w"] = west; params["e"] = east
+    else:
+        lng_cond = "(l.longitude >= %(w)s or l.longitude <= %(e)s)"
+        params["w"] = west; params["e"] = east
+
+    conds = [
+        "l.latitude between %(s)s and %(n)s",
+        lng_cond
     ]
+    if int(us_only or 0):
+        conds.append("(l.country is null or l.country = 'USA')")
 
-    leads = frappe.get_al_
+    where_sql = " and ".join(conds)
+
+    rows = frappe.db.sql(
+        f"""
+        select
+          l.name,
+          l.business_name,
+          l.business_type,
+          l.workflow_state,
+          l.zippostal_code as zip,          -- <— use ONLY zippostal_code
+          l.latitude,
+          l.longitude
+        from `tabATM Leads` l
+        where {where_sql}
+        order by l.modified desc
+        limit %(lim)s
+        """,
+        {**params, "lim": int(limit)},
+        as_dict=True,
+    )
+
+    zmap = {}
+    if int(filter_non_red or 0):
+        zrows = frappe.get_all("Zip Code Analytics",
+                               fields=["zip_code", "zone_color"],
+                               limit_page_length=200000)
+        zmap = {str(r["zip_code"]).zfill(5): (r.get("zone_color") or "") for r in zrows}
+
+    out = []
+    for r in rows:
+        lat, lng = r.get("latitude"), r.get("longitude")
+        if lat is None or lng is None:
+            continue
+
+        z = (str(r.get("zip") or "").strip().zfill(5)) if (r.get("zip") or "").strip().isdigit() else (r.get("zip") or "")
+        zone = zmap.get(z, "") if zmap else ""
+        if int(filter_non_red or 0) and zone == "Red":
+            continue
+
+        out.append({
+            "name": r["name"],
+            "business_name": r.get("business_name") or r["name"],
+            "business_type": r.get("business_type") or "",
+            "workflow_state": r.get("workflow_state") or "",
+            "zip": z,
+            "zone_color": zone,
+            "latitude": float(lat),
+            "longitude": float(lng),
+        })
+    return out
+
+
+@frappe.whitelist()
+def geocode_missing_zip_centroids(limit: int = 500):
+    """
+    Convenience: fill Zip Code Analytics lat/lng for rows that are missing.
+    Tries Google Geocoding with 'ZIP USA'.
+    """
+    key = _google_key()
+    if not key:
+        frappe.throw("Google Maps API key missing in Google Maps Settings")
+
+    missing = frappe.get_all("Zip Code Analytics",
+                             filters=[["latitude", "is", "not set"], ["zip_code", "is", "set"]],
+                             fields=["name", "zip_code"],
+                             limit_page_length=limit)
+    upd = 0
+    for r in missing:
+        z = str(r["zip_code"]).zfill(5)
+        try:
+            j = requests.get("https://maps.googleapis.com/maps/api/geocode/json",
+                             params={"address": f"{z} USA", "key": key, "components": f"postal_code:{z}|country:US"},
+                             timeout=12).json()
+            loc = (j.get("results") or [{}])[0].get("geometry", {}).get("location", {})
+            lat, lng = loc.get("lat"), loc.get("lng")
+            if lat is not None and lng is not None:
+                frappe.db.set_value("Zip Code Analytics", r["name"],
+                                    {"latitude": float(lat), "longitude": float(lng)})
+                upd += 1
+        except Exception:
+            pass
+    frappe.db.commit()
+    return {"updated": upd}
+
+
+# ---------------- Non-Red leads + type list (JOIN uses zippostal_code) ----------------
+# @frappe.whitelist()
+# def get_leads_non_red(filter_non_red: int = 1,
+#                       workflow: str | None = None,
+#                       business_types: list[str] | None = None,
+#                       q: str | None = None):
+#     """
+#     Returns ATM Leads with lat/lng, joined to Zip Code Analytics for zone_color.
+#     - filter_non_red=1 => only Green/Light Green/Yellow (exclude Red)
+#     - workflow: exact workflow_state (optional)
+#     - business_types: list of types to include (optional)
+#     - q: free-text search over name/business_name/business_type/zippostal_code (optional)
+#     """
+#     params = {}
+#     conds = ["l.latitude is not null", "l.longitude is not null"]
+
+#     if int(filter_non_red or 0):
+#         conds.append("(z.zone_color is null or z.zone_color <> 'Red')")
+
+#     if workflow:
+#         conds.append("l.workflow_state = %(wf)s")
+#         params["wf"] = workflow
+
+#     if business_types:
+#         conds.append("l.business_type in %(types)s")
+#         params["types"] = tuple(business_types)
+
+#     if q:
+#         params["q"] = f"%{q.strip()}%"
+#         conds.append("("
+#                      "l.name like %(q)s or "
+#                      "l.business_name like %(q)s or "
+#                      "l.business_type like %(q)s or "
+#                      "l.zippostal_code like %(q)s"
+#                      ")")
+
+#     where_sql = " and ".join(conds)
+#     rows = frappe.db.sql(
+#         f"""
+#         select
+#             l.name,
+#             l.business_name,
+#             l.business_type,
+#             l.workflow_state,
+#             l.zippostal_code as zip,
+#             l.latitude, l.longitude,
+#             z.zone_color
+#         from `tabATM Leads` l
+#         left join `tabZip Code Analytics` z
+#           on l.zippostal_code = z.zip_code
+#         where {where_sql}
+#         order by l.modified desc
+#         limit 20000
+#         """,
+#         params,
+#         as_dict=True,
+#     )
+
+#     out = []
+#     for r in rows:
+#         if r.get("latitude") is None or r.get("longitude") is None:
+#             continue
+#         out.append({
+#             "name": r["name"],
+#             "business_name": r.get("business_name") or r["name"],
+#             "business_type": r.get("business_type") or "",
+#             "workflow_state": r.get("workflow_state") or "",
+#             "zip": r.get("zip") or "",
+#             "zone_color": r.get("zone_color") or "",
+#             "latitude": float(r["latitude"]),
+#             "longitude": float(r["longitude"]),
+#         })
+#     return out
+
+@frappe.whitelist()
+def list_business_types(non_red_only: int = 1):
+    cond = "and (z.zone_color is null or z.zone_color <> 'Red')" if int(non_red_only or 0) else ""
+    rows = frappe.db.sql(
+        f"""
+        select distinct l.business_type
+        from `tabATM Leads` l
+        left join `tabZip Code Analytics` z
+          on l.zippostal_code = z.zip_code
+        where l.business_type is not null and l.business_type <> ''
+        {cond}
+        order by 1
+        """,
+        as_dict=True,
+    )
+    return [r["business_type"] for r in rows]
