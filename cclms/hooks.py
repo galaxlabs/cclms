@@ -4,6 +4,16 @@ app_publisher = "Galaxy"
 app_description = "Call Centre Lead Management System"
 app_email = "galaxylab2020@gmail.com"
 app_license = "mit"
+
+add_to_apps_screen = [
+	{
+		"name": "cclms",
+		"logo": "/assets/cclms/logo.png",
+		"title": "Call Centre Lead Management System",
+		"route": "/cclms",
+		"has_permission": "cclms.api.permission.has_app_permission"
+	}
+]
 # required_apps = []
 
 # Includes in <head>
