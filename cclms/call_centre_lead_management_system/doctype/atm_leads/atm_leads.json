@@ -12,9 +12,6 @@
   "section_break_fk0q",
   "company",
   "is_duplicate",
-  "item_created",
-  "supplier_created",
-  "sales_order_created",
   "section_break_hmqm",
   "executive_name",
   "column_break_rdkf",
@@ -457,27 +454,6 @@
    "label": "Signed Leads Hide"
   },
   {
-   "default": "0",
-   "fieldname": "item_created",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Item Created"
-  },
-  {
-   "default": "0",
-   "fieldname": "supplier_created",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Supplier Created"
-  },
-  {
-   "default": "0",
-   "fieldname": "sales_order_created",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Sales Order Created"
-  },
-  {
    "fieldname": "full_address",
    "fieldtype": "Small Text",
    "label": "Full Address"
@@ -563,7 +539,7 @@
    "link_fieldname": "atm_leads"
   }
  ],
- "modified": "2025-10-24 22:35:34.051876",
+ "modified": "2025-12-05 00:00:32.955872",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",

@@ -275,4 +275,14 @@ page_js = {
 website_route_rules = [
     {"from_route": "/btm-radar", "to_route": "btm-radar"}
 ]
+doc_events = {
+    "ATM Leads": {
+        "after_save": "cclms.cclms.notifications.atm_lead_after_save"
+    }
+}
+scheduler_events = {
+    "hourly": [
+        "cclms.call_centre_lead_management_system.doctype.atm_lead_kpi_summary.atm_lead_kpi_scheduler.update_all_summaries"
+    ]
+}
 

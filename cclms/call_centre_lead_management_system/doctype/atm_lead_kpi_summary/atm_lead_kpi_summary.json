@@ -1,0 +1,148 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{state_filter}-{executive_name}{month}-{year}",
+ "creation": "2025-12-03 23:01:31.403577",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "year",
+  "month",
+  "executive_name",
+  "state_filter",
+  "credit_mode",
+  "branch",
+  "status",
+  "from_date",
+  "to_date",
+  "column_break_agmz",
+  "current_month_count",
+  "previous_month_count",
+  "total_count",
+  "overall_count",
+  "section_break_ulcp",
+  "kpi_rows"
+ ],
+ "fields": [
+  {
+   "fieldname": "year",
+   "fieldtype": "Int",
+   "label": "Year"
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "options": "01\n02\n03\n04\n05\n06\n07\n08\n09\n10\n11\n12"
+  },
+  {
+   "fieldname": "executive_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Executive (Generator)",
+   "options": "Sales Agent",
+   "reqd": 1
+  },
+  {
+   "fieldname": "state_filter",
+   "fieldtype": "Link",
+   "label": "Lead Status (Workflow State)",
+   "options": "Workflow State",
+   "reqd": 1
+  },
+  {
+   "default": "Generator",
+   "fieldname": "credit_mode",
+   "fieldtype": "Select",
+   "label": "Credit Mode",
+   "options": "Generator\nOwner\nBoth"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "KPI Status",
+   "options": "Draft\nCalculated\nAdjusted\nFinal"
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_ulcp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "kpi_rows",
+   "fieldtype": "Table",
+   "label": "KPI Rows",
+   "options": "ATM Lead KPI Row"
+  },
+  {
+   "fieldname": "column_break_agmz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_month_count",
+   "fieldtype": "Int",
+   "label": "Current Month Count"
+  },
+  {
+   "fieldname": "previous_month_count",
+   "fieldtype": "Int",
+   "label": "Prev Month"
+  },
+  {
+   "fieldname": "total_count",
+   "fieldtype": "Int",
+   "label": "Total"
+  },
+  {
+   "fieldname": "overall_count",
+   "fieldtype": "Int",
+   "label": "Over All"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-04 02:09:40.101191",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "ATM Lead KPI Summary",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:agent_name",
  "creation": "2025-02-19 07:01:50.546034",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -23,7 +24,8 @@
    "fieldname": "agent_name",
    "fieldtype": "Link",
    "label": "Agent Name",
-   "options": "Sales Agent"
+   "options": "Sales Agent",
+   "unique": 1
   },
   {
    "fieldname": "first_name",
@@ -82,10 +84,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-19 07:28:01.136921",
+ "modified": "2025-11-14 22:19:54.743759",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Data Record",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -101,6 +104,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
