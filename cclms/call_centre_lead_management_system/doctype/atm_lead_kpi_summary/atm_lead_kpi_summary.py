@@ -7,23 +7,39 @@ from collections import defaultdict
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import getdate
 
 
 class ATMLeadKPISummary(Document):
+    """
+    Monthly KPI master:
+    - One document per Year + Month (optionally filtered by Executive).
+    - Child rows per (Company, State, State Code, Agent).
+    - Counts & average days calculated from ATM Lead State History.
+    """
 
     @frappe.whitelist()
     def rebuild_rows(self):
         """
-        Build KPI rows for this: executive_name + state_filter + month + year,
-        across ALL companies.
+        Rebuild KPI rows for this Year + Month.
+
+        Uses ATM Lead State History as the source of truth.
+
+        If self.executive_name is set:
+            -> Only history for that agent (h.agent or l.executive_name).
+        If empty:
+            -> All agents.
         """
 
-        # protect Adjusted/Final from being overwritten
-        if self.status in ("Adjusted", "Final"):
-            frappe.throw("This summary is already Adjusted/Final. Duplicate it if you need a fresh calculation.")
+        # Optional protection: don't overwrite manually adjusted/final summaries
+        if getattr(self, "status", None) in ("Adjusted", "Final"):
+            frappe.throw(
+                "This summary is already Adjusted/Final. "
+                "Duplicate it if you need a fresh calculation."
+            )
 
-        if not (self.year and self.month and self.executive_name and self.state_filter):
-            frappe.throw("Please set Year, Month, Executive and Lead Status.")
+        if not self.year or not self.month:
+            frappe.throw("Please set Year and Month before rebuilding KPI rows.")
 
         year = int(self.year)
         month = int(self.month)
@@ -36,50 +52,70 @@ class ATMLeadKPISummary(Document):
         self.from_date = start_day
         self.to_date = end_day
 
-        # 2) Clear existing rows
+        # Clear existing rows
         self.set("kpi_rows", [])
 
-        credit_mode = self.credit_mode or "Generator"
+        # 2) Build SQL conditions for history fetch
+        conditions = ["h.change_date BETWEEN %s AND %s"]
+        params = [start_day, end_day]
 
-        # Workflow State name (text used in ATM Leads.status)
-        workflow_state_name = frappe.db.get_value(
-            "Workflow State", self.state_filter, "name"
-        ) or self.state_filter
+        # Optional filter by executive_name (agent)
+        # If you set Executive on the parent, we only show that agent's KPI.
+        if getattr(self, "executive_name", None):
+            conditions.append(
+                "IFNULL(h.agent, IFNULL(l.executive_name, '')) = %s"
+            )
+            params.append(self.executive_name)
 
-        # 3) Get all ATM Leads in this workflow state for this executive
-        #    No docstatus filter, because you use workflow only.
-        filters = {
-            "status": workflow_state_name,
-            "executive_name": self.executive_name,
-        }
-        if self.branch:
-            filters["branch"] = self.branch
+        # Optional filter by branch (if you want)
+        if getattr(self, "branch", None):
+            conditions.append("l.branch = %s")
+            params.append(self.branch)
 
-        leads = frappe.db.get_all(
-            "ATM Leads",
-            fields=[
-                "name",
-                "company",
-                "executive_name",
-                "executive_name_ps",
-                "lead_owner",
-                "state",
-                "state_code",
-                "post_date",
-                "approve_date",
-                "sign_date",
-                "convert_date",
-                "install_date",
-                "remove_date",
-                "sign_rejected",
-                "approved_days",
-                "sign_days",
-                "status",
-            ],
-            filters=filters,
+        where_clause = " AND ".join(conditions)
+
+        # 3) Fetch history rows within month (and optional filters)
+        history = frappe.db.sql(
+            f"""
+            SELECT
+                h.parent             AS lead_name,
+                h.from_state,
+                h.to_state,
+                h.change_date,
+                h.days_in_state,
+                h.agent              AS history_agent,
+                l.company,
+                l.state,
+                l.state_code,
+                l.executive_name     AS lead_agent
+            FROM `tabATM Lead State History` h
+            JOIN `tabATM Leads` l
+                ON l.name = h.parent
+            WHERE {where_clause}
+            """,
+            params,
+            as_dict=True,
         )
 
-        # 4) Bucket by (company, state, state_code)
+        if not history:
+            # Nothing in this month (for this filter)
+            self.leads_posted = 0
+            self.leads_approved = 0
+            self.leads_signed = 0
+            self.leads_converted = 0
+            self.leads_installed = 0
+            self.leads_removed = 0
+            self.leads_sign_rejected = 0
+            self.avg_approval_days = 0
+            self.avg_sign_days = 0
+            self.status = "Calculated"
+            self.save()
+            return
+
+        # -------------------------------
+        # Aggregate in buckets
+        # Key: (company, state, state_code, agent_name)
+        # -------------------------------
         buckets = defaultdict(lambda: {
             "leads_posted": 0,
             "leads_approved": 0,
@@ -94,56 +130,90 @@ class ATMLeadKPISummary(Document):
             "sign_days_count": 0,
         })
 
-        def in_range(d):
-            return d and start_day <= d <= end_day
+        for h in history:
+            company = h.company or "Unknown"
+            state = h.state or ""
+            state_code = h.state_code or ""
+            # Prefer explicit history.agent (Data); fall back to lead.executive_name
+            agent_name = h.history_agent or h.lead_agent or "Unknown"
 
-        for l in leads:
-            # Reference date: depends on state_filter
-            ref_date = get_reference_date_for_lead(l, workflow_state_name)
-            if not in_range(ref_date):
-                # This lead is in that state, but not in this month
-                continue
-
-            # Decide who gets credit logically
-            agent_name = resolve_kpi_agent_for_lead(l, credit_mode, self.executive_name)
-            if not agent_name:
-                continue
-
-            key = (l.company, l.state, l.state_code)
+            key = (company, state, state_code, agent_name)
             b = buckets[key]
 
-            # Fill counters based on individual date fields
-            if in_range(l.post_date):
+            from_state = (h.from_state or "").strip()
+            to_state = (h.to_state or "").strip()
+            days_in_state = h.days_in_state
+
+            # -------- Counts (per bucket) --------
+
+            # Submitted: Draft -> Submitted
+            if from_state == "Draft" and to_state == "Submitted":
                 b["leads_posted"] += 1
-            if in_range(l.approve_date):
+
+            if to_state == "Approved":
                 b["leads_approved"] += 1
-            if in_range(l.sign_date):
+
+            if to_state == "Signed":
                 b["leads_signed"] += 1
-            if in_range(l.convert_date):
+
+            if to_state == "Converted":
                 b["leads_converted"] += 1
-            if in_range(l.install_date):
+
+            if to_state == "Installed":
                 b["leads_installed"] += 1
-            if in_range(l.remove_date):
+
+            if to_state in ("installed/Removed", "Removed"):
                 b["leads_removed"] += 1
-            if in_range(l.sign_rejected):
+
+            if to_state == "Signed Rejected":
                 b["leads_sign_rejected"] += 1
 
-            if l.approved_days:
-                b["approval_days_sum"] += float(l.approved_days)
-                b["approval_days_count"] += 1
-            if l.sign_days:
-                b["sign_days_sum"] += float(l.sign_days)
-                b["sign_days_count"] += 1
+            # -------- Durations (per bucket) --------
+            if days_in_state is not None:
+                try:
+                    d = float(days_in_state)
+                except (TypeError, ValueError):
+                    d = None
 
-        # 5) Fill child rows
-        for (company, state, state_code), b in buckets.items():
+                if d is not None:
+                    # Approval cycle: time spent in Submitted
+                    if from_state == "Submitted":
+                        b["approval_days_sum"] += d
+                        b["approval_days_count"] += 1
+
+                    # Sign cycle: time spent in Agreement Sent
+                    if from_state == "Agreement Sent":
+                        b["sign_days_sum"] += d
+                        b["sign_days_count"] += 1
+
+        # -------------------------------
+        # Totals for parent
+        # -------------------------------
+        total_posted = 0
+        total_approved = 0
+        total_signed = 0
+        total_converted = 0
+        total_installed = 0
+        total_removed = 0
+        total_sign_rejected = 0
+
+        total_approval_days_sum = 0.0
+        total_approval_days_count = 0
+        total_sign_days_sum = 0.0
+        total_sign_days_count = 0
+
+        # -------------------------------
+        # Materialize child rows + accumulate parent totals
+        # -------------------------------
+        for (company, state, state_code, agent_name), b in buckets.items():
             row = self.append("kpi_rows", {})
             row.company = company
             row.state = state
             row.state_code = state_code
 
-            # default credit = parent executive_name (generator)
-            row.kpi_agent = self.executive_name
+            # IMPORTANT: set kpi_agent fieldtype = Data in DocType,
+            # otherwise you'll hit Link issues for old or missing agents.
+            row.kpi_agent = agent_name
 
             row.leads_posted = b["leads_posted"]
             row.leads_approved = b["leads_approved"]
@@ -155,8 +225,44 @@ class ATMLeadKPISummary(Document):
 
             if b["approval_days_count"]:
                 row.avg_approval_days = b["approval_days_sum"] / b["approval_days_count"]
+
             if b["sign_days_count"]:
                 row.avg_sign_days = b["sign_days_sum"] / b["sign_days_count"]
+
+            # Accumulate parent totals
+            total_posted += b["leads_posted"]
+            total_approved += b["leads_approved"]
+            total_signed += b["leads_signed"]
+            total_converted += b["leads_converted"]
+            total_installed += b["leads_installed"]
+            total_removed += b["leads_removed"]
+            total_sign_rejected += b["leads_sign_rejected"]
+
+            total_approval_days_sum += b["approval_days_sum"]
+            total_approval_days_count += b["approval_days_count"]
+            total_sign_days_sum += b["sign_days_sum"]
+            total_sign_days_count += b["sign_days_count"]
+
+        # -------------------------------
+        # Set parent totals / averages
+        # -------------------------------
+        self.leads_posted = total_posted
+        self.leads_approved = total_approved
+        self.leads_signed = total_signed
+        self.leads_converted = total_converted
+        self.leads_installed = total_installed
+        self.leads_removed = total_removed
+        self.leads_sign_rejected = total_sign_rejected
+
+        if total_approval_days_count:
+            self.avg_approval_days = total_approval_days_sum / total_approval_days_count
+        else:
+            self.avg_approval_days = 0
+
+        if total_sign_days_count:
+            self.avg_sign_days = total_sign_days_sum / total_sign_days_count
+        else:
+            self.avg_sign_days = 0
 
         self.status = "Calculated"
         self.save()
@@ -164,70 +270,73 @@ class ATMLeadKPISummary(Document):
     @frappe.whitelist()
     def apply_transfers(self):
         """
-        Apply manual closer adjustments:
-        - For each row where transfer_checked && transfer_to_agent
-          -> move KPI credit to transfer_to_agent.
-        - We do NOT touch ATM Leads.
+        Legacy button support.
+
+        You said you don't want transfer-to-closer logic now,
+        but the form is still calling apply_transfers.
+
+        To keep UX simple, we just rebuild rows again.
         """
-        if self.status not in ("Draft", "Calculated", "Adjusted"):
-            frappe.throw("You can only adjust a summary in Draft / Calculated / Adjusted status.")
+        self.rebuild_rows()
 
-        changed = False
+@frappe.whitelist()
+def generate_kpi_for_month(year=None, month=None):
+    """
+    Create / update one ATM Lead KPI Summary per Sales Agent
+    for the given month, then rebuild rows for each.
 
-        for row in self.kpi_rows:
-            if row.transfer_checked and row.transfer_to_agent:
-                # Move credit to closer
-                row.kpi_agent = row.transfer_to_agent
-                # Clear the flag once applied
-                row.transfer_checked = 0
-                changed = True
+    - If year/month not given -> use current month.
+    - Works even if year/month fields are Select (string) in DocType.
+    """
 
-        if changed:
-            self.status = "Adjusted"
-            self.save()
-            frappe.msgprint("Closer adjustments applied. KPI Agent updated in rows.")
+    today = getdate()
+
+    # Allow both int and string values coming in
+    if year is None:
+        year_int = today.year
+    else:
+        year_int = int(year)
+
+    if month is None:
+        month_int = today.month
+    else:
+        month_int = int(month)
+
+    # Strings as stored in Select fields
+    year_str = str(year_int)
+    month_str = f"{month_int:02d}"
+
+    # Get all Sales Agents
+    agents = frappe.get_all("Sales Agent", fields=["name"])
+
+    for a in agents:
+        agent_name = a.name
+
+        # Try to find existing summary for this agent + month (string match)
+        summary_name = frappe.db.get_value(
+            "ATM Lead KPI Summary",
+            {
+                "year": year_str,
+                "month": month_str,
+                "executive_name": agent_name,
+            },
+            "name",
+        )
+
+        if summary_name:
+            doc = frappe.get_doc("ATM Lead KPI Summary", summary_name)
         else:
-            frappe.msgprint("No rows marked for closer adjustment.")
+            doc = frappe.new_doc("ATM Lead KPI Summary")
+            doc.year = year_str           # Select expects string
+            doc.month = month_str         # "01".."12"
+            doc.executive_name = agent_name
 
+            # state_filter only to satisfy autoname/link; not used in logic
+            doc.state_filter = "Signed"   # or any valid Workflow State
+            doc.status = "Draft"
+            doc.insert(ignore_permissions=True)
 
-# -------------------------
-# Helper functions (module level)
-# -------------------------
+        # Rebuild KPI for this agent & month
+        doc.rebuild_rows()
 
-def get_reference_date_for_lead(lead, workflow_state_name):
-    """
-    Given a lead and a workflow state name, return the relevant date field
-    that indicates when the lead entered that state.
-    NOTE: make sure workflow_state_name strings match your actual Workflow States.
-    """
-    state_date_field_map = {
-        "Posted": lead.post_date,
-        "Approved": lead.approve_date,
-        "Signed": lead.sign_date,
-        "Converted": lead.convert_date,
-        "Installed": lead.install_date,
-        "Removed": lead.remove_date,
-        "Sign Rejected": lead.sign_rejected,
-    }
-    # default: use post_date if state not in map
-    return state_date_field_map.get(workflow_state_name, lead.post_date)
-
-
-def resolve_kpi_agent_for_lead(lead, credit_mode, parent_executive):
-    """
-    Determine the KPI agent for a lead based on credit mode.
-    - "Generator" => use lead.executive_name (Sales Agent link)
-    - "Owner"     => use lead.executive_name_ps (full name) if set, else executive_name
-    - "Both"      => prefer executive_name_ps if set, else executive_name
-    If nothing found, fallback to parent_executive.
-    """
-    if credit_mode == "Generator":
-        return lead.executive_name or parent_executive
-
-    if credit_mode == "Owner":
-        return lead.executive_name_ps or lead.executive_name or parent_executive
-
-    if credit_mode == "Both":
-        return lead.executive_name_ps or lead.executive_name or parent_executive
-
-    return parent_executive
+    return f"Generated / updated KPI summaries for {len(agents)} agents for {month_str}-{year_str}"

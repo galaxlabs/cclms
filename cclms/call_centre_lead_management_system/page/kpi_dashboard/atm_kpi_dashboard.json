@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2025-12-06 00:02:46.612929",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-12-06 00:02:46.612929",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "tm-kpi-dashboard",
+ "owner": "Administrator",
+ "page_name": "tm-kpi-dashboard",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "TM KPI Dashboard"
+}

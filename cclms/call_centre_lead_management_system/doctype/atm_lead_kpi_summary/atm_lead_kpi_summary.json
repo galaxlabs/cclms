@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{state_filter}-{executive_name}{month}-{year}",
+ "autoname": "format:{executive_name}-{month}-{year}",
  "creation": "2025-12-03 23:01:31.403577",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -9,25 +9,38 @@
   "year",
   "month",
   "executive_name",
-  "state_filter",
   "credit_mode",
-  "branch",
   "status",
-  "from_date",
   "to_date",
   "column_break_agmz",
   "current_month_count",
   "previous_month_count",
   "total_count",
   "overall_count",
+  "branch",
+  "from_date",
+  "section_break_btpp",
+  "leads_posted",
+  "total_converted",
+  "leads_sign_rejected",
+  "column_break_oemq",
+  "leads_approved",
+  "leads_installed",
+  "avg_approval_days",
+  "column_break_wacm",
+  "leads_signed",
+  "leads_removed",
+  "avg_sign_days",
   "section_break_ulcp",
   "kpi_rows"
  ],
  "fields": [
   {
+   "default": "2026",
    "fieldname": "year",
-   "fieldtype": "Int",
-   "label": "Year"
+   "fieldtype": "Select",
+   "label": "Year",
+   "options": "2025\n2026\n2027\n2024"
   },
   {
    "fieldname": "month",
@@ -41,13 +54,6 @@
    "in_list_view": 1,
    "label": "Executive (Generator)",
    "options": "Sales Agent",
-   "reqd": 1
-  },
-  {
-   "fieldname": "state_filter",
-   "fieldtype": "Link",
-   "label": "Lead Status (Workflow State)",
-   "options": "Workflow State",
    "reqd": 1
   },
   {
@@ -115,12 +121,69 @@
    "fieldname": "overall_count",
    "fieldtype": "Int",
    "label": "Over All"
+  },
+  {
+   "fieldname": "section_break_btpp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "leads_posted",
+   "fieldtype": "Int",
+   "label": "Total Submitted (Posted)"
+  },
+  {
+   "fieldname": "column_break_oemq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "leads_approved",
+   "fieldtype": "Int",
+   "label": "Total Approved"
+  },
+  {
+   "fieldname": "column_break_wacm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "leads_signed",
+   "fieldtype": "Int",
+   "label": "Total Signed"
+  },
+  {
+   "fieldname": "total_converted",
+   "fieldtype": "Int",
+   "label": "Total Converted"
+  },
+  {
+   "fieldname": "leads_installed",
+   "fieldtype": "Int",
+   "label": "Total Installed"
+  },
+  {
+   "fieldname": "leads_removed",
+   "fieldtype": "Int",
+   "label": "Total Removed"
+  },
+  {
+   "fieldname": "leads_sign_rejected",
+   "fieldtype": "Int",
+   "label": "Total Sign Rejected"
+  },
+  {
+   "fieldname": "avg_approval_days",
+   "fieldtype": "Float",
+   "label": "Avg Approval Days"
+  },
+  {
+   "fieldname": "avg_sign_days",
+   "fieldtype": "Float",
+   "label": "Avg Sign Days"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-12-04 02:09:40.101191",
+ "modified": "2025-12-05 23:08:07.848521",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Lead KPI Summary",

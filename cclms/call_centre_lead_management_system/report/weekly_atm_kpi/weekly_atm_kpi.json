@@ -1,0 +1,55 @@
+{
+ "add_total_row": 0,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2025-12-06 00:33:13.378755",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letterhead": null,
+ "modified": "2025-12-06 00:33:13.378755",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Weekly ATM KPI",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "ATM Leads",
+ "report_name": "Weekly ATM KPI",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Data Executive"
+  },
+  {
+   "role": "Sales Executive"
+  },
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Karachi Team"
+  },
+  {
+   "role": "India Team"
+  },
+  {
+   "role": "Onboarding Executive"
+  },
+  {
+   "role": "OC"
+  }
+ ],
+ "timeout": 0
+}

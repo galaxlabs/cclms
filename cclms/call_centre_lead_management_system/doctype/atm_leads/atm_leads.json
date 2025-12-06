@@ -65,28 +65,19 @@
   "install_date",
   "column_break_nszu",
   "remove_date",
-  "section_break_pawd",
-  "approved_days",
-  "column_break_lchj",
-  "agreement_sent_days",
-  "column_break_zkia",
-  "sign_days",
-  "column_break_bnov",
-  "convert_days",
-  "column_break_sznf",
-  "install_days",
-  "column_break_mhpr",
-  "remove_days",
   "section_break_utay",
   "opening_hours",
   "refrence",
-  "hidden_by_signed_lead",
-  "executive_name_ps",
+  "section_break_tnof",
   "sign_by",
-  "lead_owner",
+  "kpi_min",
   "status",
+  "column_break_hyxs",
+  "executive_name_ps",
   "kpi_max",
-  "kpi_min"
+  "lead_owner",
+  "section_break_bjqr",
+  "state_history"
  ],
  "fields": [
   {
@@ -329,33 +320,6 @@
    "label": "Sign Date"
   },
   {
-   "fieldname": "section_break_pawd",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "agreement_sent_days",
-   "fieldtype": "Data",
-   "label": "Agreement Sent Days"
-  },
-  {
-   "fieldname": "column_break_lchj",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "approved_days",
-   "fieldtype": "Data",
-   "label": "Approved Days"
-  },
-  {
-   "fieldname": "column_break_zkia",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "sign_days",
-   "fieldtype": "Data",
-   "label": "Sign Days"
-  },
-  {
    "default": " TBD",
    "fieldname": "percentage",
    "fieldtype": "Data",
@@ -378,33 +342,6 @@
    "fieldtype": "Table",
    "label": "Opening Hours",
    "options": "Opening Hours"
-  },
-  {
-   "fieldname": "column_break_bnov",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "convert_days",
-   "fieldtype": "Data",
-   "label": "Convert Days"
-  },
-  {
-   "fieldname": "column_break_sznf",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "install_days",
-   "fieldtype": "Data",
-   "label": "Install Days"
-  },
-  {
-   "fieldname": "column_break_mhpr",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "remove_days",
-   "fieldtype": "Data",
-   "label": "Remove days"
   },
   {
    "fieldname": "column_break_mskq",
@@ -444,14 +381,6 @@
    "fieldname": "refrence",
    "fieldtype": "Data",
    "label": "Refrence"
-  },
-  {
-   "default": "0",
-   "fieldname": "hidden_by_signed_lead",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "in_list_view": 1,
-   "label": "Signed Leads Hide"
   },
   {
    "fieldname": "full_address",
@@ -526,6 +455,24 @@
    "fieldname": "sign_rejected",
    "fieldtype": "Date",
    "label": "Sign Rejected"
+  },
+  {
+   "fieldname": "section_break_tnof",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_hyxs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_bjqr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "state_history",
+   "fieldtype": "Table",
+   "label": "History",
+   "options": "ATM Lead State History"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -539,7 +486,7 @@
    "link_fieldname": "atm_leads"
   }
  ],
- "modified": "2025-12-05 00:00:32.955872",
+ "modified": "2025-12-05 00:26:38.968936",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",

@@ -281,8 +281,14 @@ doc_events = {
     }
 }
 scheduler_events = {
+    # "cron": {
+    #     # Every day at 00:00 UTC = 05:00 PKT
+    #     "0 0 * * *": [
+    #         "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.sync_recent_lead_state_history"
+    #     ]
+    # },
     "hourly": [
-        "cclms.call_centre_lead_management_system.doctype.atm_lead_kpi_summary.atm_lead_kpi_scheduler.update_all_summaries"
+        "cclms.call_centre_lead_management_system.doctype.atm_lead_kpi_summary.atm_lead_kpi_summary.generate_kpi_for_month",
     ]
 }
 

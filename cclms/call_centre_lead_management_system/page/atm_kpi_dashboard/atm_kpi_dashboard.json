@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2025-12-06 00:13:08.177608",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-12-06 00:13:08.177608",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "atm-kpi-dashboard",
+ "owner": "Administrator",
+ "page_name": "atm-kpi-dashboard",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "ATM KPI Dashboard"
+}
