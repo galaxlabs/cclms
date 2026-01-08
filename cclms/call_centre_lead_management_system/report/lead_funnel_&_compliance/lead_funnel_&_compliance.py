@@ -122,7 +122,7 @@ def _quality_gaps(start, end, company=None, exec_name=None):
     base = " FROM `tabATM Leads` WHERE " + " AND ".join(where)
     total = frappe.db.sql("SELECT COUNT(*)"+base, tuple(args))[0][0]
     missing_addr = frappe.db.sql(
-        "SELECT COUNT(*)"+base+" AND (COALESCE(`city`,'')='' OR COALESCE(`state`,'')='' OR COALESCE(`zippostal_code`,'')='')",
+        "SELECT COUNT(*)"+base+" AND (COALESCE(`city`,'')='' OR COALESCE(`state`,'')='' OR COALESCE(`zip_code`,'')='')",
         tuple(args)
     )[0][0]
     missing_geo = frappe.db.sql(

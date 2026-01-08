@@ -27,6 +27,7 @@
   "competitor_density",
   "kiosk_density_company",
   "saturation_rate",
+  "zone_updated_on",
   "column_break_hxlg",
   "population",
   "removal_rate",
@@ -38,6 +39,7 @@
   "land_sq_mi",
   "water_sq_mi",
   "geo_id_fq",
+  "matched_rule",
   "section_break_zzge",
   "demo_json"
  ],
@@ -218,12 +220,22 @@
    "fieldname": "geo_id_fq",
    "fieldtype": "Data",
    "label": "Geo Id FQ"
+  },
+  {
+   "fieldname": "matched_rule",
+   "fieldtype": "Data",
+   "label": "Matched Rule"
+  },
+  {
+   "fieldname": "zone_updated_on",
+   "fieldtype": "Datetime",
+   "label": "Zone Update at"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-19 10:30:05.819138",
+ "modified": "2026-01-07 02:21:50.967372",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Zip Code Analytics",

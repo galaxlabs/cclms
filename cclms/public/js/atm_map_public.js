@@ -53,7 +53,7 @@ function initMap() {
 					content: `
 						<b>${lead.company}</b><br>
 						${lead.business_type || ''}<br>
-						ZIP: ${lead.zippostal_code}<br>
+						ZIP: ${lead.zip_code}<br>
 						Zone: ${lead.zone || 'Unknown'}`
 				});
 

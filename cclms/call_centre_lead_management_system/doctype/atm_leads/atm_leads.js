@@ -81,7 +81,7 @@
 //         frm.set_value('city', parsedAddress.city);
 //         frm.set_value('state_code', parsedAddress.state_code);
 //         frm.set_value('state', parsedAddress.state);
-//         frm.set_value('zippostal_code', parsedAddress.zip);
+//         frm.set_value('zip_code', parsedAddress.zip);
 //         frm.set_value('country', parsedAddress.country);
 
 //         // Also set lat/lng if available
@@ -345,7 +345,7 @@
 //                 frm.set_value('address', streetAddress);
 //                 frm.set_value('city', city);
 //                 frm.set_value('state_code', stateCode); // State Code
-//                 frm.set_value('zippostal_code', zip);
+//                 frm.set_value('zip_code', zip);
 //                 frm.set_value('country', country);
 
 //                 // Set the state name based on state code if state name is not available
@@ -382,7 +382,7 @@
 //                 frm.doc.address || 'N/A',                 // Business Street Address
 //                 frm.doc.city || 'N/A',                    // City
 //                 frm.doc.state_code || 'N/A',              // State/Province
-//                 frm.doc.zippostal_code || 'N/A',          // ZIP/Postal Code
+//                 frm.doc.zip_code || 'N/A',          // ZIP/Postal Code
 //                 frm.doc.business_phone_number || 'N/A',   // Business Phone
 //                 frm.doc.personal_cell_phone || '',        // Personal Phone
 //                 frm.doc.email || '',                      // Email Address
@@ -438,7 +438,7 @@
 
 // Business Name: ${frm.doc.business_name || 'N/A'}
 
-// Business Address: ${frm.doc.address || 'N/A'}, ${frm.doc.city || 'N/A'}, ${frm.doc.state_code || 'N/A'}, ${frm.doc.zippostal_code || 'N/A'}
+// Business Address: ${frm.doc.address || 'N/A'}, ${frm.doc.city || 'N/A'}, ${frm.doc.state_code || 'N/A'}, ${frm.doc.zip_code || 'N/A'}
 
 // Business Phone: ${frm.doc.business_phone_number || 'N/A'}
 

@@ -7,14 +7,25 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "active",
+  "section_break_tbgx",
   "brand",
   "latitude",
   "zip_code",
   "place_id",
+  "address",
+  "city",
+  "state_code",
+  "provider",
+  "osm_id",
   "column_break_gcxe",
   "actual_zip_code",
   "longitude",
-  "source"
+  "source",
+  "display_name",
+  "notes",
+  "last_seen_on",
+  "first_seen_on"
  ],
  "fields": [
   {
@@ -77,12 +88,67 @@
    "in_standard_filter": 1,
    "label": "Actual Zip Code",
    "search_index": 1
+  },
+  {
+   "fieldname": "display_name",
+   "fieldtype": "Data",
+   "label": "Display Name"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "last_seen_on",
+   "fieldtype": "Datetime",
+   "label": "Last Seen On"
+  },
+  {
+   "default": "1",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "fieldname": "section_break_tbgx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "first_seen_on",
+   "fieldtype": "Datetime",
+   "label": "First Seen On"
+  },
+  {
+   "fieldname": "provider",
+   "fieldtype": "Data",
+   "label": "Provider"
+  },
+  {
+   "fieldname": "osm_id",
+   "fieldtype": "Data",
+   "label": "Osm ID"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-17 20:39:24.182690",
+ "modified": "2026-01-07 19:01:01.146329",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Competitor Kiosk",

@@ -14,6 +14,7 @@
   "other_metadata",
   "opening_hours",
   "distance_data",
+  "place_id",
   "section_break_aqal",
   "geolocation_dzeg"
  ],
@@ -68,11 +69,17 @@
   {
    "fieldname": "geolocation_dzeg",
    "fieldtype": "Geolocation"
+  },
+  {
+   "fieldname": "place_id",
+   "fieldtype": "Data",
+   "label": "Place Id",
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-14 10:11:07.734749",
+ "modified": "2026-01-06 21:44:44.455289",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Locations",
@@ -92,6 +99,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

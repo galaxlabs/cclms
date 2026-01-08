@@ -104,7 +104,7 @@
   function openInfo(marker, row) {
     const addr = [
       row.address,
-      [row.city, row.state, row.zippostal_code].filter(Boolean).join(", "),
+      [row.city, row.state, row.zip_code].filter(Boolean).join(", "),
       row.country
     ].filter(Boolean).join("<br>");
 

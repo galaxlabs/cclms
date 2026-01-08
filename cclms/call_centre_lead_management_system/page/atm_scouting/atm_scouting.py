@@ -23,7 +23,7 @@ def _geocode_lead_row(row):
     address = row.get("full_address") or row.get("address") or row.get("business_name") or ""
     city    = row.get("city") or ""
     state   = row.get("state") or row.get("state_code") or ""
-    zipc    = row.get("zippostal_code") or row.get("zip") or ""
+    zipc    = row.get("zip_code") or row.get("zip") or ""
     country = row.get("country") or "USA"
 
     q = ", ".join([p for p in [address, city, state, _safe_zip(zipc), country] if p])
@@ -127,7 +127,7 @@ def get_leads_non_red(filter_non_red: int = 0, us_only: int = 0, limit: int = 50
           l.business_name,
           l.business_type,
           l.workflow_state,
-          l.zippostal_code as zip,          -- <— use ONLY zippostal_code
+          l.zip_code as zip,          -- <— use ONLY zip_code
           l.latitude,
           l.longitude
         from `tabATM Leads` l
@@ -210,7 +210,7 @@ def get_leads_in_viewport(north: float, south: float, east: float, west: float,
           l.business_name,
           l.business_type,
           l.workflow_state,
-          l.zippostal_code as zip,          -- <— use ONLY zippostal_code
+          l.zip_code as zip,          -- <— use ONLY zip_code
           l.latitude,
           l.longitude
         from `tabATM Leads` l
@@ -286,7 +286,7 @@ def geocode_missing_zip_centroids(limit: int = 500):
     return {"updated": upd}
 
 
-# ---------------- Non-Red leads + type list (JOIN uses zippostal_code) ----------------
+# ---------------- Non-Red leads + type list (JOIN uses zip_code) ----------------
 # @frappe.whitelist()
 # def get_leads_non_red(filter_non_red: int = 1,
 #                       workflow: str | None = None,
@@ -297,7 +297,7 @@ def geocode_missing_zip_centroids(limit: int = 500):
 #     - filter_non_red=1 => only Green/Light Green/Yellow (exclude Red)
 #     - workflow: exact workflow_state (optional)
 #     - business_types: list of types to include (optional)
-#     - q: free-text search over name/business_name/business_type/zippostal_code (optional)
+#     - q: free-text search over name/business_name/business_type/zip_code (optional)
 #     """
 #     params = {}
 #     conds = ["l.latitude is not null", "l.longitude is not null"]
@@ -319,7 +319,7 @@ def geocode_missing_zip_centroids(limit: int = 500):
 #                      "l.name like %(q)s or "
 #                      "l.business_name like %(q)s or "
 #                      "l.business_type like %(q)s or "
-#                      "l.zippostal_code like %(q)s"
+#                      "l.zip_code like %(q)s"
 #                      ")")
 
 #     where_sql = " and ".join(conds)
@@ -330,12 +330,12 @@ def geocode_missing_zip_centroids(limit: int = 500):
 #             l.business_name,
 #             l.business_type,
 #             l.workflow_state,
-#             l.zippostal_code as zip,
+#             l.zip_code as zip,
 #             l.latitude, l.longitude,
 #             z.zone_color
 #         from `tabATM Leads` l
 #         left join `tabZip Code Analytics` z
-#           on l.zippostal_code = z.zip_code
+#           on l.zip_code = z.zip_code
 #         where {where_sql}
 #         order by l.modified desc
 #         limit 20000
@@ -368,7 +368,7 @@ def list_business_types(non_red_only: int = 1):
         select distinct l.business_type
         from `tabATM Leads` l
         left join `tabZip Code Analytics` z
-          on l.zippostal_code = z.zip_code
+          on l.zip_code = z.zip_code
         where l.business_type is not null and l.business_type <> ''
         {cond}
         order by 1

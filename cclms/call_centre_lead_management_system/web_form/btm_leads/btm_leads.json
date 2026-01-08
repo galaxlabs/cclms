@@ -37,7 +37,7 @@
    "label": "State Code"
   },
   {
-   "fieldname": "zippostal_code",
+   "fieldname": "zip_code",
    "fieldtype": "Data",
    "label": "Zip/Postal Code"
   },

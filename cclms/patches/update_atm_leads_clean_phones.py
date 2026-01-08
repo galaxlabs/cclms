@@ -62,7 +62,7 @@
 
 #     leads = frappe.get_all("ATM Leads", fields=[
 #         "name", "business_phone_number", "personal_cell_phone", "email",
-#         "address", "city", "state", "state_code", "zippostal_code", "country"
+#         "address", "city", "state", "state_code", "zip_code", "country"
 #     ])
 
 #     for lead in leads:
@@ -84,7 +84,7 @@
 #             print(f"📧 email: '{email}' ➜ '{cleaned_email}'")
 
 #         # Address field cleanup
-#         for field in ["address", "city", "state", "state_code", "zippostal_code"]:
+#         for field in ["address", "city", "state", "state_code", "zip_code"]:
 #             val = lead.get(field)
 #             cleaned = clean_text(val)
 #             if cleaned != (val or ""):
@@ -147,7 +147,7 @@
 
 # #     leads = frappe.get_all("ATM Leads", fields=[
 # #         "name", "business_phone_number", "personal_cell_phone", "email",
-# #         "address", "city", "state", "state_code", "zippostal_code", "country"
+# #         "address", "city", "state", "state_code", "zip_code", "country"
 # #     ])
 
 # #     for lead in leads:
@@ -169,7 +169,7 @@
 # #             print(f"📧 Cleaned email: '{email}' ➜ '{cleaned_email}'")
 
 # #         # Address cleanup
-# #         for field in ["address", "city", "state", "state_code", "zippostal_code"]:
+# #         for field in ["address", "city", "state", "state_code", "zip_code"]:
 # #             val = lead.get(field)
 # #             cleaned = clean_text(val)
 # #             if cleaned != (val or ""):
@@ -209,7 +209,7 @@
 
 # #     leads = frappe.get_all("ATM Leads", fields=[
 # #         "name", "country", "business_phone_number", "personal_cell_phone",
-# #         "address", "city", "state", "state_code", "zippostal_code",
+# #         "address", "city", "state", "state_code", "zip_code",
 # #         "email", "owner_name", "business_name"
 # #     ])
 
@@ -226,7 +226,7 @@
 # #                 updated_fields[field] = cleaned
 
 # #         # General text fields
-# #         for field in ["address", "city", "state", "state_code", "zippostal_code", "email", "owner_name", "business_name"]:
+# #         for field in ["address", "city", "state", "state_code", "zip_code", "email", "owner_name", "business_name"]:
 # #             original = (lead.get(field) or "").strip()
 # #             cleaned = clean_text(original)
 # #             if cleaned and cleaned.lower() not in ["na", "n/a"] and cleaned != original:
@@ -291,7 +291,7 @@
 # #         "address": "",
 # #         "city": "",
 # #         "state_code": "",
-# #         "zippostal_code": "",
+# #         "zip_code": "",
 # #         "country": ""
 # #     }
 
@@ -304,7 +304,7 @@
 # #         state_zip = parts[2].split()
 # #         if len(state_zip) == 2:
 # #             parsed["state_code"] = state_zip[0]
-# #             parsed["zippostal_code"] = state_zip[1]
+# #             parsed["zip_code"] = state_zip[1]
 # #         else:
 # #             parsed["state_code"] = parts[2]
 
@@ -316,7 +316,7 @@
 
 # #     leads = frappe.get_all("ATM Leads", fields=[
 # #         "name", "country", "business_phone_number", "personal_cell_phone",
-# #         "address", "city", "state", "state_code", "zippostal_code", "email",
+# #         "address", "city", "state", "state_code", "zip_code", "email",
 # #         "owner_name", "business_name"
 # #     ])
 
@@ -339,14 +339,14 @@
 # #             updated_fields["personal_cell_phone"] = personal_clean
 
 # #         # Split full address if other fields are empty
-# #         if lead.address and not (lead.city or lead.state_code or lead.zippostal_code):
+# #         if lead.address and not (lead.city or lead.state_code or lead.zip_code):
 # #             parsed = split_address_components(lead.address)
 # #             for key in parsed:
 # #                 if parsed[key] and not (lead.get(key) or "").strip():
 # #                     updated_fields[key] = parsed[key]
 
 # #         # Clean text fields
-# #         for field in ["address", "city", "state", "state_code", "zippostal_code", "email"]:
+# #         for field in ["address", "city", "state", "state_code", "zip_code", "email"]:
 # #             original = (lead.get(field) or "").strip()
 # #             cleaned = clean_text(original)
 # #             if cleaned != original:
@@ -422,7 +422,7 @@
 # #         "city",
 # #         "state",
 # #         "state_code",
-# #         "zippostal_code",
+# #         "zip_code",
 # #         "email",
 # #         "owner_name",
 # #         "business_name"
@@ -447,7 +447,7 @@
 # #             updated_fields["personal_cell_phone"] = personal_clean
 
 # #         # Text cleanup
-# #         text_fields = ["address", "city", "state", "state_code", "zippostal_code", "email"]
+# #         text_fields = ["address", "city", "state", "state_code", "zip_code", "email"]
 # #         for field in text_fields:
 # #             original = (lead.get(field) or "").strip()
 # #             cleaned = clean_text(original)
@@ -588,7 +588,7 @@
 # #         "city",
 # #         "state",
 # #         "state_code",
-# #         "zippostal_code",
+# #         "zip_code",
 # #         "email"
 # #     ])
 
@@ -608,7 +608,7 @@
 # #             updated_fields["personal_cell_phone"] = personal_clean
 
 # #         # Clean text fields
-# #         for field in ["address", "city", "state", "state_code", "zippostal_code", "email"]:
+# #         for field in ["address", "city", "state", "state_code", "zip_code", "email"]:
 # #             original = lead.get(field) or ""
 # #             cleaned = clean_text(original)
 # #             if cleaned != original.strip():

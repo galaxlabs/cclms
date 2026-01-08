@@ -27,7 +27,7 @@ def _base_fields() -> List[str]:
         "city",
         "state",
         "state_code",
-        "zippostal_code",
+        "zip_code",
         "country",
         "latitude",
         "longitude",

@@ -5,7 +5,7 @@ from cclms.utils.zip_classifier import classify_zip
 def get_map_data():
     leads = frappe.get_all(
         "ATM Leads",
-        fields=["name", "zippostal_code", "latitude", "longitude", "company", "business_type"]
+        fields=["name", "zip_code", "latitude", "longitude", "company", "business_type"]
     )
 
     enriched = []

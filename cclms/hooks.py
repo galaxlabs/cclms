@@ -281,12 +281,24 @@ doc_events = {
     }
 }
 scheduler_events = {
-    # "cron": {
-    #     # Every day at 00:00 UTC = 05:00 PKT
-    #     "0 0 * * *": [
-    #         "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.sync_recent_lead_state_history"
-    #     ]
-    # },
+    "cron": {
+        # Every day at 00:00 UTC = 05:00 PKT
+        "*/1 * * * *": [
+            "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.sync_recent_lead_state_history",
+        ],
+    },
+        #     "cclms.api.competitor_agent.run_competitor_minutely",
+        # ],
+        # "*/15 * * * *": [
+        #     "cclms.services.zipintel.zip_refresh.refresh_zip_analytics_batch",
+        # ],
+        #  "*/5 * * * *": [
+        #     "cclms.api.btm_agent.run_btm_minutely",
+        # ],
+        # "0 3 * * *": [
+        #     "cclms.api.competitor_agent.deactivate_stale_competitors",
+        # ],
+    
     "hourly": [
         "cclms.call_centre_lead_management_system.doctype.atm_lead_kpi_summary.atm_lead_kpi_summary.generate_kpi_for_month",
     ]

@@ -5,68 +5,100 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "min_population",
-  "min_margin",
-  "min_density",
-  "max_distance",
-  "column_break_bwml",
-  "max_removal_rate",
-  "max_margin",
-  "max_density",
-  "require_installed"
+  "section_break_qhry",
+  "enabled",
+  "batch_size",
+  "last_zip_cursor",
+  "max_places_per_type",
+  "last_zip_cursor_opportunity",
+  "column_break_qidr",
+  "run_every_minutes",
+  "min_ai_score",
+  "places_radius_m",
+  "last_zip_cursor_competitor",
+  "competitor_batch_size",
+  "section_break_nmkl",
+  "rules"
  ],
  "fields": [
   {
-   "fieldname": "min_population",
-   "fieldtype": "Int",
-   "label": "Min Population"
-  },
-  {
-   "fieldname": "min_margin",
-   "fieldtype": "Float",
-   "label": "Min Margin"
-  },
-  {
-   "fieldname": "min_density",
-   "fieldtype": "Int",
-   "label": "Min Density"
-  },
-  {
-   "fieldname": "max_removal_rate",
-   "fieldtype": "Float",
-   "label": "Max Removal Rate"
+   "fieldname": "section_break_nmkl",
+   "fieldtype": "Section Break"
   },
   {
    "default": "0",
-   "fieldname": "require_installed",
+   "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Require Installed"
+   "label": "Enabled"
   },
   {
-   "fieldname": "max_distance",
-   "fieldtype": "Float",
-   "label": "Max Distance"
+   "fieldname": "section_break_qhry",
+   "fieldtype": "Section Break"
   },
   {
-   "fieldname": "column_break_bwml",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "max_margin",
-   "fieldtype": "Float",
-   "label": "Max Margin"
-  },
-  {
-   "fieldname": "max_density",
+   "fieldname": "batch_size",
    "fieldtype": "Int",
-   "label": "Max Density"
+   "label": "Batch Size"
+  },
+  {
+   "fieldname": "run_every_minutes",
+   "fieldtype": "Int",
+   "label": "Run Every (Minutes)"
+  },
+  {
+   "fieldname": "last_zip_cursor",
+   "fieldtype": "Data",
+   "label": "Last ZIP Cursor"
+  },
+  {
+   "fieldname": "rules",
+   "fieldtype": "Table",
+   "label": "Rules",
+   "options": "ATM Criteria Rule Set"
+  },
+  {
+   "default": "80",
+   "fieldname": "min_ai_score",
+   "fieldtype": "Float",
+   "label": "Min AI Score"
+  },
+  {
+   "default": "12000",
+   "fieldname": "places_radius_m",
+   "fieldtype": "Int",
+   "label": "Places Radius "
+  },
+  {
+   "default": "15",
+   "fieldname": "max_places_per_type",
+   "fieldtype": "Int",
+   "label": "Max Places Per Type"
+  },
+  {
+   "fieldname": "last_zip_cursor_competitor",
+   "fieldtype": "Data",
+   "label": "Last Zip Cursor Compititor"
+  },
+  {
+   "fieldname": "last_zip_cursor_opportunity",
+   "fieldtype": "Data",
+   "label": "Last Zip Cursor Opportunity"
+  },
+  {
+   "fieldname": "competitor_batch_size",
+   "fieldtype": "Int",
+   "label": "Competitor Batch Size"
+  },
+  {
+   "fieldname": "column_break_qidr",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-09-12 17:29:40.957520",
+ "modified": "2026-01-07 15:43:03.343025",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Criteria",

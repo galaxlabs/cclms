@@ -17,7 +17,7 @@
 //                 let filters = {
 //                     address: frm.doc.address,
 //                     city: frm.doc.city,
-//                     zippostal_code: frm.doc.zippostal_code,
+//                     zip_code: frm.doc.zip_code,
 //                     state: frm.doc.state,
 //                     business_name: frm.doc.business_name,
 //                     company: frm.doc.company
@@ -140,7 +140,7 @@
 //                 business_name: frm.doc.business_name,
 //                 owner_name: frm.doc.owner_name,
 //                 address: frm.doc.address,
-//                 zippostal_code: frm.doc.zippostal_code,
+//                 zip_code: frm.doc.zip_code,
 //                 state: frm.doc.state,
 //                 state_code:frm.doc.state_code,
 //                 city: frm.doc.city,
