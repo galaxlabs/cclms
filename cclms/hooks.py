@@ -281,12 +281,12 @@ doc_events = {
     }
 }
 scheduler_events = {
-    "cron": {
-        # Every day at 00:00 UTC = 05:00 PKT
-        "*/1 * * * *": [
-            "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.sync_recent_lead_state_history",
-        ],
-    },
+    # "cron": {
+    #     # Every day at 00:00 UTC = 05:00 PKT
+    #     "*/1 * * * *": [
+    #         "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.sync_recent_lead_state_history",
+    #     ],
+    # },
         #     "cclms.api.competitor_agent.run_competitor_minutely",
         # ],
         # "*/15 * * * *": [
