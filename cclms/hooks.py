@@ -26,15 +26,9 @@ add_to_apps_screen = [
 app_include_js = [
     "assets/cclms/js/workflow_dashboard.js",
     "https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places",
-  "public/js/atm_map.js"
-                  ]
-# ]
-
-app_include_js = [
-"/assets/cclms/js/chart.umd.js"
-
- ]
-
+  	"public/js/atm_map.js",
+	"/assets/cclms/js/chart.umd.js"
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/cclms/css/cclms.css"
@@ -49,8 +43,8 @@ app_include_js = [
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
-page_js = {
-}
+# page_js = {
+# }
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
@@ -277,10 +271,13 @@ website_route_rules = [
 ]
 doc_events = {
     "ATM Leads": {
-        "after_save": "cclms.cclms.notifications.atm_lead_after_save"
+        "after_save": "cclms.notifications.atm_lead_after_save",
     }
 }
-scheduler_events = {
+	scheduler_events = {
+    "hourly": [
+        "cclms.call_centre_lead_management_system.doctype.atm_lead_kpi_summary.atm_lead_kpi_summary.generate_kpi_for_month",
+    ],
     # "cron": {
     #     # Every day at 00:00 UTC = 05:00 PKT
     #     "*/1 * * * *": [
@@ -298,9 +295,5 @@ scheduler_events = {
         # "0 3 * * *": [
         #     "cclms.api.competitor_agent.deactivate_stale_competitors",
         # ],
-    
-    "hourly": [
-        "cclms.call_centre_lead_management_system.doctype.atm_lead_kpi_summary.atm_lead_kpi_summary.generate_kpi_for_month",
-    ]
 }
 
