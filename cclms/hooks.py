@@ -274,7 +274,7 @@ doc_events = {
         "after_save": "cclms.notifications.atm_lead_after_save",
     }
 }
-	scheduler_events = {
+scheduler_events = {
     "hourly": [
         "cclms.call_centre_lead_management_system.doctype.atm_lead_kpi_summary.atm_lead_kpi_summary.generate_kpi_for_month",
     ],

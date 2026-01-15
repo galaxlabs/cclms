@@ -20,7 +20,7 @@
   "abbr",
   "company_address",
   "executive_name",
-  "employee_official_name",
+  "official_name",
   "father_name",
   "employee_id",
   "designation",
@@ -86,12 +86,6 @@
    "fieldtype": "Data",
    "label": "Abbr",
    "read_only": 1
-  },
-  {
-   "fetch_from": "executive_name.full_name",
-   "fieldname": "employee_official_name",
-   "fieldtype": "Data",
-   "label": "Employee Official Name"
   },
   {
    "fetch_from": "executive_name.father_name",
@@ -224,11 +218,17 @@
    "fieldname": "join_date",
    "fieldtype": "Data",
    "label": "Join date"
+  },
+  {
+   "fetch_from": "executive_name.full_name",
+   "fieldname": "official_name",
+   "fieldtype": "Data",
+   "label": "Employee Official Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-11 12:30:32.856547",
+ "modified": "2026-01-14 23:38:18.276582",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Legal Agreement",
@@ -248,6 +248,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

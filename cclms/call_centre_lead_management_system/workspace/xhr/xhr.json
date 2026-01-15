@@ -1,0 +1,52 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"fRxj4TBerd\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">XHR</span>\",\"col\":12}},{\"id\":\"v6VdwPYjc_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Legal Agreement\",\"col\":3}},{\"id\":\"Fd-9eYc_9D\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Agent\",\"col\":3}}]",
+ "creation": "2026-01-15 00:03:26.040601",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "XHR",
+ "links": [],
+ "modified": "2026-01-15 00:29:43.095660",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "XHR",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "HR User"
+  }
+ ],
+ "sequence_id": 36.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Legal Agreement",
+   "link_to": "Legal Agreement",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Sales Agent",
+   "link_to": "Sales Agent",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "XHR"
+}
