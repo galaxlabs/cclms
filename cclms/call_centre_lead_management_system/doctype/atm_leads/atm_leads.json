@@ -178,16 +178,15 @@
    "label": "Address"
   },
   {
-   "bold": 1,
    "columns": 1,
    "fieldname": "address",
-   "fieldtype": "Autocomplete",
+   "fieldtype": "Data",
    "in_filter": 1,
+   "in_global_search": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Address",
-   "search_index": 1,
-   "width": "200px"
+   "search_index": 1
   },
   {
    "fieldname": "column_break_ovkd",
@@ -498,7 +497,7 @@
    "link_fieldname": "atm_leads"
   }
  ],
- "modified": "2026-01-06 19:28:15.906179",
+ "modified": "2026-01-20 23:15:02.576972",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",

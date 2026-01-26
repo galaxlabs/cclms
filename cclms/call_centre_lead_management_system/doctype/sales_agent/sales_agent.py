@@ -1,34 +1,92 @@
 import frappe
 from frappe.model.document import Document
 from frappe.permissions import add_user_permission, remove_user_permission
+from frappe.utils import now
+from frappe.utils.password import update_password, set_encrypted_password
+import secrets
+import string
+
+PASSWORD_MANAGER_ROLES = {"System Manager", "HR Manager", "Sales Manager"}
+
+# Force same Role Profile + Module Profile on every Sales Agent user
+DEFAULT_ROLE_PROFILE = "Sales Executive"
+DEFAULT_MODULE_PROFILE = "Sales Executive"
 
 
 class SalesAgent(Document):
-
     def validate(self):
-        # Always keep these consistent BEFORE saving
+        # normalize email + full name
+        if self.email:
+            self.email = (self.email or "").strip().lower()
+
         self.full_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
 
+        # always keep link to User by email
+        if self.email:
+            self.user = self.email
+
     def after_insert(self):
-        self.create_user_and_employee()
-        self.refresh_user_permissions(old=None)
+        self.sync_all(old=None)
 
     def on_update(self):
-        old = self.get_doc_before_save()  # <- IMPORTANT
-
-        # if email changed, rename the User (User.name is email)
-        self.handle_email_change(old)
-
-        # sync linked docs
-        self.sync_user()
-        self.sync_employee()
-
-        # refresh permissions (remove old -> add new)
-        self.refresh_user_permissions(old=old)
+        old = self.get_doc_before_save()
+        self.sync_all(old=old)
 
     def on_trash(self):
-        # remove all permissions created by this logic
+        # remove permissions using current values
         self.refresh_user_permissions(old=self, remove_only=True)
+
+    # -----------------------------
+    # Main Orchestrator
+    # -----------------------------
+    def sync_all(self, old=None):
+        # guard against recursion
+        if getattr(frappe.flags, "sales_agent_sync_in_progress", False):
+            return
+
+        frappe.flags.sales_agent_sync_in_progress = True
+        try:
+            # 1) handle email rename (User.name is email)
+            self.handle_email_change(old)
+
+            # 2) ensure User exists (reuse if exists)
+            self.ensure_user()
+
+            # 3) ensure Employee exists & linked (always)
+            self.ensure_employee()
+
+            # 4) sync latest data into User/Employee
+            self.sync_user()
+            self.sync_employee()
+
+            # 5) apply enable/disable policy
+            self.apply_active_status()
+
+            # 6) refresh user permissions (remove old → add new)
+            self.refresh_user_permissions(old=old)
+
+        finally:
+            frappe.flags.sales_agent_sync_in_progress = False
+
+    # -----------------------------
+    # Enable / Disable Policy
+    # -----------------------------
+    def is_inactive(self) -> bool:
+        # enable=1 => active, enable=0 => inactive
+        return not bool(self.enable)
+
+    def apply_active_status(self):
+        inactive = self.is_inactive()
+
+        # USER.enabled (enable disabled user when enable=1)
+        if self.email and frappe.db.exists("User", self.email):
+            frappe.db.set_value("User", self.email, "enabled", 0 if inactive else 1)
+
+        # EMPLOYEE.status
+        if self.employee and frappe.db.exists("Employee", self.employee):
+            frappe.db.set_value(
+                "Employee", self.employee, "status", "Left" if inactive else "Active"
+            )
 
     # -----------------------------
     # EMAIL CHANGE HANDLING
@@ -37,93 +95,60 @@ class SalesAgent(Document):
         if not old:
             return
 
-        old_email = old.email
-        new_email = self.email
+        old_email = (old.email or "").strip().lower()
+        new_email = (self.email or "").strip().lower()
 
         if not old_email or not new_email or old_email == new_email:
             return
 
-        # Rename User document
-        if frappe.db.exists("User", old_email) and not frappe.db.exists("User", new_email):
+        # if new email already exists, cannot rename into it
+        if frappe.db.exists("User", new_email):
+            frappe.throw(f"Cannot change email. User already exists: {new_email}")
+
+        # rename User document if old exists
+        if frappe.db.exists("User", old_email):
             frappe.rename_doc("User", old_email, new_email, force=True)
 
-        # If employee linked, ensure employee.user_id updated
+        # update linked employee.user_id
         if self.employee and frappe.db.exists("Employee", self.employee):
             frappe.db.set_value("Employee", self.employee, "user_id", new_email)
 
-        # If you have other doctypes linked by email, update them here too (Customer, etc.)
-        # Example:
-        # frappe.db.set_value("Customer", {"email_id": old_email}, "email_id", new_email)
+        # keep Sales Agent.user link correct
+        self.user = new_email
 
     # -----------------------------
-    # User + Employee Creation
+    # USER Create/Reuse + Password on Create
     # -----------------------------
-    def create_user_and_employee(self):
+    def ensure_user(self):
         if not self.email:
-            frappe.throw("Email is required to create a User.")
+            frappe.throw("Email is required to create/reuse a User.")
 
-        # -------- USER --------
+        self.user = self.email  # keep link
+
         if frappe.db.exists("User", self.email):
-            user = frappe.get_doc("User", self.email)
-        else:
-            user = frappe.get_doc({
-                "doctype": "User",
-                "email": self.email,
-                "first_name": self.first_name,
-                "last_name": self.last_name,
-                "gender": self.gender,
-                "send_welcome_email": 1,
-                "enabled": 1
-            })
-            user.insert(ignore_permissions=True)
+            # reuse existing user
+            return
 
-        role_profile = self.get_role_profile_for_branch()
-        if role_profile:
-            user.role_profile_name = role_profile
+        # create new user
+        user = frappe.get_doc({
+            "doctype": "User",
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "gender": self.gender,
+            "send_welcome_email": 0,  # we are setting password manually
+            "enabled": 1 if self.enable else 0,
+        })
 
-        user.module_profile = "Sales Executive"
-        user.first_name = self.first_name
-        user.last_name = self.last_name
-        user.gender = self.gender
-        user.enabled = 1
-        user.save(ignore_permissions=True)
+        # Force same Role Profile + Module Profile
+        user.role_profile_name = DEFAULT_ROLE_PROFILE
+        user.module_profile = DEFAULT_MODULE_PROFILE
 
-        # -------- EMPLOYEE --------
-        if not self.employee:
-            existing_employee = (
-                frappe.db.exists("Employee", {"user_id": self.email})
-                or frappe.db.exists("Employee", {"custom_pseudo_name": self.agent_name})
-            )
+        user.insert(ignore_permissions=True)
 
-            if existing_employee:
-                self.db_set("employee", existing_employee)
-            else:
-                employee = frappe.get_doc({
-                    "doctype": "Employee",
-                    "custom_pseudo_name": self.agent_name,
-                    "first_name": self.first_name,
-                    "last_name": self.last_name,
-                    "employee_name": self.full_name,
-                    "user_id": self.email,
-                    "company": self.company,
-                    "gender": self.gender,
-                    "date_of_birth": self.date_off_berth,
-                    "date_of_joining": self.join_date,
-                    "cell_number": self.phone,
-                    "designation": self.designation,
-                    "department": self.department,
-                    "custom_employee_id": self.id,
-                    "custom_father_name": getattr(self, "father_name", None),
-                    "current_address": self.address,
-                    "passport_number": getattr(self, "nic", None),
-                    "branch": self.branch
-                })
-                employee.insert(ignore_permissions=True)
-                self.db_set("employee", employee.name)
+        # set random password on first creation (store in Sales Agent)
+        self._set_and_store_new_password(self.email, length=12, bypass_role_check=False)
 
-    # -----------------------------
-    # Sync User on Update
-    # -----------------------------
     def sync_user(self):
         if not self.email or not frappe.db.exists("User", self.email):
             return
@@ -132,13 +157,58 @@ class SalesAgent(Document):
         user.first_name = self.first_name
         user.last_name = self.last_name
         user.gender = self.gender
-        user.role_profile_name = self.get_role_profile_for_branch()
-        user.module_profile = "Sales Executive"
+
+        # Force same Role Profile + Module Profile
+        user.role_profile_name = DEFAULT_ROLE_PROFILE
+        user.module_profile = DEFAULT_MODULE_PROFILE
+
         user.save(ignore_permissions=True)
 
     # -----------------------------
-    # Sync Employee on Update
+    # EMPLOYEE Create/Link (Always)
     # -----------------------------
+    def ensure_employee(self):
+        # if already linked and exists, ok
+        if self.employee and frappe.db.exists("Employee", self.employee):
+            return
+
+        # find existing employee by user_id OR by pseudo name
+        emp_name = (
+            frappe.db.get_value("Employee", {"user_id": self.email}, "name")
+            or frappe.db.get_value("Employee", {"custom_pseudo_name": self.agent_name}, "name")
+        )
+
+        if emp_name:
+            frappe.db.set_value("Sales Agent", self.name, "employee", emp_name)
+            self.employee = emp_name
+            return
+
+        # create new employee
+        employee = frappe.get_doc({
+            "doctype": "Employee",
+            "custom_pseudo_name": self.agent_name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "employee_name": self.full_name,
+            "user_id": self.email,
+            "company": self.company,
+            "gender": self.gender,
+            "date_of_birth": self.date_off_berth,
+            "date_of_joining": self.join_date,
+            "cell_number": self.phone,
+            "designation": self.designation,
+            "department": self.department,
+            "custom_employee_id": self.id,
+            "custom_father_name": getattr(self, "father_name", None),
+            "current_address": self.address,
+            "passport_number": getattr(self, "nic", None),
+            "branch": self.branch
+        })
+        employee.insert(ignore_permissions=True)
+
+        frappe.db.set_value("Sales Agent", self.name, "employee", employee.name)
+        self.employee = employee.name
+
     def sync_employee(self):
         if not self.employee or not frappe.db.exists("Employee", self.employee):
             return
@@ -164,14 +234,63 @@ class SalesAgent(Document):
         employee.save(ignore_permissions=True)
 
     # -----------------------------
-    # Permissions (remove old, add new)
+    # Password helpers + Button APIs
+    # -----------------------------
+
+
+    def _has_password_manager_role(self) -> bool:
+        user_roles = set(frappe.get_roles(frappe.session.user))
+        return bool(user_roles.intersection(PASSWORD_MANAGER_ROLES))
+
+    def _generate_password(self, length: int = 12) -> str:
+        length = int(length) if length else 12
+        length = max(8, min(length, 64))
+
+        alphabet = string.ascii_letters + string.digits
+        return "".join(secrets.choice(alphabet) for _ in range(length))
+
+    def _set_and_store_new_password(
+        self,
+        user_email: str,
+        length: int = 12,
+        bypass_role_check: bool = False,
+    ) -> str:
+        if not bypass_role_check and not self._has_password_manager_role():
+            frappe.throw("Only System Manager / HR Manager / Sales Manager can generate or view passwords.")
+
+        new_pass = self._generate_password(length)
+
+        # set login password on User
+        update_password(user_email, new_pass)
+
+        # store encrypted password in Sales Agent Password field (v15 safe way)
+        set_encrypted_password(self.doctype, self.name, "agent_password", new_pass)
+
+        # update timestamp
+        self.db_set("last_password_set_on", now(), update_modified=False)
+
+        return new_pass
+
+
+    @frappe.whitelist()
+    def generate_new_password(self, length: int = 12):
+        if not self.email or not frappe.db.exists("User", self.email):
+            frappe.throw("User does not exist. Save Sales Agent first to create User.")
+
+        return self._set_and_store_new_password(self.email, length=length, bypass_role_check=False)
+
+    @frappe.whitelist()
+    def get_saved_password(self):
+        if not self._has_password_manager_role():
+            frappe.throw("Only System Manager / HR Manager / Sales Manager can generate or view passwords.")
+
+        return self.get_password("agent_password")
+
+    # -----------------------------
+    # User Permissions (self docs only)
     # -----------------------------
     def refresh_user_permissions(self, old=None, remove_only=False):
-        """
-        1) Remove permissions based on OLD values
-        2) Add permissions based on CURRENT values
-        """
-        # remove old permissions
+        # remove permissions using OLD values
         self._remove_permissions_for_doc(old or self)
 
         if remove_only:
@@ -184,7 +303,6 @@ class SalesAgent(Document):
         if not doc.email:
             return
 
-        add_user_permission("User", doc.email, doc.email)
         add_user_permission("Sales Agent", doc.name, doc.email)
 
         if doc.employee:
@@ -198,8 +316,6 @@ class SalesAgent(Document):
         if not doc or not doc.email:
             return
 
-        # IMPORTANT: remove using old values so stale perms are cleaned
-        remove_user_permission("User", doc.email, doc.email)
         remove_user_permission("Sales Agent", doc.name, doc.email)
 
         if doc.employee:
@@ -208,374 +324,3 @@ class SalesAgent(Document):
             remove_user_permission("Company", doc.company, doc.email)
         if doc.branch:
             remove_user_permission("Branch", doc.branch, doc.email)
-
-    # -----------------------------
-    # Role Profile Mapping
-    # -----------------------------
-    def get_role_profile_for_branch(self):
-        if not self.branch:
-            return None
-        branch_map = {
-            "Karachi": "Karachi Team",
-            "Lahore": "Lahore Team",
-            "Chandi Garh": "India Team"
-        }
-        return branch_map.get(self.branch)
-
-# import frappe
-# from frappe.model.document import Document
-# from frappe.permissions import add_user_permission, remove_user_permission
-
-
-# class SalesAgent(Document):
-
-#     # Runs after a new Sales Agent is inserted
-#     def after_insert(self):
-#         self.create_user_and_employee()
-#         self.assign_user_permissions()
-
-#     # Runs every time Sales Agent is updated
-#     def on_update(self):
-#         self.sync_user()
-#         self.sync_employee()
-#         self.assign_user_permissions()
-
-#     # Runs when Sales Agent is deleted
-#     def on_trash(self):
-#         self.remove_user_permissions()
-
-#     # -----------------------------
-#     # User + Employee Creation
-#     # -----------------------------
-#     def create_user_and_employee(self):
-#         if not self.email:
-#             frappe.throw("Email is required to create a User.")
-
-#         # -------- USER --------
-#         if frappe.db.exists("User", self.email):
-#             user = frappe.get_doc("User", self.email)
-#             frappe.msgprint(f"User already exists: {self.email}")
-#         else:
-#             user = frappe.get_doc({
-#                 "doctype": "User",
-#                 "email": self.email,
-#                 "first_name": self.first_name,
-#                 "last_name": self.last_name,
-#                 "gender": self.gender,
-#                 "send_welcome_email": 1,
-#                 "enabled": 1
-#             })
-#             user.insert(ignore_permissions=True)
-#             frappe.msgprint(f"User created: {self.email}")
-
-#         # Assign Role Profile
-#         role_profile = self.get_role_profile_for_branch()
-#         if role_profile:
-#             user.role_profile_name = role_profile
-#             frappe.msgprint(f"Assigned Role Profile: {role_profile}")
-#         user.module_profile = "Sales Executive"
-#         user.save(ignore_permissions=True)
-
-#         # -------- EMPLOYEE --------
-#         if not self.employee:
-#             existing_employee = frappe.db.exists(
-#                 "Employee", {"user_id": self.email}
-#             ) or frappe.db.exists(
-#                 "Employee", {"custom_pseudo_name": self.agent_name}
-#             )
-
-#             if existing_employee:
-#                 self.db_set("employee", existing_employee)
-#                 frappe.msgprint(f"Existing Employee linked: {existing_employee}")
-#             else:
-#                 employee = frappe.get_doc({
-#                     "doctype": "Employee",
-#                     "custom_pseudo_name": self.agent_name,
-#                     "first_name": self.first_name,
-#                     "last_name": self.last_name,
-#                     "employee_name": f"{self.first_name or ''} {self.last_name or ''}".strip(),
-#                     "user_id": self.email,
-#                     "company": self.company,
-#                     "gender": self.gender,
-#                     "date_of_birth": self.date_off_berth,
-#                     "date_of_joining": self.join_date,
-#                     "cell_number": self.phone,
-#                     "designation": self.designation,
-#                     "department": self.department,
-#                     "custom_employee_id": self.id,
-#                     "custom_father_name": getattr(self, "father_name", None),
-#                     "current_address": self.address,
-#                     "passport_number": getattr(self, "nic", None),
-#                     "branch": self.branch
-#                 })
-#                 employee.insert(ignore_permissions=True)
-#                 self.db_set("employee", employee.name)
-#                 frappe.msgprint(f"Employee created and linked: {employee.name}")
-
-#     # -----------------------------
-#     # Sync User on Update
-#     # -----------------------------
-#     def sync_user(self):
-#         if not frappe.db.exists("User", self.email):
-#             return
-#         user = frappe.get_doc("User", self.email)
-#         user.first_name = self.first_name
-#         user.last_name = self.last_name
-#         user.gender = self.gender
-#         user.role_profile_name = self.get_role_profile_for_branch()
-#         user.module_profile = "Sales Executive"
-#         user.save(ignore_permissions=True)
-#         frappe.msgprint("User updated with latest Sales Agent data.")
-
-#     # -----------------------------
-#     # Sync Employee on Update
-#     # -----------------------------
-#     def sync_employee(self):
-#         if not self.employee or not frappe.db.exists("Employee", self.employee):
-#             return
-#         employee = frappe.get_doc("Employee", self.employee)
-#         employee.custom_pseudo_name = self.agent_name
-#         employee.first_name = self.first_name
-#         employee.last_name = self.last_name
-#         employee.company = self.company
-#         employee.user_id = self.email
-#         employee.gender = self.gender
-#         employee.date_of_birth = self.date_off_berth
-#         employee.date_of_joining = self.join_date
-#         employee.cell_number = self.phone
-#         employee.designation = self.designation
-#         employee.department = self.department
-#         employee.custom_employee_id = self.id
-#         employee.custom_father_name = getattr(self, "father_name", None)
-#         employee.current_address = self.address
-#         employee.passport_number = getattr(self, "nic", None)
-#         employee.branch = self.branch
-#         employee.save(ignore_permissions=True)
-#         frappe.msgprint("Employee updated with latest Sales Agent data.")
-
-#     # -----------------------------
-#     # Assign Permissions
-#     # -----------------------------
-#         # -----------------------------
-#     # Assign Permissions
-#     # -----------------------------
-#     def assign_user_permissions(self):
-#         if not self.email:
-#             return
-
-#         # --- Give access to themselves as User ---
-#         add_user_permission("User", self.email, self.email)
-
-#         # --- Sales Agent Permission ---
-#         add_user_permission("Sales Agent", self.name, self.email)
-
-#         # --- Employee Permission ---
-#         if self.employee:
-#             add_user_permission("Employee", self.employee, self.email)
-
-#         # --- Company Permission ---
-#         if self.company:
-#             add_user_permission("Company", self.company, self.email)
-
-#         # --- Branch Permission ---
-#         if self.branch:
-#             add_user_permission("Branch", self.branch, self.email)
-
-#         frappe.msgprint(f"User permissions set for {self.email}.")
-
-#     # -----------------------------
-#     # Remove Permissions on Delete
-#     # -----------------------------
-#     def remove_user_permissions(self):
-#         if not self.email:
-#             return
-
-#         # --- Remove self User Permission ---
-#         remove_user_permission("User", self.email, self.email)
-
-#         # --- Remove related permissions ---
-#         remove_user_permission("Sales Agent", self.name, self.email)
-
-#         if self.employee:
-#             remove_user_permission("Employee", self.employee, self.email)
-
-#         if self.company:
-#             remove_user_permission("Company", self.company, self.email)
-
-#         if self.branch:
-#             remove_user_permission("Branch", self.branch, self.email)
-
-#         frappe.msgprint(f"User permissions removed for {self.email}.")
-
-
-#     # -----------------------------
-#     # Role Profile Mapping
-#     # -----------------------------
-#     def get_role_profile_for_branch(self):
-#         if not self.branch:
-#             return None
-#         branch_map = {
-#             "Karachi": "Karachi Team",
-#             "Lahore": "Lahore Team",
-#             "Chandi Garh": "India Team"
-#         }
-#         return branch_map.get(self.branch)
-
-# import frappe
-# from frappe.model.document import Document
-# from frappe.permissions import (
-# 	add_user_permission,
-# 	get_doc_permissions,
-# 	has_permission,
-# 	remove_user_permission,
-# )
-# from frappe.utils import cstr, getdate, today, validate_email_address
-
-
-# class SalesAgent(Document):
-# 	def after_insert(self):
-# 		self.create_self_user_and_employee()
-
-# 	def on_update(self):
-# 		self.sync_user()
-# 		self.sync_employee()
-
-# 	def create_self_user_and_employee(self):
-# 		if not self.email:
-# 			frappe.throw("Email is required to create a user.")
-
-# 		# --- Create or Get User ---
-# 		user = frappe.get_doc("User", self.email) if frappe.db.exists("User", self.email) else None
-
-# 		if not user:
-# 			user = frappe.get_doc({
-# 				"doctype": "User",
-# 				"email": self.email,
-# 				"first_name": self.first_name,
-# 				"last_name": self.last_name,
-# 				"gender": self.gender,
-# 				"send_welcome_email": 1,
-# 				"enabled": 1
-# 			})
-# 			user.insert(ignore_permissions=True)
-# 			frappe.msgprint(f"User created: {self.email}")
-# 		else:
-# 			frappe.msgprint(f"User already exists: {self.email}")
-
-# 		# --- Assign Role Profile based on Branch ---
-# 		role_profile = self.get_role_profile_for_branch()
-# 		if role_profile:
-# 			user.role_profile_name = role_profile
-# 			frappe.msgprint(f"Assigned Role Profile: {role_profile}")
-# 		else:
-# 			frappe.msgprint("No matching Role Profile found for the selected branch.")
-
-# 		# --- Assign Static Module Profile ---
-# 		user.module_profile = "Sales Executive"
-# 		user.save(ignore_permissions=True)
-# 		frappe.msgprint("Assigned Module Profile: Sales Executive")
-
-# 		# --- Create Employee if not already linked ---
-# 			# --- Create or Link Employee ---
-# 		if not self.employee:
-# 			# Try to find existing employee by email or full name
-# 			existing_employee = frappe.db.get_value("Employee", {"user_id": self.email}) \
-# 				or frappe.db.get_value("Employee", {"employee_name": f"{self.first_name or ''} {self.last_name or ''}".strip()})
-
-# 			if existing_employee:
-# 				self.db_set("employee", existing_employee)
-# 				frappe.msgprint(f"Existing Employee linked: {existing_employee}")
-# 			else:
-# 				# Create new employee
-# 				employee = frappe.get_doc({
-# 					"doctype": "Employee",
-# 					"custom_pseudo_name": self.agent_name,
-# 					"first_name": self.first_name,
-# 					"last_name": self.last_name,
-# 					"employee_name": f"{self.first_name or ''} {self.last_name or ''}".strip(),
-# 					"user_id": self.email,
-# 					"company": self.company,
-# 					"gender": self.gender,
-# 					"date_of_birth": self.date_off_berth,
-# 					"date_of_joining": self.join_date,
-# 					"cell_number": self.phone,
-# 					"designation": self.designation,
-# 					"department": self.department,
-# 					"custom_employee_id": self.id,
-# 					"custom_father_name": self.father_name,
-# 					"current_address": self.address,
-# 					"passport_number": self.nic,
-# 					"branch": self.branch
-# 				})
-# 				employee.insert(ignore_permissions=True)
-# 				self.db_set("employee", employee.name)
-# 				frappe.msgprint(f"Employee created and linked: {employee.name}")
-# 		else:
-# 			frappe.msgprint(f"Sales Agent already linked to Employee: {self.employee}")
-
-
-# 	def sync_user(self):
-# 		if not frappe.db.exists("User", self.email):
-# 			frappe.msgprint("User does not exist to sync.")
-# 			return
-
-# 		user = frappe.get_doc("User", self.email)
-# 		user.first_name = self.first_name
-# 		user.last_name = self.last_name
-# 		user.gender = self.gender
-# 		user.role_profile_name = self.get_role_profile_for_branch()
-# 		user.module_profile = "Sales Executive"
-# 		user.save(ignore_permissions=True)
-# 		frappe.msgprint("User updated with latest Sales Agent data.")
-
-# 	def sync_employee(self):
-# 		if not self.employee:
-# 			frappe.msgprint("No linked employee to update.")
-# 			return
-
-# 		if not frappe.db.exists("Employee", self.employee):
-# 			frappe.msgprint("Linked Employee record not found.")
-# 			return
-
-# 		employee = frappe.get_doc("Employee", self.employee)
-# 		employee.custom_pseudo_name = self.agent_name
-# 		employee.employee_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
-# 		employee.company = self.company
-# 		employee.user_id = self.email
-# 		employee.gender = self.gender
-# 		employee.date_of_birth = self.date_off_berth
-# 		employee.date_of_joining = self.join_date
-# 		employee.cell_number = self.phone
-# 		employee.designation = self.designation
-# 		employee.department = self.department
-# 		employee.custom_employee_id = self.id
-# 		employee.custom_father_name = self.father_name
-# 		employee.current_address = self.address
-# 		employee.passport_number = self.nic
-# 		employee.branch = self.branch
-# 		employee.save(ignore_permissions=True)
-# 		frappe.msgprint("Employee updated with latest Sales Agent data.")
-
-
-
-# 	def assign_user_permissions(self):
-# 		add_user_permission("Sales Agent", self.name, self.email, ignore_permissions=True)
-# 		if self.employee:
-# 			add_user_permission("Employee", self.employee, self.email, ignore_permissions=True)
-# 		if self.company:
-# 			add_user_permission("Company", self.company, self.email, ignore_permissions=True)
-# 		if self.branch:
-# 			add_user_permission("Branch", self.branch, self.email, ignore_permissions=True)
-# 		frappe.msgprint("User permissions set.")
-
-# 	def get_role_profile_for_branch(self):
-# 		if not self.branch:
-# 			return None
-
-# 		branch_map = {
-# 			"Karachi": "Karachi Team",
-# 			"Lahore": "Lahore Team",
-# 			"Chandi Garh": "India Team"
-# 		}
-
-# 		return branch_map.get(self.branch)

@@ -8,12 +8,24 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "user_info_section",
+  "enable",
+  "user_section_section",
   "first_name",
   "email",
+  "user_name",
+  "last_password_set_on",
+  "column_break_dpnv",
+  "last_name",
+  "full_name",
+  "user",
+  "agent_password",
+  "agent_name",
+  "employee_info_section",
   "company",
   "date_off_berth",
+  "department",
   "designation",
-  "full_name",
   "phone",
   "phone_ext",
   "address",
@@ -21,18 +33,14 @@
   "left_date",
   "kpi_maximum",
   "column_break_zgsg",
-  "last_name",
-  "user_name",
+  "employee",
   "branch",
   "join_date",
-  "employee",
-  "agent_name",
   "gender",
   "father_name",
   "id",
   "nic",
   "salary",
-  "department",
   "kpi_minimum"
  ],
  "fields": [
@@ -43,7 +51,7 @@
    "unique": 1
   },
   {
-   "fetch_from": "email.username",
+   "fetch_from": "user.username",
    "fieldname": "user_name",
    "fieldtype": "Data",
    "label": "User Name"
@@ -98,10 +106,11 @@
    "options": "Employee"
   },
   {
-   "fetch_from": "employee.designation",
    "fieldname": "designation",
-   "fieldtype": "Data",
-   "label": "Designation"
+   "fieldtype": "Link",
+   "label": "Designation",
+   "link_filters": "[[\"Designation\",\"designation_name\",\"in\",[\"Sales Executive\",\"Sales Representative\",\"Sales Manager\",\"Sales Agent\"]]]",
+   "options": "Designation"
   },
   {
    "fieldname": "phone",
@@ -164,6 +173,7 @@
    "fieldname": "department",
    "fieldtype": "Link",
    "label": "Department",
+   "link_filters": "[[\"Department\",\"department_name\",\"=\",\"Sales\"]]",
    "options": "Department"
   },
   {
@@ -175,6 +185,49 @@
    "fieldname": "kpi_maximum",
    "fieldtype": "Int",
    "label": "KPI Max"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable",
+   "fieldtype": "Check",
+   "label": "Enable"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "user_info_section",
+   "fieldtype": "Section Break",
+   "label": "User Info"
+  },
+  {
+   "fieldname": "agent_password",
+   "fieldtype": "Password",
+   "label": "Agent Password"
+  },
+  {
+   "fieldname": "last_password_set_on",
+   "fieldtype": "Datetime",
+   "label": "Last password Changed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_dpnv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user_section_section",
+   "fieldtype": "Section Break",
+   "label": "User Section"
+  },
+  {
+   "fieldname": "employee_info_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Info"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -206,7 +259,7 @@
    "link_fieldname": "email"
   }
  ],
- "modified": "2026-01-14 23:11:07.058837",
+ "modified": "2026-01-22 22:44:56.267647",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Sales Agent",
