@@ -1,0 +1,247 @@
+# apps/cclms/cclms/api/lead.py
+from __future__ import annotations
+
+from typing import Dict, Any, List, Optional
+import frappe
+from frappe.utils import now_datetime, add_months, add_days
+
+
+# -----------------------------
+# Helpers
+# -----------------------------
+def _has_field(doctype: str, fieldname: str) -> bool:
+    try:
+        return frappe.get_meta(doctype).has_field(fieldname)
+    except Exception:
+        return False
+
+
+def _get_sales_agent_name_for_user(user: str) -> Optional[str]:
+    """
+    Best-effort mapping user -> Sales Agent.
+    Adjust this function if your Sales Agent doctype uses a different link field.
+    Common patterns:
+      - Sales Agent.user (Link User)
+      - Sales Agent.email_id
+    """
+    if not user or user == "Guest":
+        return None
+
+    # Pattern 1: Sales Agent has Link field 'user'
+    if _has_field("Sales Agent", "user"):
+        name = frappe.db.get_value("Sales Agent", {"user": user}, "name")
+        if name:
+            return name
+
+    # Pattern 2: email_id match
+    if _has_field("Sales Agent", "email_id"):
+        name = frappe.db.get_value("Sales Agent", {"email_id": user}, "name")
+        if name:
+            return name
+
+    # Pattern 3: User.full_name match (last resort; not recommended)
+    full_name = frappe.db.get_value("User", user, "full_name")
+    if full_name:
+        name = frappe.db.get_value("Sales Agent", {"full_name": full_name}, "name")
+        if name:
+            return name
+
+    return None
+
+
+def _pending_states() -> List[str]:
+    """
+    Your workflow states may vary.
+    Keep this list tight to avoid hiding important states.
+    """
+    return [
+        "Pending",
+        "Pending Approval",
+        "Pending Approved",
+        "Pending Review",
+    ]
+
+
+def _stale_hide_filters(doctype: str = "ATM Leads") -> List[List[Any]]:
+    """
+    Hide:
+      - Rejected older than 3 months
+      - Pending older than 1 month
+    Uses `modified` for freshness (fast + always present).
+    """
+    cutoff_rejected = add_months(now_datetime(), -3)
+    cutoff_pending = add_months(now_datetime(), -1)
+
+    # We'll implement as OR-filters to "exclude stale" using NOT conditions via SQL-ish trick:
+    # Keep rows that are NOT (Rejected AND modified < cutoff_rejected)
+    # AND NOT (Pending AND modified < cutoff_pending)
+    #
+    # Frappe filters don't support NOT groups nicely, so we do it by allowing all rows,
+    # but explicitly excluding stale ones with "not in names" would be expensive.
+    #
+    # Best simple approach: use Query Builder in the endpoint, OR we use extra SQL condition.
+    # Here we return SQL condition string later (see query builder usage below).
+    return []
+
+
+def _user_scope_filters(user: str) -> Dict[str, Any]:
+    roles = set(frappe.get_roles(user))
+
+    # System Manager sees all
+    if "System Manager" in roles or user == "Administrator":
+        return {"mode": "all", "sales_agent": None, "roles": roles}
+
+    sa = _get_sales_agent_name_for_user(user)
+    return {"mode": "scoped", "sales_agent": sa, "roles": roles}
+
+
+# -----------------------------
+# Public API
+# -----------------------------
+@frappe.whitelist()
+def get_leads(
+    # filters
+    company: Optional[str] = None,
+    executive_name: Optional[str] = None,
+    state: Optional[str] = None,                 # CA or California etc (optional; used if fields exist)
+    state_code: Optional[str] = None,
+    status_in: Optional[str] = None,             # CSV workflow_state list
+    # paging
+    limit_start: int = 0,
+    limit_page_length: int = 200,
+    # behavior
+    include_draft: int = 0,
+    include_without_coordinates: int = 0,
+) -> Dict[str, Any]:
+    """
+    Central leads API:
+    - applies permission scope
+    - hides stale rejected/pending
+    - returns rows + by_status counters for UI grouping
+    """
+
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw("Authentication required", frappe.AuthenticationError)
+
+    scope = _user_scope_filters(user)
+    roles = scope["roles"]
+    sa_name = scope["sales_agent"]
+
+    # Base AND filters
+    f_and: List[List[Any]] = [
+        ["doctype", "=", "ATM Leads"],  # harmless
+    ]
+    if not int(include_draft or 0):
+        f_and.append(["workflow_state", "!=", "Draft"])
+
+    if company:
+        f_and.append(["company", "=", company])
+
+    # allow explicit executive filter (for managers)
+    if executive_name:
+        f_and.append(["executive_name", "=", executive_name])
+
+    # If not manager: restrict to "owner OR assigned sales agent OR Karachi Team allowed"
+    # NOTE: We cannot express (A OR B OR C) cleanly with only filters; we’ll use Query Builder below.
+    restrict = (scope["mode"] != "all")
+
+    # Status CSV -> list
+    status_list = []
+    if status_in:
+        status_list = [s.strip() for s in status_in.split(",") if s.strip()]
+        if status_list:
+            f_and.append(["workflow_state", "in", status_list])
+
+    # Fields
+    fields = [
+        "name", "owner", "modified",
+        "company", "executive_name", "workflow_state",
+        "address", "city", "state", "state_code", "zip_code", "country",
+        "latitude", "longitude",
+        "post_date", "sign_date", "agreement_sent_date", "approved_date", "converted_date",
+    ]
+
+    # ----------------------------
+    # Query Builder (best for OR permission + stale-hide)
+    # ----------------------------
+    from frappe.query_builder import DocType
+    from pypika import functions as fn
+
+    L = DocType("ATM Leads")
+
+    q = frappe.qb.from_(L).select(*[getattr(L, f) for f in fields if hasattr(L, f)])
+
+    # Apply AND filters
+    for flt in f_and:
+        field, op, val = flt[0], flt[1], flt[2]
+        if not hasattr(L, field):
+            continue
+        col = getattr(L, field)
+        if op == "=":
+            q = q.where(col == val)
+        elif op == "!=":
+            q = q.where(col != val)
+        elif op == "in":
+            q = q.where(col.isin(val))
+
+    # Permission OR conditions
+    if restrict:
+        cond_owner = (L.owner == user)
+        cond_assigned = fn.Coalesce(L.executive_name, "") == (sa_name or "__NONE__")
+
+        # Karachi Team: if you have a field like branch/team; we’ll check common ones
+        karachi_role = ("Karachi Team" in roles) or ("Karachi" in roles)
+
+        cond_karachi = None
+        if karachi_role:
+            if hasattr(L, "branch"):
+                cond_karachi = (fn.Coalesce(L.branch, "") == "Karachi")
+            elif hasattr(L, "team"):
+                cond_karachi = (fn.Coalesce(L.team, "") == "Karachi")
+            elif hasattr(L, "region"):
+                cond_karachi = (fn.Coalesce(L.region, "") == "Karachi")
+
+        if cond_karachi is not None:
+            q = q.where(cond_owner | cond_assigned | cond_karachi)
+        else:
+            q = q.where(cond_owner | cond_assigned)
+
+    # Stale-hide rules
+    cutoff_rejected = add_months(now_datetime(), -3)
+    cutoff_pending = add_months(now_datetime(), -1)
+    pending_states = _pending_states()
+
+    # Keep rows that are NOT stale rejected AND NOT stale pending
+    q = q.where(~((L.workflow_state == "Rejected") & (L.modified < cutoff_rejected)))
+    q = q.where(~((L.workflow_state.isin(pending_states)) & (L.modified < cutoff_pending)))
+
+    # Coordinates rule
+    if not int(include_without_coordinates or 0):
+        q = q.where(L.latitude.isnotnull() & L.longitude.isnotnull())
+
+    # Sort + paging
+    q = q.orderby(L.modified, order=frappe.qb.desc).limit(int(limit_page_length)).offset(int(limit_start))
+
+    rows = frappe.db.sql(q.get_sql(), as_dict=True)
+
+    # Counters by workflow_state (for grouping)
+    by_status: Dict[str, int] = {}
+    for r in rows:
+        st = (r.get("workflow_state") or "Unknown")
+        by_status[st] = by_status.get(st, 0) + 1
+
+    return {
+        "rows": rows,
+        "meta": {
+            "limit_start": int(limit_start),
+            "limit_page_length": int(limit_page_length),
+            "returned": len(rows),
+            "by_status": by_status,
+            "scoped": restrict,
+            "sales_agent": sa_name,
+            "status_in": status_list,
+            "cutoff_rejected": str(cutoff_rejected),
+            "cutoff_pending": str(cutoff_pending),
+        }
+    }

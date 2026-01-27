@@ -1,7 +1,17 @@
 # cclms/api/atm_radar.py
+from cclms.api.lead import get_leads
 from typing import List, Dict, Any, Optional
 import frappe
 
+@frappe.whitelist(allow_guest=False)
+def get_leads_by_state(...):
+    # map your inputs to the new API
+    return get_leads(
+        company=company,
+        executive_name=executive_name,
+        status_in=status_in,
+        limit=limit,   # if you keep arg name "limit" then pass to limit_page_length
+    )
 # --- Helpers -----------------------------------------------------------------
 
 def _state_filter(state_or_code: Optional[str]) -> List[List[Any]]:

@@ -10,7 +10,7 @@
  "engine": "InnoDB",
  "field_order": [
   "ai_analysis_html",
-  "ai_score",
+  "ai_core",
   "section_break_fk0q",
   "company",
   "is_duplicate",
@@ -145,6 +145,7 @@
    "in_filter": 1,
    "in_global_search": 1,
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Owner Name",
    "options": "Name",
    "search_index": 1
@@ -156,7 +157,10 @@
   {
    "fieldname": "business_name",
    "fieldtype": "Data",
+   "in_filter": 1,
+   "in_global_search": 1,
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Business Name",
    "search_index": 1
   },
@@ -481,9 +485,11 @@
    "label": "AI Market Analysis"
   },
   {
-   "fieldname": "ai_score",
-   "fieldtype": "Read Only",
-   "label": "AI Score"
+   "fieldname": "ai_core",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "AI Score",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -497,7 +503,7 @@
    "link_fieldname": "atm_leads"
   }
  ],
- "modified": "2026-01-20 23:15:02.576972",
+ "modified": "2026-01-27 15:15:24.172790",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "ATM Leads",

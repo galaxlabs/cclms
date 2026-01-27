@@ -10,7 +10,7 @@ def get_map_data():
 
     enriched = []
     for l in leads:
-        zone, color = classify_zip(l.zip)
+        zone, color = classify_zip(l.get("zip_code"))
         l["zone"] = zone
         l["color"] = color
         enriched.append(l)
