@@ -8,9 +8,9 @@ app_license = "mit"
 add_to_apps_screen = [
 	{
 		"name": "cclms",
-		"logo": "/assets/cclms/logo.png",
+		"logo": "/assets/cclms/images/xlogo.png",
 		"title": "Call Centre Lead Management System",
-		"route": "/cclms",
+		"route": "/app/home",
 		"has_permission": "cclms.api.permission.has_app_permission"
 	}
 ]
