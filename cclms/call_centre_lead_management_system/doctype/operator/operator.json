@@ -1,0 +1,99 @@
+{
+  "actions": [],
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "field:operator_name",
+  "creation": "2026-01-28 19:15:15.112382",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "operator_name",
+    "is_recurring_operator",
+    "active"
+  ],
+  "fields": [
+    {
+      "fieldtype": "Section Break",
+      "label": "Operator",
+      "fieldname": "section_break_operator_1"
+    },
+    {
+      "label": "Operator Name",
+      "fieldname": "operator_name",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_1"
+    },
+    {
+      "label": "Is Recurring Operator",
+      "fieldname": "is_recurring_operator",
+      "fieldtype": "Check",
+      "default": 0
+    },
+    {
+      "label": "Active",
+      "fieldname": "active",
+      "fieldtype": "Check",
+      "default": 1
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-01-28 19:15:15.112382",
+  "modified_by": "Administrator",
+  "module": "Call Centre Lead Management System",
+  "name": "Operator",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "print": 1,
+      "email": 1,
+      "report": 1,
+      "export": 1,
+      "import": 1,
+      "share": 1,
+      "permlevel": 0
+    },
+    {
+      "role": "Employee",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "print": 1,
+      "email": 0,
+      "report": 1,
+      "export": 1,
+      "import": 0,
+      "share": 0,
+      "permlevel": 0
+    },
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "print": 1,
+      "email": 1,
+      "report": 1,
+      "export": 1,
+      "import": 1,
+      "share": 1,
+      "permlevel": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

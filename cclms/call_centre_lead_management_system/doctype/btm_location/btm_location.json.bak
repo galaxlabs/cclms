@@ -1,0 +1,230 @@
+{
+  "actions": [],
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "format:LOC-.#####",
+  "creation": "2026-01-28 19:15:15.112382",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "location_name",
+    "business_type",
+    "google_place_id",
+    "address_fingerprint",
+    "address",
+    "address_line1",
+    "address_line2",
+    "city",
+    "state",
+    "zip_code",
+    "geo",
+    "lat",
+    "lng",
+    "contact",
+    "owner_contact_name",
+    "owner_phone",
+    "owner_email",
+    "lock",
+    "status_summary",
+    "locked_reason",
+    "locked_on"
+  ],
+  "fields": [
+    {
+      "fieldtype": "Section Break",
+      "label": "Basic",
+      "fieldname": "section_break_basic_1"
+    },
+    {
+      "label": "Location Name",
+      "fieldname": "location_name",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_1"
+    },
+    {
+      "label": "Business Type",
+      "fieldname": "business_type",
+      "fieldtype": "Link",
+      "options": "Business Types"
+    },
+    {
+      "label": "Google Place ID",
+      "fieldname": "google_place_id",
+      "fieldtype": "Data"
+    },
+    {
+      "label": "Address Fingerprint",
+      "fieldname": "address_fingerprint",
+      "fieldtype": "Data",
+      "read_only": 1,
+      "unique": 1
+    },
+    {
+      "fieldtype": "Section Break",
+      "label": "Address",
+      "fieldname": "address"
+    },
+    {
+      "label": "Address Line 1",
+      "fieldname": "address_line1",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "label": "Address Line 2",
+      "fieldname": "address_line2",
+      "fieldtype": "Data"
+    },
+    {
+      "label": "City",
+      "fieldname": "city",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_2"
+    },
+    {
+      "label": "State",
+      "fieldname": "state",
+      "fieldtype": "Data"
+    },
+    {
+      "label": "Zip Code",
+      "fieldname": "zip_code",
+      "fieldtype": "Data",
+      "reqd": 1
+    },
+    {
+      "fieldtype": "Section Break",
+      "label": "Geo",
+      "fieldname": "geo"
+    },
+    {
+      "label": "Latitude",
+      "fieldname": "lat",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_3"
+    },
+    {
+      "label": "Longitude",
+      "fieldname": "lng",
+      "fieldtype": "Float"
+    },
+    {
+      "fieldtype": "Section Break",
+      "label": "Owner / Contact",
+      "fieldname": "contact"
+    },
+    {
+      "label": "Owner / Contact Name",
+      "fieldname": "owner_contact_name",
+      "fieldtype": "Data"
+    },
+    {
+      "label": "Phone",
+      "fieldname": "owner_phone",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_4"
+    },
+    {
+      "label": "Email",
+      "fieldname": "owner_email",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldtype": "Section Break",
+      "label": "Lock",
+      "fieldname": "lock"
+    },
+    {
+      "label": "Status Summary",
+      "fieldname": "status_summary",
+      "fieldtype": "Select",
+      "options": "Open\nLocked Rejected\nLocked SignedInstalled",
+      "default": "Open",
+      "read_only": 1
+    },
+    {
+      "label": "Locked Reason",
+      "fieldname": "locked_reason",
+      "fieldtype": "Small Text",
+      "read_only": 1
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_5"
+    },
+    {
+      "label": "Locked On",
+      "fieldname": "locked_on",
+      "fieldtype": "Datetime",
+      "read_only": 1
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-01-28 19:15:15.112382",
+  "modified_by": "Administrator",
+  "module": "Call Centre Lead Management System",
+  "name": "BTM Location",
+  "naming_rule": "Expression",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "print": 1,
+      "email": 1,
+      "report": 1,
+      "export": 1,
+      "import": 1,
+      "share": 1,
+      "permlevel": 0
+    },
+    {
+      "role": "Employee",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "print": 1,
+      "email": 0,
+      "report": 1,
+      "export": 1,
+      "import": 0,
+      "share": 0,
+      "permlevel": 0
+    },
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "print": 1,
+      "email": 1,
+      "report": 1,
+      "export": 1,
+      "import": 1,
+      "share": 1,
+      "permlevel": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

@@ -1,0 +1,237 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:DEAL-.#####",
+ "creation": "2026-01-28 19:15:15.112382",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "location",
+  "source_atm_lead",
+  "status",
+  "approved_date",
+  "needs_reanalysis_date",
+  "signed_date",
+  "install_scheduled_date",
+  "cancelled_date",
+  "business_type",
+  "install_blocker_notes",
+  "column_break_xfka",
+  "operator_company",
+  "assigned_agent",
+  "submitted_date",
+  "rejected_date",
+  "agreement_sent_date",
+  "converted_date",
+  "installed_date",
+  "tier",
+  "install_blocker_reason",
+  "naming_series",
+  "rent",
+  "budget_rent",
+  "agreed_rent",
+  "margin_rent",
+  "margin_eligible"
+ ],
+ "fields": [
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Location",
+   "options": "BTM Location"
+  },
+  {
+   "fieldname": "operator_company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Operator Company",
+   "options": "Operator"
+  },
+  {
+   "fieldname": "source_atm_lead",
+   "fieldtype": "Link",
+   "label": "Source ATM Lead",
+   "options": "ATM Leads"
+  },
+  {
+   "fieldname": "assigned_agent",
+   "fieldtype": "Link",
+   "label": "Assigned Agent",
+   "options": "User"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nSubmitted\nUnder Review\nNeeds Reanalysis\nApproved\nRejected\nAgreement Sent\nSigned\nConverted\nInstall Scheduled\nInstalled\nCancelled\nDisputed"
+  },
+  {
+   "fieldname": "submitted_date",
+   "fieldtype": "Datetime",
+   "label": "Submitted Date"
+  },
+  {
+   "fieldname": "approved_date",
+   "fieldtype": "Datetime",
+   "label": "Approved Date"
+  },
+  {
+   "fieldname": "rejected_date",
+   "fieldtype": "Datetime",
+   "label": "Rejected Date"
+  },
+  {
+   "fieldname": "needs_reanalysis_date",
+   "fieldtype": "Datetime",
+   "label": "Needs Reanalysis Date"
+  },
+  {
+   "fieldname": "agreement_sent_date",
+   "fieldtype": "Datetime",
+   "label": "Agreement Sent Date"
+  },
+  {
+   "fieldname": "signed_date",
+   "fieldtype": "Datetime",
+   "label": "Signed Date"
+  },
+  {
+   "fieldname": "converted_date",
+   "fieldtype": "Datetime",
+   "label": "Converted Date"
+  },
+  {
+   "fieldname": "install_scheduled_date",
+   "fieldtype": "Datetime",
+   "label": "Install Scheduled Date"
+  },
+  {
+   "fieldname": "installed_date",
+   "fieldtype": "Datetime",
+   "label": "Installed Date"
+  },
+  {
+   "fieldname": "cancelled_date",
+   "fieldtype": "Datetime",
+   "label": "Cancelled Date"
+  },
+  {
+   "fieldname": "tier",
+   "fieldtype": "Select",
+   "label": "Tier",
+   "options": "Tier 1\nTier 2\nTier 3"
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Link",
+   "label": "Business Type",
+   "options": "Business Types"
+  },
+  {
+   "fieldname": "install_blocker_reason",
+   "fieldtype": "Select",
+   "label": "Install Blocker Reason",
+   "options": "\nNo wire available\nNo power socket near spot\nNot allowed to drill\nSpace not ready\nOwner refused\nScheduling issue\nOther"
+  },
+  {
+   "fieldname": "install_blocker_notes",
+   "fieldtype": "Small Text",
+   "label": "Install Blocker Notes"
+  },
+  {
+   "fieldname": "rent",
+   "fieldtype": "Section Break",
+   "label": "Sensitive Rent (Director Only)"
+  },
+  {
+   "fieldname": "budget_rent",
+   "fieldtype": "Currency",
+   "label": "Budget Rent",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "agreed_rent",
+   "fieldtype": "Currency",
+   "label": "Agreed Rent",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "margin_rent",
+   "fieldtype": "Currency",
+   "label": "Margin Rent",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "margin_eligible",
+   "fieldtype": "Check",
+   "label": "Margin Eligible",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_xfka",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "LOC-YYYY-#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "LOC-YYYY-#####"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-29 02:13:37.722352",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Operator Deal",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

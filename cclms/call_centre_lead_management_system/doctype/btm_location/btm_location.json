@@ -1,0 +1,218 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-01-28 19:15:15.112382",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "location_name",
+  "google_place_id",
+  "column_break_qznj",
+  "business_type",
+  "address_fingerprint",
+  "address",
+  "address_line1",
+  "city",
+  "zip_code",
+  "column_break_imur",
+  "address_line2",
+  "state",
+  "geo",
+  "lat",
+  "column_break_hqxz",
+  "lng",
+  "contact",
+  "owner_contact_name",
+  "owner_email",
+  "column_break_cqoj",
+  "owner_phone",
+  "lock",
+  "status_summary",
+  "locked_reason",
+  "locked_on",
+  "naming_series"
+ ],
+ "fields": [
+  {
+   "fieldname": "location_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Location Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Link",
+   "label": "Business Type",
+   "options": "Business Types"
+  },
+  {
+   "fieldname": "google_place_id",
+   "fieldtype": "Data",
+   "label": "Google Place ID"
+  },
+  {
+   "fieldname": "address_fingerprint",
+   "fieldtype": "Data",
+   "label": "Address Fingerprint",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Section Break",
+   "label": "Address"
+  },
+  {
+   "fieldname": "address_line1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Address Line 1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "address_line2",
+   "fieldtype": "Data",
+   "label": "Address Line 2"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "zip_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Zip Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "geo",
+   "fieldtype": "Section Break",
+   "label": "Geo"
+  },
+  {
+   "fieldname": "lat",
+   "fieldtype": "Float",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "lng",
+   "fieldtype": "Float",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "contact",
+   "fieldtype": "Section Break",
+   "label": "Owner / Contact"
+  },
+  {
+   "fieldname": "owner_contact_name",
+   "fieldtype": "Data",
+   "label": "Owner / Contact Name"
+  },
+  {
+   "fieldname": "owner_phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "owner_email",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fieldname": "lock",
+   "fieldtype": "Section Break",
+   "label": "Lock"
+  },
+  {
+   "default": "Open",
+   "fieldname": "status_summary",
+   "fieldtype": "Select",
+   "label": "Status Summary",
+   "options": "Open\nLocked Rejected\nLocked SignedInstalled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "locked_reason",
+   "fieldtype": "Small Text",
+   "label": "Locked Reason",
+   "read_only": 1
+  },
+  {
+   "fieldname": "locked_on",
+   "fieldtype": "Datetime",
+   "label": "Locked On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_qznj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_imur",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_hqxz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_cqoj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "LOC-.YYYY.-.MM.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "options": "LOC-.YYYY.-.MM.-.#####",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-29 02:05:27.899411",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "BTM Location",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

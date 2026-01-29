@@ -1,0 +1,166 @@
+{
+  "actions": [],
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "format:ORC-.#####",
+  "creation": "2026-01-28 19:15:15.112382",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "operator_company",
+    "effective_from",
+    "effective_to",
+    "tier",
+    "business_type",
+    "signed_bonus_amount",
+    "install_bonus_amount",
+    "monthly_budget_rent",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldtype": "Section Break",
+      "label": "Rate Card",
+      "fieldname": "section_break_rate_card_1"
+    },
+    {
+      "label": "Operator Company",
+      "fieldname": "operator_company",
+      "fieldtype": "Link",
+      "options": "Operator",
+      "reqd": 1
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_1"
+    },
+    {
+      "label": "Effective From",
+      "fieldname": "effective_from",
+      "fieldtype": "Date",
+      "reqd": 1
+    },
+    {
+      "label": "Effective To",
+      "fieldname": "effective_to",
+      "fieldtype": "Date"
+    },
+    {
+      "fieldtype": "Section Break",
+      "label": "Segmentation",
+      "fieldname": "section_break_segmentation_2"
+    },
+    {
+      "label": "Tier",
+      "fieldname": "tier",
+      "fieldtype": "Select",
+      "reqd": 1,
+      "options": "Tier 1\nTier 2\nTier 3"
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_2"
+    },
+    {
+      "label": "Business Type",
+      "fieldname": "business_type",
+      "fieldtype": "Link",
+      "options": "Business Types",
+      "reqd": 1
+    },
+    {
+      "fieldtype": "Section Break",
+      "label": "Amounts",
+      "fieldname": "section_break_amounts_3"
+    },
+    {
+      "label": "Signed Bonus Amount",
+      "fieldname": "signed_bonus_amount",
+      "fieldtype": "Currency",
+      "reqd": 1,
+      "default": 0
+    },
+    {
+      "fieldtype": "Column Break",
+      "fieldname": "column_break_column_break_3"
+    },
+    {
+      "label": "Install Bonus Amount",
+      "fieldname": "install_bonus_amount",
+      "fieldtype": "Currency",
+      "reqd": 1,
+      "default": 0
+    },
+    {
+      "label": "Monthly Budget Rent",
+      "fieldname": "monthly_budget_rent",
+      "fieldtype": "Currency",
+      "permlevel": 1
+    },
+    {
+      "fieldtype": "Section Break",
+      "label": "Notes",
+      "fieldname": "section_break_notes_4"
+    },
+    {
+      "label": "Notes",
+      "fieldname": "notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-01-28 19:15:15.112382",
+  "modified_by": "Administrator",
+  "module": "Call Centre Lead Management System",
+  "name": "Operator Rate Card",
+  "naming_rule": "Expression",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "print": 1,
+      "email": 1,
+      "report": 1,
+      "export": 1,
+      "import": 1,
+      "share": 1,
+      "permlevel": 0
+    },
+    {
+      "role": "Employee",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "print": 1,
+      "email": 0,
+      "report": 1,
+      "export": 1,
+      "import": 0,
+      "share": 0,
+      "permlevel": 0
+    },
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "print": 1,
+      "email": 1,
+      "report": 1,
+      "export": 1,
+      "import": 1,
+      "share": 1,
+      "permlevel": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

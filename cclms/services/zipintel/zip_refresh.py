@@ -214,7 +214,7 @@ def refresh_zip_analytics_batch(batch_size: int = None):
 
     # 2) company kiosks from ATM Leads (zip field differs)
     # If ATM Leads has field zippostal_code, use it; else fallback to zip_code
-    atm_zip_field = "zippostal_code" if _doctype_has_field("ATM Leads", "zippostal_code") else "zip_code"
+    atm_zip_field = "zip_code" if _doctype_has_field("ATM Leads", "zip_code") else "zip_code"
 
     # Optional: filter only installed leads if you have such statuses
     # If you want this stricter, add a config field later. For now: count all.
