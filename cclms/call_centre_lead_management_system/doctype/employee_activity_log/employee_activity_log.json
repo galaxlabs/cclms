@@ -1,0 +1,136 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-08 17:33:54.233700",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "date",
+  "log_time",
+  "active_app",
+  "activity_type",
+  "screen_snapshot",
+  "column_break_mplo",
+  "status",
+  "productivity_score",
+  "ai_summary",
+  "section_break_ezal",
+  "total_calls_today",
+  "column_break_gjja",
+  "total_talk_time",
+  "activity_trace_section",
+  "activity_logs"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "log_time",
+   "fieldtype": "Datetime",
+   "label": "Exact time of activity"
+  },
+  {
+   "fieldname": "active_app",
+   "fieldtype": "Data",
+   "label": "Active App"
+  },
+  {
+   "fieldname": "activity_type",
+   "fieldtype": "Select",
+   "label": "Activity Type",
+   "options": "Call\nResearch\nCRM Entry\nIdle"
+  },
+  {
+   "fieldname": "screen_snapshot",
+   "fieldtype": "Attach Image",
+   "label": "Screen Snapshot"
+  },
+  {
+   "fieldname": "column_break_mplo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "productivity_score",
+   "fieldtype": "Percent",
+   "label": "Productivity Score"
+  },
+  {
+   "fieldname": "ai_summary",
+   "fieldtype": "Small Text",
+   "label": "Ai Summary"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status"
+  },
+  {
+   "fieldname": "section_break_ezal",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_calls_today",
+   "fieldtype": "Int",
+   "label": "Total Calls Today",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_gjja",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_talk_time",
+   "fieldtype": "Duration",
+   "label": "Total Talk Time"
+  },
+  {
+   "fieldname": "activity_trace_section",
+   "fieldtype": "Section Break",
+   "label": "Activity Trace"
+  },
+  {
+   "fieldname": "activity_logs",
+   "fieldtype": "Table",
+   "label": "Activity Entry",
+   "options": "Activity Entry"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-08 18:30:05.542740",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Employee Activity Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

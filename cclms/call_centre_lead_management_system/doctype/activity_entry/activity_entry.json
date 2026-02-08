@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-08 18:24:16.448920",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "event_time",
+  "call_start",
+  "call_end",
+  "column_break_hamu",
+  "duration",
+  "event_type",
+  "reference_id",
+  "screenshot",
+  "summary"
+ ],
+ "fields": [
+  {
+   "fieldname": "event_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Event Time"
+  },
+  {
+   "fieldname": "event_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Event Type",
+   "options": "Call\nScreen Snap\nApp Change"
+  },
+  {
+   "fieldname": "reference_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "RingCentral Call ID"
+  },
+  {
+   "fieldname": "screenshot",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Screenshot"
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Summary"
+  },
+  {
+   "fieldname": "call_start",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Call Start"
+  },
+  {
+   "fieldname": "call_end",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Call End"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Duration",
+   "in_list_view": 1,
+   "label": "Duration"
+  },
+  {
+   "fieldname": "column_break_hamu",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-02-08 18:36:50.046011",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Activity Entry",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
