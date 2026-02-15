@@ -1,0 +1,63 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-13 20:53:20.661035",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "overwrite",
+  "cutoff_date",
+  "limit",
+  "commit_every"
+ ],
+ "fields": [
+  {
+   "fieldname": "cutoff_date",
+   "fieldtype": "Date",
+   "label": "Cut Off Date"
+  },
+  {
+   "fieldname": "limit",
+   "fieldtype": "Int",
+   "label": "Limit"
+  },
+  {
+   "default": "200",
+   "fieldname": "commit_every",
+   "fieldtype": "Int",
+   "label": "Commit Every"
+  },
+  {
+   "default": "0",
+   "fieldname": "overwrite",
+   "fieldtype": "Check",
+   "label": "Overwrite"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-02-13 20:57:45.335360",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Ops Maintenance",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
