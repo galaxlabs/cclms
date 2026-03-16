@@ -276,7 +276,7 @@ doc_events = {
     },
     "Operator Deal": {
         "before_save": "cclms.services.maintenance.operator_deal_flags.before_save_operator_deal"
-    }
+    },
     "Communication": {
         "after_insert": "cclms.utils.communication_utils.handle_incoming_operations_email"
     }
