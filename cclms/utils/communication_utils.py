@@ -1,21 +1,25 @@
 import frappe
-from frappe.utils import strip_html_tags
+from frappe.utils import strip_html_tags, now_datetime, get_datetime, add_to_date
+
+# --- EMAIL LOGIC ---
 
 def handle_incoming_operations_email(doc, method=None):
-    """
-    Main trigger called by hooks.py on Communication 'after_insert'
-    """
-    # Only run for Received emails in the 'Oprations' account
+    """Triggered from hooks.py on Communication after_insert"""
     if doc.sent_or_received == "Received" and doc.email_account == "Oprations":
         
-        # 1. Notify only users who have 'Oprations' enabled in their User profile
+        # 1. Security: Only run Gemini/Alerts for emails from the last 10 minutes
+        # This prevents crashing during your bulk history pull
+        ten_mins_ago = add_to_date(now_datetime(), minutes=-10)
+        if get_datetime(doc.creation) < get_datetime(ten_mins_ago):
+            return
+
+        # 2. Notify Authorized Users
         notify_authorized_inbox_users(doc)
         
-        # 2. Generate Gemini Draft
+        # 3. Generate Gemini Draft
         generate_gemini_draft(doc)
 
 def notify_authorized_inbox_users(doc):
-    # Find users who have 'Oprations' in their 'user_emails' child table
     authorized_users = frappe.get_all("User Email", filters={
         "email_account": "Oprations",
         "parenttype": "User"
@@ -26,37 +30,30 @@ def notify_authorized_inbox_users(doc):
     for user in recipients:
         if user == frappe.session.user: continue
         
+        # Create Bell Notification
         frappe.get_doc({
             "doctype": "Notification Log",
             "for_user": user,
-            "subject": f"New Operations Email: {doc.subject or 'No Subject'}",
+            "subject": f"New Email: {doc.subject or 'No Subject'}",
             "type": "Alert",
             "document_type": "Communication",
             "document_name": doc.name
         }).insert(ignore_permissions=True)
 
 def generate_gemini_draft(doc):
-    # Pull API Key from Google Maps Settings
     api_key = frappe.db.get_single_value('Google Maps Settings', 'api_key')
-    if not api_key:
-        return
+    if not api_key: return
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-    
     clean_content = strip_html_tags(doc.content or "")
-    prompt = f"Draft a professional and concise reply to this customer email: {clean_content}"
-
+    
     try:
-        # Use frappe's robust request handler
         from frappe.integrations.utils import make_post_request
-        
-        payload = {"contents": [{"parts": [{"text": prompt}]}]}
+        payload = {"contents": [{"parts": [{"text": f"Draft a professional reply: {clean_content}"}]}]}
         response = make_post_request(url, json=payload)
 
         if response and "candidates" in response:
             ai_text = response["candidates"][0]["content"]["parts"][0]["text"]
-            
-            # Insert suggestion as a comment on the email
             frappe.get_doc({
                 "doctype": "Comment",
                 "comment_type": "Comment",
@@ -64,6 +61,34 @@ def generate_gemini_draft(doc):
                 "reference_name": doc.name,
                 "content": f"🤖 **Gemini AI Suggestion:**\n\n{ai_text}"
             }).insert(ignore_permissions=True)
-            
-    except Exception as e:
-        frappe.log_error(f"Gemini Draft Error: {str(e)}", "Communication Utils")
+    except Exception:
+        pass
+
+# --- WORKFLOW LOGIC ---
+
+def handle_atm_lead_workflow(doc, method=None):
+    """Triggered from hooks.py on ATM Leads after_save"""
+    if doc.has_value_changed("workflow_state"):
+        # Notify Owner
+        if doc.owner != frappe.session.user:
+            create_workflow_notification(doc.owner, doc, f"Lead {doc.name} updated to {doc.workflow_state}")
+
+        # Notify Approvers
+        wf_name = frappe.db.get_value("Workflow", {"document_type": doc.doctype, "is_active": 1}, "name")
+        if wf_name:
+            role = frappe.db.get_value("Workflow Document State", {"parent": wf_name, "state": doc.workflow_state}, "allow_edit")
+            if role:
+                approvers = frappe.get_all("Has Role", filters={"role": role, "parenttype": "User"}, fields=["parent"])
+                for appr in approvers:
+                    if appr.parent != frappe.session.user:
+                        create_workflow_notification(appr.parent, doc, f"Action Required: {doc.name} is {doc.workflow_state}")
+
+def create_workflow_notification(recipient, doc, message):
+    frappe.get_doc({
+        "doctype": "Notification Log",
+        "for_user": recipient,
+        "subject": message,
+        "type": "Alert",
+        "document_type": doc.doctype,
+        "document_name": doc.name
+    }).insert(ignore_permissions=True)
