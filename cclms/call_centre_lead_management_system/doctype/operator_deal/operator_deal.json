@@ -2,7 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:DEAL-.#####",
+ "autoname": "naming_series:",
  "creation": "2026-01-28 19:15:15.112382",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -179,20 +179,20 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "LOC-YYYY-#####",
+   "default": "DEAL-.YYYY.-.MM.-.#####",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
-   "options": "LOC-YYYY-#####"
+   "options": "DEAL-.YYYY.-.MM.-.#####"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-29 02:13:37.722352",
+ "modified": "2026-02-15 02:03:52.144190",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
  "name": "Operator Deal",
- "naming_rule": "Expression",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {

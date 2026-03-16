@@ -272,7 +272,12 @@ website_route_rules = [
 doc_events = {
     "ATM Leads": {
         "after_save": "cclms.notifications.atm_lead_after_save",
+        "on_trash": "cclms.services.mirror.on_trash_atm_lead.delink_operator_deals"
+    },
+    "Operator Deal": {
+        "before_save": "cclms.services.maintenance.operator_deal_flags.before_save_operator_deal"
     }
+
 }
 scheduler_events = {
     "hourly": [

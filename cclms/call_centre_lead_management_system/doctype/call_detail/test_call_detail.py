@@ -1,9 +1,9 @@
-# Copyright (c) 2025, Galaxy and Contributors
+# Copyright (c) 2026, Galaxy and Contributors
 # See license.txt
 
 # import frappe
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestCallRecord(FrappeTestCase):
+class TestCallDetail(FrappeTestCase):
 	pass
