@@ -24,12 +24,9 @@ add_to_apps_screen = [
 # app_include_js = "/assets/cclms/js/cclms.js"
 # app_include_css = [
 app_include_js = [
-    "/assets/cclms/js/workflow_dashboard.js",
-    "https://maps.googleapis.com/maps/api/js?key=&libraries=places",
   	"/assets/cclms/js/atm_map.js",
 	"/assets/cclms/js/chart.umd.js",
     "/assets/cclms/js/cclms_global.js"
-    
 ]
 
 # include js, css files in header of web template
