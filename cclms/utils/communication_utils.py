@@ -67,23 +67,44 @@ def generate_gemini_draft(doc):
 # --- WORKFLOW LOGIC ---
 
 def handle_atm_lead_workflow(doc, method=None):
-    """Triggered from hooks.py on ATM Leads after_save"""
-    if doc.has_value_changed("workflow_state"):
-        # Notify Owner
-        if doc.owner != frappe.session.user:
-            create_workflow_notification(doc.owner, doc, f"Lead {doc.name} updated to {doc.workflow_state}")
+    """
+    Triggered from hooks.py on ATM Leads after_save.
+    Handles the 'Track' Workflow notifications.
+    """
+    # Only run if the state has actually changed
+    if not doc.has_value_changed("workflow_state"):
+        return
 
-        # Notify Approvers
-        wf_name = frappe.db.get_value("Workflow", {"document_type": doc.doctype, "is_active": 1}, "name")
-        if wf_name:
-            role = frappe.db.get_value("Workflow Document State", {"parent": wf_name, "state": doc.workflow_state}, "allow_edit")
-            if role:
-                approvers = frappe.get_all("Has Role", filters={"role": role, "parenttype": "User"}, fields=["parent"])
-                for appr in approvers:
-                    if appr.parent != frappe.session.user:
-                        create_workflow_notification(appr.parent, doc, f"Action Required: {doc.name} is {doc.workflow_state}")
+    current_state = doc.workflow_state
+    user_who_saved = frappe.session.user
 
-def create_workflow_notification(recipient, doc, message):
+    # 1. Notify the Record Owner (The Sales Agent who created it)
+    if doc.owner != user_who_saved:
+        msg = f"Document {doc.name} moved to state: {current_state}"
+        create_system_notification(doc.owner, doc, msg)
+
+    # 2. Notify the Next Approvers based on the Workflow 'allow_edit' Role
+    # Your JSON shows different roles for different states
+    wf_name = "Track"
+    
+    # Fetch the role that is allowed to edit in the NEW state
+    allowed_role = frappe.db.get_value("Workflow Document State", 
+        {"parent": wf_name, "state": current_state}, "allow_edit")
+
+    if allowed_role:
+        # Get all users with this specific role
+        approvers = frappe.get_all("Has Role", 
+            filters={"role": allowed_role, "parenttype": "User"}, 
+            fields=["parent"])
+        
+        for appr in approvers:
+            if appr.parent != user_who_saved:
+                msg = f"Action Required: {doc.name} is now in '{current_state}' (Role: {allowed_role})"
+                create_system_notification(appr.parent, doc, msg)
+
+def create_system_notification(recipient, doc, message):
+    """Creates the Notification Log and triggers a Realtime popup"""
+    # A. Create the Bell Notification
     frappe.get_doc({
         "doctype": "Notification Log",
         "for_user": recipient,
@@ -92,3 +113,14 @@ def create_workflow_notification(recipient, doc, message):
         "document_type": doc.doctype,
         "document_name": doc.name
     }).insert(ignore_permissions=True)
+
+    # B. Trigger Realtime Popup (For Chrome/Desk)
+    frappe.publish_realtime(
+        event="notification", # This matches the JS listener we discussed
+        message={
+            "subject": message,
+            "document_type": doc.doctype,
+            "document_name": doc.name
+        },
+        user=recipient
+    )
