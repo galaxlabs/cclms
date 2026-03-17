@@ -1,32 +1,55 @@
-// cclms_global.js - v15 Compatible
-$(document).on('app_ready', function() {
-    // 1. Setup Browser Notification Permissions
-    if (window.Notification && Notification.permission === "default") {
-        Notification.requestPermission();
-    }
+/**
+ * Global Client Script for CCLMS
+ * Handles Real-time Notifications and Workflow Alerts
+ */
 
-    // 2. Listen for Real-time Notifications
-    // The 'msgprint' and 'eval_js' are standard, but we use 'notification' 
-    // because that's what we named the event in our Python code.
-    frappe.realtime.on('notification', function(data) {
-        // Show the orange/blue toast in the top right
-        frappe.show_alert({
-            message: data.subject || __("New Update Received"),
-            indicator: data.indicator || "orange"
-        }, 7);
+(function() {
+    "use strict";
 
-        // Trigger the native System/Chrome notification
-        if (window.Notification && Notification.permission === "granted") {
-            let n = new Notification("Xperts Global", {
-                body: data.subject,
-                icon: '/assets/frappe/images/frappe-framework-logo.png'
+    // Wait for the app to be fully ready
+    $(document).on('app_ready', function() {
+        console.log("CCLMS: Global Script Loaded and App Ready");
+
+        // 1. Request Browser Notification Permissions on first load
+        if (window.Notification && Notification.permission === "default") {
+            Notification.requestPermission().then(permission => {
+                console.log("CCLMS: Browser Notification Permission:", permission);
             });
-            n.onclick = function() {
-                window.focus();
-                if (data.document_type && data.document_name) {
-                    frappe.set_route('Form', data.document_type, data.document_name);
-                }
-            };
         }
+
+        // 2. Listen for 'notification' events from Python (frappe.publish_realtime)
+        frappe.realtime.on('notification', function(data) {
+            console.log("CCLMS: Real-time Event Received!", data);
+
+            // A. Show the Frappe Toast (The sliding bar in top-right)
+            frappe.show_alert({
+                message: data.subject || __("New Notification Received"),
+                indicator: data.indicator || "orange"
+            }, 7);
+
+            // B. Show Browser Native Notification (Even if the tab is in the background)
+            if (window.Notification && Notification.permission === "granted") {
+                const options = {
+                    body: data.subject,
+                    icon: '/assets/frappe/images/frappe-framework-logo.png', // Or your custom logo
+                    sticky: false
+                };
+
+                const n = new Notification("Xperts Global ATM", options);
+
+                n.onclick = function(event) {
+                    event.preventDefault();
+                    window.focus();
+                    
+                    // If the notification includes a document link, take the user there
+                    if (data.document_type && data.document_name) {
+                        frappe.set_route('Form', data.document_type, data.document_name);
+                    }
+                };
+            }
+        });
+
+        // 3. Optional: Heartbeat check to confirm listener is active
+        console.log("CCLMS: Real-time Listener 'notification' is now active.");
     });
-});
+})();
