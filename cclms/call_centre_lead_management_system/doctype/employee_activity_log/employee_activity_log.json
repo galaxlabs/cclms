@@ -19,6 +19,8 @@
   "column_break_mplo",
   "status",
   "device_id",
+  "device_profile",
+  "tracker_device",
   "machine_name",
   "ip_address",
   "productivity_score",
@@ -119,6 +121,20 @@
    "fieldname": "device_id",
    "fieldtype": "Data",
    "label": "Device ID"
+  },
+  {
+   "fieldname": "device_profile",
+   "fieldtype": "Link",
+   "label": "Device Profile",
+   "options": "Device Profile",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tracker_device",
+   "fieldtype": "Link",
+   "label": "Tracker Device",
+   "options": "Tracker Device",
+   "read_only": 1
   },
   {
    "fieldname": "machine_name",

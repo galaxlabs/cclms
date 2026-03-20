@@ -6,15 +6,40 @@ from frappe.model.document import Document
 from frappe.utils import get_datetime, now_datetime, time_diff_in_seconds
 
 
+def _resolve_device_links(device_id=None):
+    if not device_id:
+        return (None, None)
+
+    device_profile = None
+    tracker_device = None
+    if frappe.db.exists("DocType", "Device Profile"):
+        device_profile = frappe.db.get_value("Device Profile", {"device_id": device_id}, "name")
+    if frappe.db.exists("DocType", "Tracker Device"):
+        tracker_device = frappe.db.get_value("Tracker Device", {"device_id": device_id}, "name")
+    return (device_profile, tracker_device)
+
+
 class EmployeeActivityLog(Document):
     def before_insert(self):
         if not self.login_time:
             self.login_time = now_datetime()
         self.last_heartbeat = self.last_heartbeat or now_datetime()
+        self.sync_device_links()
         self.mark_attendance()
 
     def validate(self):
+        self.sync_device_links()
         self.calculate_metrics()
+
+    def sync_device_links(self):
+        if not self.device_id:
+            return
+
+        device_profile, tracker_device = _resolve_device_links(self.device_id)
+        if device_profile:
+            self.device_profile = device_profile
+        if tracker_device:
+            self.tracker_device = tracker_device
 
     def mark_attendance(self):
         if not self.employee:
@@ -117,3 +142,29 @@ def close_stale_logs(idle_minutes=15):
         frappe.db.commit()
     return {"updated": updated}
 
+
+def backfill_device_links(limit=0):
+    rows = frappe.get_all(
+        "Employee Activity Log",
+        filters={"device_id": ["!=", ""]},
+        fields=["name", "device_id", "device_profile", "tracker_device"],
+        limit_page_length=int(limit) if limit else 0,
+        order_by="modified desc",
+    )
+
+    updated = 0
+    for row in rows:
+        device_profile, tracker_device = _resolve_device_links(row.device_id)
+        values = {}
+        if device_profile and row.device_profile != device_profile:
+            values["device_profile"] = device_profile
+        if tracker_device and row.tracker_device != tracker_device:
+            values["tracker_device"] = tracker_device
+        if not values:
+            continue
+        frappe.db.set_value("Employee Activity Log", row.name, values, update_modified=False)
+        updated += 1
+
+    if updated:
+        frappe.db.commit()
+    return {"updated": updated}

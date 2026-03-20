@@ -183,8 +183,10 @@ def _tracker_runtime_policy(binding):
         "action_poll_seconds": tracker.get("action_poll_seconds") or 60,
         "device_health_enabled": _config_bool("tracker_device_health_enabled", False),
         "device_health_poll_seconds": _config_int("tracker_device_health_poll_seconds", 300),
-        "notifications_enabled": False,
-        "notifications_poll_seconds": 60,
+        "notifications_enabled": int(tracker.get("notifications_enabled") or 0) == 1
+        or _config_bool("tracker_notifications_enabled", False),
+        "notifications_poll_seconds": tracker.get("notifications_poll_seconds")
+        or _config_int("tracker_notifications_poll_seconds", 60),
         "biometric_device": biometric_device,
         "biometric_sync_enabled": biometric_enabled,
         "biometric_sync_interval_minutes": tracker.get("biometric_sync_minutes") or 15,
@@ -641,19 +643,28 @@ def get_device_notifications(payload=None):
     rows = frappe.get_all(
         "Notification Log",
         filters={"for_user": binding.get("tracked_user"), "read": 0},
-        fields=["name", "subject", "email_content", "creation"],
+        fields=["name", "subject", "email_content", "creation", "document_type", "document_name", "type"],
         order_by="creation desc",
         limit_page_length=10,
     )
     for row in rows:
+        body = frappe.safe_decode(row.get("email_content") or row.get("subject") or "").strip()[:280]
         notifications.append(
             {
                 "notification_id": row.get("name"),
                 "enabled": True,
                 "title": row.get("subject") or "CRM Notification",
-                "message": frappe.safe_decode(row.get("email_content") or row.get("subject") or "").strip()[:280],
+                "message": body,
+                "body": body,
                 "repeat_seconds": 300,
                 "severity": "info",
+                "type": row.get("type") or "Alert",
+                "document_type": row.get("document_type"),
+                "document_name": row.get("document_name"),
+                "route": ["Form", row.get("document_type"), row.get("document_name")]
+                if row.get("document_type") and row.get("document_name")
+                else None,
+                "created_on": str(row.get("creation") or ""),
             }
         )
 

@@ -19,6 +19,8 @@
   "policy_section",
   "device_actions_enabled",
   "action_poll_seconds",
+  "notifications_enabled",
+  "notifications_poll_seconds",
   "productivity_rules_json",
   "biometric_section",
   "biometric_enabled",
@@ -103,6 +105,19 @@
    "fieldname": "action_poll_seconds",
    "fieldtype": "Int",
    "label": "Action Poll Seconds"
+  },
+  {
+   "default": "0",
+   "fieldname": "notifications_enabled",
+   "fieldtype": "Check",
+   "label": "Notifications Enabled"
+  },
+  {
+   "default": "60",
+   "depends_on": "eval:doc.notifications_enabled==1",
+   "fieldname": "notifications_poll_seconds",
+   "fieldtype": "Int",
+   "label": "Notification Poll Seconds"
   },
   {
    "fieldname": "productivity_rules_json",
