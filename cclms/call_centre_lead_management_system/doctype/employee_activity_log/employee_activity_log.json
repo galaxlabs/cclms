@@ -6,15 +6,27 @@
  "engine": "InnoDB",
  "field_order": [
   "employee",
+  "user",
+  "sales_agent",
   "date",
+  "login_time",
+  "logout_time",
+  "last_heartbeat",
   "log_time",
   "active_app",
   "activity_type",
   "screen_snapshot",
   "column_break_mplo",
   "status",
+  "device_id",
+  "machine_name",
+  "ip_address",
   "productivity_score",
+  "total_active_minutes",
+  "total_idle_minutes",
+  "unauthorized_site_hits",
   "ai_summary",
+  "system_info_json",
   "section_break_ezal",
   "total_calls_today",
   "column_break_gjja",
@@ -30,9 +42,36 @@
    "options": "Employee"
   },
   {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "sales_agent",
+   "fieldtype": "Link",
+   "label": "Sales Agent",
+   "options": "Sales Agent"
+  },
+  {
    "fieldname": "log_time",
    "fieldtype": "Datetime",
    "label": "Exact time of activity"
+  },
+  {
+   "fieldname": "login_time",
+   "fieldtype": "Datetime",
+   "label": "Login Time"
+  },
+  {
+   "fieldname": "logout_time",
+   "fieldtype": "Datetime",
+   "label": "Logout Time"
+  },
+  {
+   "fieldname": "last_heartbeat",
+   "fieldtype": "Datetime",
+   "label": "Last Heartbeat"
   },
   {
    "fieldname": "active_app",
@@ -73,7 +112,23 @@
   {
    "fieldname": "status",
    "fieldtype": "Select",
-   "label": "Status"
+   "label": "Status",
+   "options": "\nActive\nIdle\nLogged Out\nClosed"
+  },
+  {
+   "fieldname": "device_id",
+   "fieldtype": "Data",
+   "label": "Device ID"
+  },
+  {
+   "fieldname": "machine_name",
+   "fieldtype": "Data",
+   "label": "Machine Name"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address"
   },
   {
    "fieldname": "section_break_ezal",
@@ -95,9 +150,32 @@
    "label": "Total Talk Time"
   },
   {
+   "fieldname": "total_active_minutes",
+   "fieldtype": "Float",
+   "label": "Total Active Minutes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_idle_minutes",
+   "fieldtype": "Float",
+   "label": "Total Idle Minutes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "unauthorized_site_hits",
+   "fieldtype": "Int",
+   "label": "Unauthorized Site Hits",
+   "read_only": 1
+  },
+  {
    "fieldname": "activity_trace_section",
    "fieldtype": "Section Break",
    "label": "Activity Trace"
+  },
+  {
+   "fieldname": "system_info_json",
+   "fieldtype": "Long Text",
+   "label": "System Info JSON"
   },
   {
    "fieldname": "activity_logs",

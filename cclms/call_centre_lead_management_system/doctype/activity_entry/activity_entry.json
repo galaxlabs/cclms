@@ -7,6 +7,16 @@
  "engine": "InnoDB",
  "field_order": [
   "event_time",
+  "event_source",
+  "active_app",
+  "window_title",
+  "website_url",
+  "domain",
+  "productivity_rating",
+  "productivity_score",
+  "productivity_rule_name",
+  "is_authorized",
+  "event_minutes",
   "call_start",
   "call_end",
   "column_break_hamu",
@@ -24,11 +34,62 @@
    "label": "Event Time"
   },
   {
+   "fieldname": "event_source",
+   "fieldtype": "Data",
+   "label": "Event Source"
+  },
+  {
+   "fieldname": "active_app",
+   "fieldtype": "Data",
+   "label": "Active App"
+  },
+  {
+   "fieldname": "window_title",
+   "fieldtype": "Data",
+   "label": "Window Title"
+  },
+  {
+   "fieldname": "website_url",
+   "fieldtype": "Data",
+   "label": "Website URL"
+  },
+  {
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "label": "Domain"
+  },
+  {
+   "fieldname": "productivity_rating",
+   "fieldtype": "Data",
+   "label": "Productivity Rating"
+  },
+  {
+   "fieldname": "productivity_score",
+   "fieldtype": "Float",
+   "label": "Productivity Score"
+  },
+  {
+   "fieldname": "productivity_rule_name",
+   "fieldtype": "Data",
+   "label": "Productivity Rule Name"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_authorized",
+   "fieldtype": "Check",
+   "label": "Is Authorized"
+  },
+  {
+   "fieldname": "event_minutes",
+   "fieldtype": "Float",
+   "label": "Event Minutes"
+  },
+  {
    "fieldname": "event_type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Event Type",
-   "options": "Call\nScreen Snap\nApp Change"
+   "options": "Call\nScreen Snap\nApp Change\nWebsite Visit\nLogin\nLogout\nIdle\nHeartbeat"
   },
   {
    "fieldname": "reference_id",

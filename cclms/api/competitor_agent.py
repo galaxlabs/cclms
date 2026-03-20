@@ -606,11 +606,12 @@ def run_competitor_batch(batch_size: int = None) -> Dict[str, Any]:
 
 def run_competitor_minutely():
     """
-    Scheduler entrypoint.
-    Keep batch_size tiny to protect quota.
+    Legacy scheduler entrypoint.
+    Kept for compatibility; the smarter scheduler now runs through
+    cclms.services.zipintel.intelligence.run_five_minute_intelligence.
     """
     try:
-        run_competitor_batch(batch_size=1)
+        run_competitor_batch(batch_size=20)
     except Exception:
         frappe.log_error(frappe.get_traceback(), "Competitor minutely agent failed")
 

@@ -1,0 +1,171 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-03-19 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "device_id",
+  "tracker_device",
+  "tracked_user",
+  "employee",
+  "sales_agent",
+  "column_break_1",
+  "machine_name",
+  "windows_username",
+  "version",
+  "report_time",
+  "queue_count",
+  "process_count",
+  "dns_ok",
+  "dns_host",
+  "dns_ip",
+  "dns_error",
+  "last_log_lines_json",
+  "processes_json",
+  "system_info_json",
+  "raw_payload_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "device_id",
+   "fieldtype": "Data",
+   "label": "Device ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tracker_device",
+   "fieldtype": "Link",
+   "label": "Tracker Device",
+   "options": "Tracker Device"
+  },
+  {
+   "fieldname": "tracked_user",
+   "fieldtype": "Link",
+   "label": "Tracked User",
+   "options": "User"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "sales_agent",
+   "fieldtype": "Link",
+   "label": "Sales Agent",
+   "options": "Sales Agent"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "machine_name",
+   "fieldtype": "Data",
+   "label": "Machine Name"
+  },
+  {
+   "fieldname": "windows_username",
+   "fieldtype": "Data",
+   "label": "Windows Username"
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Data",
+   "label": "Version"
+  },
+  {
+   "fieldname": "report_time",
+   "fieldtype": "Datetime",
+   "label": "Report Time"
+  },
+  {
+   "fieldname": "queue_count",
+   "fieldtype": "Int",
+   "label": "Queue Count"
+  },
+  {
+   "fieldname": "process_count",
+   "fieldtype": "Int",
+   "label": "Process Count"
+  },
+  {
+   "fieldname": "dns_ok",
+   "fieldtype": "Check",
+   "label": "DNS OK"
+  },
+  {
+   "fieldname": "dns_host",
+   "fieldtype": "Data",
+   "label": "DNS Host"
+  },
+  {
+   "fieldname": "dns_ip",
+   "fieldtype": "Data",
+   "label": "DNS IP"
+  },
+  {
+   "fieldname": "dns_error",
+   "fieldtype": "Small Text",
+   "label": "DNS Error"
+  },
+  {
+   "fieldname": "last_log_lines_json",
+   "fieldtype": "Code",
+   "label": "Last Log Lines JSON",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "processes_json",
+   "fieldtype": "Code",
+   "label": "Processes JSON",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "system_info_json",
+   "fieldtype": "Code",
+   "label": "System Info JSON",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "raw_payload_json",
+   "fieldtype": "Code",
+   "label": "Raw Payload JSON",
+   "options": "JSON",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-19 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Tracker Device Health Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

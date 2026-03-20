@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-17 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "cutoff_date",
+  "live_sync_enabled",
+  "director_roles",
+  "recurring_margin_operator",
+  "recurring_install_threshold",
+  "status_mapping_json"
+ ],
+ "fields": [
+  {
+   "default": "2025-08-01",
+   "fieldname": "cutoff_date",
+   "fieldtype": "Date",
+   "label": "Cutoff Date"
+  },
+  {
+   "default": "1",
+   "fieldname": "live_sync_enabled",
+   "fieldtype": "Check",
+   "label": "Live Sync Enabled"
+  },
+  {
+   "default": "System Manager\nDirector",
+   "fieldname": "director_roles",
+   "fieldtype": "Small Text",
+   "label": "Director Roles"
+  },
+  {
+   "fieldname": "recurring_margin_operator",
+   "fieldtype": "Link",
+   "label": "Recurring Margin Operator",
+   "options": "Operator"
+  },
+  {
+   "default": "300",
+   "fieldname": "recurring_install_threshold",
+   "fieldtype": "Int",
+   "label": "Recurring Install Threshold"
+  },
+  {
+   "fieldname": "status_mapping_json",
+   "fieldtype": "Code",
+   "label": "Status Mapping JSON",
+   "options": "JSON"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-03-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Operator Deal Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Director",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

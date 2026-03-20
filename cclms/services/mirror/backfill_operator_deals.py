@@ -1,13 +1,12 @@
 import frappe
-from frappe.utils import get_datetime
 from collections import Counter
 
-CUTOFF = get_datetime("2025-08-01")
-
 def upsert_from_atm_lead(lead, method=None):
-    if method != "backfill" and lead.creation and get_datetime(lead.creation) < CUTOFF:
-        # ignore updates for old leads
-        return None
+    from cclms.services.mirror.operator_deal_sync import sync_atm_lead
+
+    mode = "backfill" if method == "backfill" else "live"
+    result = sync_atm_lead(lead, mode=mode, overwrite=False)
+    return result.get("deal") if result.get("status") == "ok" else None
 
 def run(limit: int = 0, commit_every: int = 200, stop_on_error: int = 0):
     """

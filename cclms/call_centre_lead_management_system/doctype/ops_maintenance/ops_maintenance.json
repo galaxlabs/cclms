@@ -8,10 +8,16 @@
   "overwrite",
   "cutoff_date",
   "limit",
-  "commit_every"
+  "commit_every",
+  "batch_offset",
+  "ai_batch_size",
+  "force_gemini",
+  "last_run_log_ref",
+  "last_run_log"
  ],
  "fields": [
   {
+   "default": "2025-08-01",
    "fieldname": "cutoff_date",
    "fieldtype": "Date",
    "label": "Cut Off Date"
@@ -32,6 +38,37 @@
    "fieldname": "overwrite",
    "fieldtype": "Check",
    "label": "Overwrite"
+  },
+  {
+   "default": "0",
+   "fieldname": "batch_offset",
+   "fieldtype": "Int",
+   "label": "Batch Offset"
+  },
+  {
+   "default": "25",
+   "fieldname": "ai_batch_size",
+   "fieldtype": "Int",
+   "label": "AI Batch Size"
+  },
+  {
+   "default": "0",
+   "fieldname": "force_gemini",
+   "fieldtype": "Check",
+   "label": "Allow Gemini Fallback"
+  },
+  {
+   "fieldname": "last_run_log_ref",
+   "fieldtype": "Link",
+   "label": "Last Run Log",
+   "options": "Ops Run Log",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_run_log",
+   "fieldtype": "Long Text",
+   "label": "Last Run Log Summary",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
@@ -52,6 +89,13 @@
    "read": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Director",
    "write": 1
   }
  ],

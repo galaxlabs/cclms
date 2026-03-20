@@ -1,9 +1,9 @@
-# Copyright (c) 2026, Galaxy and contributors
-# For license information, please see license.txt
-
-# import frappe
 from frappe.model.document import Document
+
+from cclms.services.mirror.operator_deal_sync import build_address_fingerprint
 
 
 class BTMLocation(Document):
-	pass
+    def validate(self):
+        if not self.address_fingerprint:
+            self.address_fingerprint = build_address_fingerprint(self.address_line1, self.zip_code)

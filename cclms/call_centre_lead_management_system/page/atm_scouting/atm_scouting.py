@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 import requests
 
+from cclms.services.zipintel.intelligence import build_lead_intelligence
+
 # ---------- helpers ----------
 
 def _google_key():
@@ -251,6 +253,17 @@ def get_leads_in_viewport(north: float, south: float, east: float, west: float,
             "longitude": float(lng),
         })
     return out
+
+
+@frappe.whitelist()
+def get_location_advice(lead_name: str):
+    """
+    Map/scouting helper for agent-facing hints before submitting a location.
+    Uses the same ZIP + competitor truth as Operator Deal enrichment.
+    """
+    if not lead_name:
+        frappe.throw(_("Lead name is required"))
+    return build_lead_intelligence(lead_name, write_zip_centroid=False)
 
 
 @frappe.whitelist()

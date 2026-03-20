@@ -2,10 +2,35 @@
 # For license information, please see license.txt
 
 
+import re
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import now_datetime, nowdate, getdate
+
+
+US_PHONE_FIELDS = ("business_phone_number", "personal_cell_phone")
+
+
+def _normalize_phone_value(value):
+    if value in (None, ""):
+        return value
+
+    raw = str(value).strip()
+    if not raw:
+        return ""
+
+    raw = re.sub(r"\s+", " ", raw)
+    digits = re.sub(r"\D", "", raw)
+
+    # Standardize common US numbers while preserving older/international values.
+    if len(digits) == 10:
+        return f"{digits[:3]}-{digits[3:6]}-{digits[6:]}"
+    if len(digits) == 11 and digits.startswith("1"):
+        return f"{digits[0]}-{digits[1:4]}-{digits[4:7]}-{digits[7:]}"
+
+    return raw
 
 
 class ATMLeads(Document):
@@ -24,6 +49,7 @@ class ATMLeads(Document):
     # -------------------------------
 
     def validate(self):
+        self.normalize_phone_fields()
         self.validate_lead_state()
 
     def before_save(self):
@@ -33,6 +59,10 @@ class ATMLeads(Document):
     # -------------------------------
     # Business validation
     # -------------------------------
+
+    def normalize_phone_fields(self):
+        for fieldname in US_PHONE_FIELDS:
+            self.set(fieldname, _normalize_phone_value(self.get(fieldname)))
 
     def validate_lead_state(self):
         """Basic lead validation: company, address, permitted states, etc."""

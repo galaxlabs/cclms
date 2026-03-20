@@ -1,29 +1,8 @@
 import frappe
 
-# -------------------------
-# Helpers
-# -------------------------
-
-def _month_range(month: str):
-    """
-    month: 'YYYY-MM'
-    returns (start_date_str, end_date_str) in 'YYYY-MM-DD'
-    """
-    y, m = month.split("-")
-    y = int(y)
-    m = int(m)
-
-    start = f"{y:04d}-{m:02d}-01"
-
-    if m == 12:
-        end = f"{y+1:04d}-01-01"
-    else:
-        end = f"{y:04d}-{m+1:02d}-01"
-
-    return start, end
-
 
 DATE_FIELD_BY_KPI = {
+    "submitted": "submitted_date",
     "approved": "approved_date",
     "rejected": "rejected_date",
     "agreement_sent": "agreement_sent_date",
@@ -31,52 +10,28 @@ DATE_FIELD_BY_KPI = {
     "converted": "converted_date",
     "installed": "installed_date",
     "cancelled": "cancelled_date",
+    "disputed": "disputed_date",
 }
 
-# -------------------------
-# KPI cards (month totals)
-# -------------------------
 
-@frappe.whitelist()
-def monthly_kpis(month: str, operator: str | None = None, agent: str | None = None):
-    start, end = _month_range(month)
+def _existing_operator_deal_fields():
+    return set(frappe.get_meta("Operator Deal").get_valid_columns())
 
-    base_filters = []
-    params = {"start": start, "end": end}
 
-    if operator:
-        base_filters.append("operator_company = %(operator)s")
-        params["operator"] = operator
+def _month_range(month):
+    year, month_num = month.split("-")
+    year = int(year)
+    month_num = int(month_num)
+    start = f"{year:04d}-{month_num:02d}-01"
+    if month_num == 12:
+        end = f"{year + 1:04d}-01-01"
+    else:
+        end = f"{year:04d}-{month_num + 1:02d}-01"
+    return start, end
 
-    if agent:
-        base_filters.append("assigned_agent = %(agent)s")
-        params["agent"] = agent
 
-    base_where = (" AND " + " AND ".join(base_filters)) if base_filters else ""
-
-    out = {}
-    for kpi, df in DATE_FIELD_BY_KPI.items():
-        out[kpi] = frappe.db.sql(f"""
-            SELECT COUNT(*)
-            FROM `tabOperator Deal`
-            WHERE {df} >= %(start)s AND {df} < %(end)s
-            {base_where}
-        """, params)[0][0]
-
-    out["net_signed"] = (out.get("signed") or 0) - (out.get("cancelled") or 0)
-    return out
-
-# -------------------------
-# Trend line (ECharts)
-# -------------------------
-
-@frappe.whitelist()
-def trend(kpi: str, months_back: int = 12, operator: str | None = None, agent: str | None = None):
-    df = DATE_FIELD_BY_KPI.get(kpi)
-    if not df:
-        frappe.throw("Invalid KPI")
-
-    filters = [f"{df} IS NOT NULL"]
+def _deal_filters(operator=None, agent=None):
+    filters = []
     params = {}
 
     if operator:
@@ -84,89 +39,149 @@ def trend(kpi: str, months_back: int = 12, operator: str | None = None, agent: s
         params["operator"] = operator
 
     if agent:
-        filters.append("assigned_agent = %(agent)s")
+        filters.append(
+            "(sales_agent = %(agent)s OR sales_agent_name_text = %(agent)s OR assigned_agent = %(agent)s)"
+        )
         params["agent"] = agent
 
+    return filters, params
+
+
+@frappe.whitelist()
+def monthly_kpis(month, operator=None, agent=None):
+    start, end = _month_range(month)
+    filters, params = _deal_filters(operator=operator, agent=agent)
+    params.update({"start": start, "end": end})
+
+    extra_where = f" AND {' AND '.join(filters)}" if filters else ""
+    existing_fields = _existing_operator_deal_fields()
+
+    output = {}
+    for kpi, fieldname in DATE_FIELD_BY_KPI.items():
+        if fieldname not in existing_fields:
+            output[kpi] = 0
+            continue
+        output[kpi] = frappe.db.sql(
+            f"""
+            SELECT COUNT(*)
+            FROM `tabOperator Deal`
+            WHERE {fieldname} >= %(start)s
+              AND {fieldname} < %(end)s
+              {extra_where}
+            """,
+            params,
+        )[0][0]
+
+    output["net_signed"] = (output.get("signed") or 0) - (output.get("cancelled") or 0)
+    return output
+
+
+@frappe.whitelist()
+def trend(kpi, months_back=12, operator=None, agent=None):
+    date_field = DATE_FIELD_BY_KPI.get(kpi)
+    if not date_field:
+        frappe.throw("Invalid KPI")
+    if date_field not in _existing_operator_deal_fields():
+        return []
+
+    filters, params = _deal_filters(operator=operator, agent=agent)
+    filters.append(f"{date_field} IS NOT NULL")
     where = " AND ".join(filters)
 
-    return frappe.db.sql(f"""
-        SELECT DATE_FORMAT({df}, '%%Y-%%m') AS ym, COUNT(*) AS value
+    return frappe.db.sql(
+        f"""
+        SELECT DATE_FORMAT({date_field}, '%%Y-%%m') AS ym, COUNT(*) AS value
         FROM `tabOperator Deal`
         WHERE {where}
         GROUP BY ym
         ORDER BY ym DESC
-        LIMIT {int(months_back)}
-    """, params, as_dict=True)
+        LIMIT %(months_back)s
+        """,
+        {**params, "months_back": int(months_back)},
+        as_dict=True,
+    )
 
-# -------------------------
-# Agent KPI table (month)
-# -------------------------
 
 @frappe.whitelist()
-def agent_kpis(month: str, operator: str | None = None):
+def agent_kpis(month, operator=None):
     start, end = _month_range(month)
-
     params = {"start": start, "end": end}
-    cond = ""
+    filters = []
     if operator:
-        cond = " AND operator_company = %(operator)s"
+        filters.append("operator_company = %(operator)s")
         params["operator"] = operator
 
-    rows = frappe.db.sql(f"""
-        SELECT
-            assigned_agent AS agent,
-            SUM(CASE WHEN submitted_date >= %(start)s AND submitted_date < %(end)s THEN 1 ELSE 0 END) AS posted,
-            SUM(CASE WHEN approved_date >= %(start)s AND approved_date < %(end)s THEN 1 ELSE 0 END) AS approved,
-            SUM(CASE WHEN agreement_sent_date >= %(start)s AND agreement_sent_date < %(end)s THEN 1 ELSE 0 END) AS agreement_sent,
-            SUM(CASE WHEN signed_date >= %(start)s AND signed_date < %(end)s THEN 1 ELSE 0 END) AS signed,
-            SUM(CASE WHEN converted_date >= %(start)s AND converted_date < %(end)s THEN 1 ELSE 0 END) AS converted,
-            SUM(CASE WHEN installed_date >= %(start)s AND installed_date < %(end)s THEN 1 ELSE 0 END) AS installed,
-            SUM(CASE WHEN rejected_date >= %(start)s AND rejected_date < %(end)s THEN 1 ELSE 0 END) AS rejected,
-            SUM(CASE WHEN cancelled_date >= %(start)s AND cancelled_date < %(end)s THEN 1 ELSE 0 END) AS cancelled
-        FROM `tabOperator Deal`
-        WHERE 1=1 {cond}
-        GROUP BY assigned_agent
-        ORDER BY signed DESC
-    """, params, as_dict=True)
+    extra_where = f" AND {' AND '.join(filters)}" if filters else ""
+    existing_fields = _existing_operator_deal_fields()
+    submitted_expr = "SUM(CASE WHEN submitted_date >= %(start)s AND submitted_date < %(end)s THEN 1 ELSE 0 END) AS submitted" if "submitted_date" in existing_fields else "0 AS submitted"
+    approved_expr = "SUM(CASE WHEN approved_date >= %(start)s AND approved_date < %(end)s THEN 1 ELSE 0 END) AS approved" if "approved_date" in existing_fields else "0 AS approved"
+    agreement_sent_expr = "SUM(CASE WHEN agreement_sent_date >= %(start)s AND agreement_sent_date < %(end)s THEN 1 ELSE 0 END) AS agreement_sent" if "agreement_sent_date" in existing_fields else "0 AS agreement_sent"
+    signed_expr = "SUM(CASE WHEN signed_date >= %(start)s AND signed_date < %(end)s THEN 1 ELSE 0 END) AS signed" if "signed_date" in existing_fields else "0 AS signed"
+    converted_expr = "SUM(CASE WHEN converted_date >= %(start)s AND converted_date < %(end)s THEN 1 ELSE 0 END) AS converted" if "converted_date" in existing_fields else "0 AS converted"
+    installed_expr = "SUM(CASE WHEN installed_date >= %(start)s AND installed_date < %(end)s THEN 1 ELSE 0 END) AS installed" if "installed_date" in existing_fields else "0 AS installed"
+    rejected_expr = "SUM(CASE WHEN rejected_date >= %(start)s AND rejected_date < %(end)s THEN 1 ELSE 0 END) AS rejected" if "rejected_date" in existing_fields else "0 AS rejected"
+    cancelled_expr = "SUM(CASE WHEN cancelled_date >= %(start)s AND cancelled_date < %(end)s THEN 1 ELSE 0 END) AS cancelled" if "cancelled_date" in existing_fields else "0 AS cancelled"
 
-    for r in rows:
-        r["net_signed"] = (r.get("signed") or 0) - (r.get("cancelled") or 0)
+    rows = frappe.db.sql(
+        f"""
+        SELECT
+            COALESCE(sales_agent, sales_agent_name_text, assigned_agent, 'Unassigned') AS agent,
+            {submitted_expr},
+            {approved_expr},
+            {agreement_sent_expr},
+            {signed_expr},
+            {converted_expr},
+            {installed_expr},
+            {rejected_expr},
+            {cancelled_expr}
+        FROM `tabOperator Deal`
+        WHERE 1=1 {extra_where}
+        GROUP BY COALESCE(sales_agent, sales_agent_name_text, assigned_agent, 'Unassigned')
+        ORDER BY signed DESC, approved DESC
+        """,
+        params,
+        as_dict=True,
+    )
+
+    for row in rows:
+        row["net_signed"] = (row.get("signed") or 0) - (row.get("cancelled") or 0)
 
     return rows
 
-# -------------------------
-# Signed drill-down list
-# -------------------------
 
 @frappe.whitelist()
-def signed_list(month: str, operator: str | None = None, agent: str | None = None, limit: int = 200):
+def signed_list(month, operator=None, agent=None, limit=200):
     start, end = _month_range(month)
+    filters, params = _deal_filters(operator=operator, agent=agent)
+    params.update({"start": start, "end": end, "limit": int(limit)})
+    extra_where = f" AND {' AND '.join(filters)}" if filters else ""
+    existing_fields = _existing_operator_deal_fields()
+    signed_field = "signed_date" if "signed_date" in existing_fields else None
+    if not signed_field:
+        return []
 
-    params = {"start": start, "end": end, "limit": int(limit)}
-    cond = []
-    if operator:
-        cond.append("operator_company = %(operator)s")
-        params["operator"] = operator
-    if agent:
-        cond.append("assigned_agent = %(agent)s")
-        params["agent"] = agent
-
-    extra_where = (" AND " + " AND ".join(cond)) if cond else ""
-
-    return frappe.db.sql(f"""
+    return frappe.db.sql(
+        f"""
         SELECT
             name,
             operator_company,
+            sales_agent,
+            sales_agent_name_text,
             assigned_agent,
             location,
             business_type,
             tier,
+            tier_suggestion,
             signed_date,
             agreement_sent_date,
             approved_date
         FROM `tabOperator Deal`
-        WHERE signed_date >= %(start)s AND signed_date < %(end)s
-        {extra_where}
+        WHERE signed_date >= %(start)s
+          AND signed_date < %(end)s
+          {extra_where}
         ORDER BY signed_date DESC
         LIMIT %(limit)s
-    """, params, as_dict=True)
+        """,
+        params,
+        as_dict=True,
+    )

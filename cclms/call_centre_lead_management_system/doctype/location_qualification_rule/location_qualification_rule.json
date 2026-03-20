@@ -1,0 +1,109 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:rule_name",
+ "creation": "2026-03-17 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rule_name",
+  "active",
+  "priority",
+  "operator_company",
+  "zone_color",
+  "min_zip_score",
+  "max_competitor_density",
+  "min_population_density",
+  "min_operator_fit_score",
+  "recommended_next_action"
+ ],
+ "fields": [
+  {
+   "fieldname": "rule_name",
+   "fieldtype": "Data",
+   "label": "Rule Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "default": "10",
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority"
+  },
+  {
+   "fieldname": "operator_company",
+   "fieldtype": "Link",
+   "label": "Operator Company",
+   "options": "Operator"
+  },
+  {
+   "fieldname": "zone_color",
+   "fieldtype": "Data",
+   "label": "Zone Color"
+  },
+  {
+   "fieldname": "min_zip_score",
+   "fieldtype": "Float",
+   "label": "Min ZIP Score"
+  },
+  {
+   "fieldname": "max_competitor_density",
+   "fieldtype": "Float",
+   "label": "Max Competitor Density"
+  },
+  {
+   "fieldname": "min_population_density",
+   "fieldtype": "Float",
+   "label": "Min Population Density"
+  },
+  {
+   "fieldname": "min_operator_fit_score",
+   "fieldtype": "Float",
+   "label": "Min Operator Fit Score"
+  },
+  {
+   "fieldname": "recommended_next_action",
+   "fieldtype": "Small Text",
+   "label": "Recommended Next Action"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Location Qualification Rule",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Director",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

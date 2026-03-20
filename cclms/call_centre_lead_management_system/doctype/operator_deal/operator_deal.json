@@ -9,12 +9,15 @@
  "field_order": [
   "location",
   "source_atm_lead",
+  "sales_agent",
+  "sales_agent_name_text",
   "status",
   "approved_date",
   "needs_reanalysis_date",
   "signed_date",
   "install_scheduled_date",
   "cancelled_date",
+  "disputed_date",
   "business_type",
   "install_blocker_notes",
   "column_break_xfka",
@@ -32,7 +35,21 @@
   "budget_rent",
   "agreed_rent",
   "margin_rent",
-  "margin_eligible"
+  "margin_eligible",
+  "enrichment_section",
+  "tier_suggestion",
+  "competitor_density_score",
+  "risk_score",
+  "operator_fit_score",
+  "recommended_next_action",
+  "zip_matched_rule",
+  "last_enriched_on",
+  "ai_section",
+  "ai_summary",
+  "ai_confidence",
+  "ai_last_provider",
+  "ai_last_model",
+  "ai_last_enriched_on"
  ],
  "fields": [
   {
@@ -54,6 +71,17 @@
    "fieldtype": "Link",
    "label": "Source ATM Lead",
    "options": "ATM Leads"
+  },
+  {
+   "fieldname": "sales_agent",
+   "fieldtype": "Link",
+   "label": "Sales Agent",
+   "options": "Sales Agent"
+  },
+  {
+   "fieldname": "sales_agent_name_text",
+   "fieldtype": "Data",
+   "label": "Sales Agent Name Text"
   },
   {
    "fieldname": "assigned_agent",
@@ -120,6 +148,11 @@
    "label": "Cancelled Date"
   },
   {
+   "fieldname": "disputed_date",
+   "fieldtype": "Datetime",
+   "label": "Disputed Date"
+  },
+  {
    "fieldname": "tier",
    "fieldtype": "Select",
    "label": "Tier",
@@ -171,6 +204,94 @@
    "fieldname": "margin_eligible",
    "fieldtype": "Check",
    "label": "Margin Eligible",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "enrichment_section",
+   "fieldtype": "Section Break",
+   "label": "Enrichment"
+  },
+  {
+   "fieldname": "tier_suggestion",
+   "fieldtype": "Data",
+   "label": "Tier Suggestion",
+   "read_only": 1
+  },
+  {
+   "fieldname": "competitor_density_score",
+   "fieldtype": "Percent",
+   "label": "Competitor Density Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "risk_score",
+   "fieldtype": "Percent",
+   "label": "Risk Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "operator_fit_score",
+   "fieldtype": "Percent",
+   "label": "Operator Fit Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "recommended_next_action",
+   "fieldtype": "Small Text",
+   "label": "Recommended Next Action",
+   "read_only": 1
+  },
+  {
+   "fieldname": "zip_matched_rule",
+   "fieldtype": "Data",
+   "label": "ZIP Matched Rule",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_enriched_on",
+   "fieldtype": "Datetime",
+   "label": "Last Enriched On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_section",
+   "fieldtype": "Section Break",
+   "label": "AI",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "ai_summary",
+   "fieldtype": "Long Text",
+   "label": "AI Summary",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_confidence",
+   "fieldtype": "Percent",
+   "label": "AI Confidence",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_last_provider",
+   "fieldtype": "Data",
+   "label": "AI Last Provider",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_last_model",
+   "fieldtype": "Data",
+   "label": "AI Last Model",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ai_last_enriched_on",
+   "fieldtype": "Datetime",
+   "label": "AI Last Enriched On",
    "permlevel": 1,
    "read_only": 1
   },
@@ -227,6 +348,16 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Director",
    "write": 1
   }
  ],

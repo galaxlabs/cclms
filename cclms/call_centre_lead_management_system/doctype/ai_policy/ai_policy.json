@@ -1,0 +1,122 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-17 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_ai_enrichment",
+  "manual_confirmation_required",
+  "local_llm_endpoint",
+  "local_llm_model",
+  "local_confidence_threshold",
+  "local_timeout_seconds",
+  "enable_gemini_fallback",
+  "gemini_endpoint",
+  "gemini_model",
+  "gemini_api_key",
+  "gemini_requests_per_minute",
+  "max_batch_size"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enable_ai_enrichment",
+   "fieldtype": "Check",
+   "label": "Enable AI Enrichment"
+  },
+  {
+   "default": "1",
+   "fieldname": "manual_confirmation_required",
+   "fieldtype": "Check",
+   "label": "Manual Confirmation Required"
+  },
+  {
+   "fieldname": "local_llm_endpoint",
+   "fieldtype": "Data",
+   "label": "Local LLM Endpoint"
+  },
+  {
+   "fieldname": "local_llm_model",
+   "fieldtype": "Data",
+   "label": "Local LLM Model"
+  },
+  {
+   "default": "0.7",
+   "fieldname": "local_confidence_threshold",
+   "fieldtype": "Float",
+   "label": "Local Confidence Threshold"
+  },
+  {
+   "default": "45",
+   "fieldname": "local_timeout_seconds",
+   "fieldtype": "Int",
+   "label": "Local Timeout Seconds"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_gemini_fallback",
+   "fieldtype": "Check",
+   "label": "Enable Gemini Fallback"
+  },
+  {
+   "fieldname": "gemini_endpoint",
+   "fieldtype": "Data",
+   "label": "Gemini Endpoint"
+  },
+  {
+   "fieldname": "gemini_model",
+   "fieldtype": "Data",
+   "label": "Gemini Model"
+  },
+  {
+   "fieldname": "gemini_api_key",
+   "fieldtype": "Password",
+   "label": "Gemini API Key"
+  },
+  {
+   "default": "10",
+   "fieldname": "gemini_requests_per_minute",
+   "fieldtype": "Int",
+   "label": "Gemini Requests Per Minute"
+  },
+  {
+   "default": "25",
+   "fieldname": "max_batch_size",
+   "fieldtype": "Int",
+   "label": "Max Batch Size"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-03-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "AI Policy",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Director",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

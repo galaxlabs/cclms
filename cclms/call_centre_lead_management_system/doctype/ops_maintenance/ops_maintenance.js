@@ -1,32 +1,38 @@
-// Copyright (c) 2026, Galaxy and contributors
-// For license information, please see license.txt
-
-// frappe.ui.form.on("Ops Maintenance", {
-// 	refresh(frm) {
-
-// 	},
-// });
-frappe.ui.form.on('Ops Maintenance', {
+frappe.ui.form.on("Ops Maintenance", {
   refresh(frm) {
-    if (frm.is_new()) return;
+    if (frm.is_new()) {
+      return;
+    }
 
     frm.clear_custom_buttons();
+    const group = __("Maintenance");
 
-    const grp = __('Rebuild');
-
-    frm.add_custom_button(__('Rebuild Deals Since Cutoff'), () => {
-      const cutoff = frm.doc.cutoff_date || '2025-08-01';
+    frm.add_custom_button(__("Rebuild Deals Since Cutoff"), () => {
       frappe.confirm(
-        `Rebuild Operator/Location/Deals from ATM Leads created/modified on or after ${cutoff}?`,
-        () => frm.call('rebuild_deals_since_cutoff').then(() => frm.reload_doc())
+        __("Rebuild Operator, BTM Location, and Operator Deal rows for the current cutoff/batch window?"),
+        () => frm.call("rebuild_deals_since_cutoff").then(() => frm.reload_doc())
       );
-    }, grp);
+    }, group);
 
-    frm.add_custom_button(__('Backfill Dates From State History'), () => {
+    frm.add_custom_button(__("Backfill Dates From State History"), () => {
       frappe.confirm(
-        `Fill missing milestone dates in Operator Deal from ATM Lead State History?`,
-        () => frm.call('backfill_dates_from_state_history').then(() => frm.reload_doc())
+        __("Backfill milestone dates from ATM Lead State History using DB updates only?"),
+        () => frm.call("backfill_dates_from_state_history").then(() => frm.reload_doc())
       );
-    }, grp);
+    }, group);
+
+    frm.add_custom_button(__("Clean Enrich From ZIP Analytics"), () => {
+      frappe.confirm(
+        __("Refresh Operator Deal enrichment fields from Zip Code Analytics for the current batch?"),
+        () => frm.call("clean_enrich_from_zip_analytics").then(() => frm.reload_doc())
+      );
+    }, group);
+
+    frm.add_custom_button(__("AI Enrichment"), () => {
+      frappe.confirm(
+        __("Run low-volume AI enrichment for the current batch using local-first policy?"),
+        () => frm.call("ai_enrichment").then(() => frm.reload_doc())
+      );
+    }, group);
   }
 });

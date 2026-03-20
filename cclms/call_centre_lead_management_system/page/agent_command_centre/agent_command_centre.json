@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2026-03-17 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-03-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "agent-command-centre",
+ "owner": "Administrator",
+ "page_name": "agent-command-centre",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Agent Command Centre"
+}

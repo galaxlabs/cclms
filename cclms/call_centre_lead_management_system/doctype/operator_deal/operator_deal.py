@@ -1,13 +1,7 @@
-# Copyright (c) 2026, Galaxy and contributors
-# For license information, please see license.txt
-
-# ~/dg-b/apps/cclms/cclms/doctype/operator_deal/operator_deal.py
-
 import frappe
 from frappe.model.document import Document
-from frappe.utils import now_datetime, get_datetime
+from frappe.utils import flt, get_datetime, now_datetime
 
-CUTOFF = get_datetime("2025-08-01")
 
 STATUS_DATE_FIELD = {
     "Submitted": "submitted_date",
@@ -23,105 +17,116 @@ STATUS_DATE_FIELD = {
     "Disputed": "disputed_date",
 }
 
-LOCK_SIGNED_STATES = ("Signed", "Installed")
-LOCK_REJECTED_STATES = ("Rejected",)
+GLOBAL_LOCK_STATES = ("Signed", "Installed")
+GLOBAL_REJECT_STATES = ("Rejected",)
+SAME_OPERATOR_ACTIVE_EXCLUSIONS = ("Cancelled", "Disputed")
+DEFAULT_CUTOFF = "2025-08-01"
+
+
+def _safe_single_value(fieldname, default=None):
+    if not frappe.db.exists("DocType", "Operator Deal Settings"):
+        return default
+    value = frappe.db.get_single_value("Operator Deal Settings", fieldname)
+    return default if value in (None, "") else value
+
+
+def _get_cutoff_datetime():
+    return get_datetime(_safe_single_value("cutoff_date", DEFAULT_CUTOFF))
+
+
+def _skip_strict_validation(doc):
+    return bool(
+        getattr(doc.flags, "in_backfill", False)
+        or getattr(doc.flags, "skip_strict_duplicate_validation", False)
+        or getattr(frappe.flags, "maintenance_mode", False)
+    )
+
+
+def _director_roles():
+    raw = _safe_single_value("director_roles", "System Manager\nDirector") or ""
+    return [role.strip() for role in raw.splitlines() if role.strip()]
 
 
 class OperatorDeal(Document):
     def validate(self):
-        self._stamp_status_date()
+        self._ensure_submitted_date()
+        if not _skip_strict_validation(self):
+            self._stamp_current_status_date()
         self._compute_margin_fields()
 
-        if not getattr(self.flags, "in_backfill", False):
+        if not _skip_strict_validation(self):
             self._strict_duplicate_validation()
 
-    def before_insert(self):
-        # If you want a default submitted_date on insert (optional)
+    def _ensure_submitted_date(self):
         if not self.submitted_date:
-            self.submitted_date = now_datetime()
+            if _skip_strict_validation(self) and self.creation:
+                self.submitted_date = get_datetime(self.creation)
+            elif not _skip_strict_validation(self):
+                self.submitted_date = now_datetime()
 
-    # -------------------------
-    # 1) Date stamping by status
-    # -------------------------
-    def _stamp_status_date(self):
+    def _stamp_current_status_date(self):
         fieldname = STATUS_DATE_FIELD.get(self.status)
         if fieldname and not self.get(fieldname):
             self.set(fieldname, now_datetime())
 
-    # -------------------------
-    # 2) Margin compute (Director-only fields)
-    # -------------------------
     def _compute_margin_fields(self):
-        # margin_rent = budget_rent - agreed_rent (if both set)
-        budget = self.budget_rent
-        agreed = self.agreed_rent
+        budget = flt(self.budget_rent)
+        agreed = flt(self.agreed_rent)
+        self.margin_rent = budget - agreed if self.budget_rent is not None and self.agreed_rent is not None else 0
 
-        if budget is None or agreed is None:
-            self.margin_rent = 0
-        else:
-            try:
-                self.margin_rent = float(budget) - float(agreed)
-            except Exception:
-                self.margin_rent = 0
+        recurring_operator = (_safe_single_value("recurring_margin_operator") or "").strip()
+        install_threshold = int(_safe_single_value("recurring_install_threshold", 300) or 300)
+        install_count = 0
 
-        # margin_eligible (simple v1 rule)
-        # - only makes sense if installed and margin > 0
-        self.margin_eligible = 1 if (self.status == "Installed" and (self.margin_rent or 0) > 0) else 0
+        if recurring_operator and self.operator_company == recurring_operator:
+            install_count = frappe.db.count(
+                "Operator Deal",
+                filters={"operator_company": self.operator_company, "status": "Installed"},
+            )
 
-    # -------------------------
-    # 3) Strict duplication rules (new-era only)
-    # -------------------------
+        self.margin_eligible = int(
+            self.status == "Installed"
+            and bool(recurring_operator)
+            and self.operator_company == recurring_operator
+            and install_count >= install_threshold
+            and self.margin_rent > 0
+        )
+
     def _strict_duplicate_validation(self):
-        # Only enforce strict duplication for records on/after cutoff
-        created = get_datetime(self.creation) if self.creation else None
-        if created and created < CUTOFF:
-            return
-
         if not self.location or not self.operator_company:
             return
 
-        # 1) If ANY signed/installed exists for this location -> block (new-era only)
-        if frappe.db.sql(
-            """
-            SELECT name
-            FROM `tabOperator Deal`
-            WHERE location=%s
-              AND name!=%s
-              AND status IN ('Signed','Installed')
-              AND creation >= %s
-            LIMIT 1
-            """,
-            (self.location, self.name, CUTOFF),
-        ):
-            frappe.throw("Duplicate blocked: this location is already Signed/Installed.")
+        creation_dt = get_datetime(self.creation) if self.creation else now_datetime()
+        if creation_dt < _get_cutoff_datetime():
+            return
 
-        # 2) If ANY rejected exists for this location -> block global (new-era only)
-        if frappe.db.sql(
-            """
-            SELECT name
-            FROM `tabOperator Deal`
-            WHERE location=%s
-              AND name!=%s
-              AND status IN ('Rejected')
-              AND creation >= %s
-            LIMIT 1
-            """,
-            (self.location, self.name, CUTOFF),
+        if frappe.db.exists(
+            "Operator Deal",
+            {
+                "location": self.location,
+                "name": ["!=", self.name or ""],
+                "status": ["in", list(GLOBAL_LOCK_STATES)],
+            },
+        ):
+            frappe.throw("Duplicate blocked: this location is already Signed/Installed with an operator.")
+
+        if frappe.db.exists(
+            "Operator Deal",
+            {
+                "location": self.location,
+                "name": ["!=", self.name or ""],
+                "status": ["in", list(GLOBAL_REJECT_STATES)],
+            },
         ):
             frappe.throw("Duplicate blocked: this location was rejected by an operator.")
 
-        # 3) Same operator duplication not allowed (except Cancelled/Disputed) (new-era only)
-        if frappe.db.sql(
-            """
-            SELECT name
-            FROM `tabOperator Deal`
-            WHERE location=%s
-              AND operator_company=%s
-              AND name!=%s
-              AND status NOT IN ('Cancelled','Disputed')
-              AND creation >= %s
-            LIMIT 1
-            """,
-            (self.location, self.operator_company, self.name, CUTOFF),
+        if frappe.db.exists(
+            "Operator Deal",
+            {
+                "location": self.location,
+                "operator_company": self.operator_company,
+                "name": ["!=", self.name or ""],
+                "status": ["not in", list(SAME_OPERATOR_ACTIVE_EXCLUSIONS)],
+            },
         ):
-            frappe.throw("Duplicate blocked: deal already exists for this operator.")
+            frappe.throw("Duplicate blocked: use the existing deal for this operator/location instead of creating a new one.")

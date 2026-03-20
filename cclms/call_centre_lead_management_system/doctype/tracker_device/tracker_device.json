@@ -1,0 +1,185 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:device_id",
+ "creation": "2026-03-18 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "device_id",
+  "tracked_user",
+  "employee",
+  "active",
+  "column_break_1",
+  "allowed_service_user",
+  "machine_name",
+  "ip_address",
+  "last_seen_on",
+  "notes",
+  "policy_section",
+  "device_actions_enabled",
+  "action_poll_seconds",
+  "productivity_rules_json",
+  "biometric_section",
+  "biometric_enabled",
+  "biometric_ip",
+  "biometric_port",
+  "biometric_password",
+  "biometric_device_identifier",
+  "biometric_sync_minutes",
+  "biometric_last_sync_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "device_id",
+   "fieldtype": "Data",
+   "label": "Device ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "tracked_user",
+   "fieldtype": "Link",
+   "label": "Tracked User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "default": "1",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "allowed_service_user",
+   "fieldtype": "Link",
+   "label": "Allowed Service User",
+   "options": "User"
+  },
+  {
+   "fieldname": "machine_name",
+   "fieldtype": "Data",
+   "label": "Machine Name"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address"
+  },
+  {
+   "fieldname": "last_seen_on",
+   "fieldtype": "Datetime",
+   "label": "Last Seen On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "policy_section",
+   "fieldtype": "Section Break",
+   "label": "Optional Tracker Policy"
+  },
+  {
+   "default": "0",
+   "fieldname": "device_actions_enabled",
+   "fieldtype": "Check",
+   "label": "Device Actions Enabled"
+  },
+  {
+   "default": "60",
+   "fieldname": "action_poll_seconds",
+   "fieldtype": "Int",
+   "label": "Action Poll Seconds"
+  },
+  {
+   "fieldname": "productivity_rules_json",
+   "fieldtype": "Code",
+   "label": "Productivity Rules JSON",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "biometric_section",
+   "fieldtype": "Section Break",
+   "label": "Optional Biometric Sync"
+  },
+  {
+   "default": "0",
+   "fieldname": "biometric_enabled",
+   "fieldtype": "Check",
+   "label": "Biometric Enabled"
+  },
+  {
+   "fieldname": "biometric_ip",
+   "fieldtype": "Data",
+   "label": "Biometric IP"
+  },
+  {
+   "default": "4370",
+   "fieldname": "biometric_port",
+   "fieldtype": "Int",
+   "label": "Biometric Port"
+  },
+  {
+   "fieldname": "biometric_password",
+   "fieldtype": "Password",
+   "label": "Biometric Password"
+  },
+  {
+   "fieldname": "biometric_device_identifier",
+   "fieldtype": "Data",
+   "label": "Biometric Device Identifier"
+  },
+  {
+   "default": "15",
+   "fieldname": "biometric_sync_minutes",
+   "fieldtype": "Int",
+   "label": "Biometric Sync Minutes"
+  },
+  {
+   "fieldname": "biometric_last_sync_on",
+   "fieldtype": "Datetime",
+   "label": "Biometric Last Sync On",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-18 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Tracker Device",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

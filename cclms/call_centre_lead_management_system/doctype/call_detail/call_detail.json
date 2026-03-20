@@ -6,13 +6,20 @@
  "engine": "InnoDB",
  "field_order": [
   "employee",
+  "user",
+  "sales_agent",
+  "activity_log",
+  "call_date",
   "start_time",
   "end_time",
+  "status",
+  "direction",
   "sentiment",
   "column_break_rodn",
   "call_id",
   "customer_number",
   "duration",
+  "source_system",
   "client_response",
   "section_break_mxsq",
   "transcript"
@@ -23,6 +30,29 @@
    "fieldtype": "Link",
    "label": "Employee",
    "options": "Employee"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "sales_agent",
+   "fieldtype": "Link",
+   "label": "Sales Agent",
+   "options": "Sales Agent"
+  },
+  {
+   "fieldname": "activity_log",
+   "fieldtype": "Link",
+   "label": "Employee Activity Log",
+   "options": "Employee Activity Log"
+  },
+  {
+   "fieldname": "call_date",
+   "fieldtype": "Date",
+   "label": "Call Date"
   },
   {
    "fieldname": "start_time",
@@ -39,6 +69,18 @@
    "fieldtype": "Select",
    "label": "Sentiment",
    "options": "Positive\nNeutral\nNegative"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Call Status",
+   "options": "\nStarted\nCompleted\nMissed\nRejected\nAbandoned"
+  },
+  {
+   "fieldname": "direction",
+   "fieldtype": "Select",
+   "label": "Direction",
+   "options": "\nOutbound\nInbound"
   },
   {
    "fieldname": "column_break_rodn",
@@ -58,6 +100,11 @@
    "fieldname": "duration",
    "fieldtype": "Duration",
    "label": "Automated (End - Start)"
+  },
+  {
+   "fieldname": "source_system",
+   "fieldtype": "Data",
+   "label": "Source System"
   },
   {
    "fieldname": "client_response",

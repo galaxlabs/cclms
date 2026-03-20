@@ -1,5 +1,7 @@
 import frappe
 
+from cclms.utils.communication_utils import create_system_notification
+
 EVENTS = {
     "approve_date": "Lead Approved",
     "sign_date": "Lead Signed",
@@ -27,6 +29,17 @@ def atm_lead_after_save(doc, method):
         if not old_val and new_val:
             create_notification(user, doc, event_label)
 
+    old_state = getattr(old, "workflow_state", None)
+    new_state = getattr(doc, "workflow_state", None)
+    if new_state and old_state != new_state:
+        create_notification(
+            user,
+            doc,
+            f"Lead moved to {new_state}",
+            body=f"{doc.business_name or doc.name} changed from {old_state or 'Draft'} to {new_state}",
+            indicator=_workflow_indicator(new_state),
+        )
+
 
 def get_user_for_agent(agent_name):
     if not agent_name:
@@ -35,13 +48,22 @@ def get_user_for_agent(agent_name):
 
 
 def create_notification(user, doc, event_label):
-    nl = frappe.new_doc("Notification Log")
-    nl.for_user = user
-    nl.type = "Alert"
-    nl.subject = f"{event_label}: {doc.business_name or doc.name}"
-    nl.document_type = doc.doctype
-    nl.document_name = doc.name
-    nl.insert(ignore_permissions=True)
+    subject = f"{event_label}: {doc.business_name or doc.name}"
+    create_system_notification(
+        user,
+        doc,
+        subject,
+        title="ATM Lead Update",
+        body=subject,
+        indicator="green",
+        notification_type="Alert",
+    )
 
-    # trigger client side notification refresh
-    frappe.publish_realtime("notification_update", after_commit=True)
+
+def _workflow_indicator(state):
+    value = (state or "").lower()
+    if any(word in value for word in ("approved", "signed", "installed", "converted")):
+        return "green"
+    if any(word in value for word in ("rejected", "removed", "cancelled")):
+        return "red"
+    return "orange"

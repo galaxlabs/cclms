@@ -680,6 +680,153 @@
 //                 ]);
 //             }, __('Personal')); // Add to the same group
 
+frappe.ui.form.on("ATM Leads", {
+    onload(frm) {
+        apply_map_prefill(frm);
+    },
+
+    refresh(frm) {
+        if (frm.is_new()) {
+            apply_map_prefill(frm);
+        }
+    },
+
+    address(frm) {
+        if (frm.is_new()) {
+            lookup_duplicate_lead(frm);
+        }
+    },
+
+    full_address(frm) {
+        if (frm.is_new()) {
+            lookup_duplicate_lead(frm);
+        }
+    },
+
+    zip_code(frm) {
+        if (frm.is_new()) {
+            lookup_duplicate_lead(frm);
+        }
+    },
+
+    business_name(frm) {
+        if (frm.is_new()) {
+            lookup_duplicate_lead(frm);
+        }
+    },
+
+    latitude(frm) {
+        if (frm.is_new()) {
+            lookup_duplicate_lead(frm);
+        }
+    },
+
+    longitude(frm) {
+        if (frm.is_new()) {
+            lookup_duplicate_lead(frm);
+        }
+    },
+});
+
+let duplicate_lookup_in_flight = false;
+
+function apply_map_prefill(frm) {
+    if (!frm.is_new()) {
+        return;
+    }
+
+    const options = frappe.route_options || {};
+    const allowedFields = [
+        "business_name",
+        "address",
+        "full_address",
+        "city",
+        "state",
+        "state_code",
+        "zip_code",
+        "country",
+        "latitude",
+        "longitude",
+    ];
+
+    let applied = false;
+    allowedFields.forEach((fieldname) => {
+        const value = options[fieldname];
+        if (value === undefined || value === null || value === "") {
+            return;
+        }
+        if (frm.doc[fieldname]) {
+            return;
+        }
+        frm.set_value(fieldname, value);
+        applied = true;
+    });
+
+    if (!applied && !frm.doc.address && !frm.doc.zip_code) {
+        return;
+    }
+
+    // Run once on form open so a map-selected location immediately shows duplicate state.
+    if (!frm.__map_prefill_checked) {
+        frm.__map_prefill_checked = true;
+        lookup_duplicate_lead(frm);
+    }
+}
+
+function lookup_duplicate_lead(frm) {
+    if (duplicate_lookup_in_flight) {
+        return;
+    }
+
+    if (!frm.doc.address && !frm.doc.full_address && !frm.doc.zip_code) {
+        return;
+    }
+
+    duplicate_lookup_in_flight = true;
+    frappe.call({
+        method: "cclms.api.atm_lead_helper.lookup_existing_lead",
+        args: {
+            address: frm.doc.address || frm.doc.full_address || "",
+            zip_code: frm.doc.zip_code || "",
+            business_name: frm.doc.business_name || "",
+            latitude: frm.doc.latitude || "",
+            longitude: frm.doc.longitude || "",
+        },
+    }).then((r) => {
+            const result = r.message || {};
+            const best = result.best_match || null;
+
+            if (best && best.name !== frm.doc.name) {
+                const distanceText = best.distance_miles !== undefined ? ` Distance: ${best.distance_miles} mi.` : "";
+                frappe.show_alert({
+                    message: __("Possible duplicate: {0} is already in stage {1}.{2}", [
+                        best.business_name || best.name,
+                        best.workflow_state || "Draft",
+                        distanceText,
+                    ]),
+                    indicator: "orange",
+                }, 10);
+
+                if (frm.dashboard.clear_headline) {
+                    frm.dashboard.clear_headline();
+                }
+                frm.dashboard.set_headline_alert(
+                    __(
+                        'Existing ATM Lead found: <a href="/app/atm-leads/{0}" target="_blank">{1}</a> is currently in <b>{2}</b>.',
+                        [
+                            encodeURIComponent(best.name),
+                            frappe.utils.escape_html(best.business_name || best.name),
+                            frappe.utils.escape_html(best.workflow_state || "Draft"),
+                        ]
+                    ),
+                    "orange"
+                );
+            }
+        }).finally(() => {
+            duplicate_lookup_in_flight = false;
+        });
+}
+
 //             frm.add_custom_button(__('Not Intrested'), function() {
 //                 copyToClipboard([
 //                     frm.doc.field ||'',

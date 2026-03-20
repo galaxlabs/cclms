@@ -17,6 +17,7 @@ cclms.OpsControlRoom = class {
     this.page = page;
     this.make_filters();
     this.make_layout();
+    this.apply_route_options();
     this.refresh();
   }
 
@@ -40,10 +41,10 @@ cclms.OpsControlRoom = class {
     });
 
     this.agent = this.page.add_field({
-      label: __('Agent'),
+      label: __('Sales Agent'),
       fieldtype: 'Link',
       fieldname: 'agent',
-      options: 'User'
+      options: 'Sales Agent'
     });
 
     this.metric = this.page.add_field({
@@ -55,6 +56,13 @@ cclms.OpsControlRoom = class {
     });
 
     this.page.set_primary_action(__('Refresh'), () => this.refresh());
+  }
+
+  apply_route_options() {
+    const routeOptions = frappe.route_options || {};
+    if (routeOptions.month) this.month.set_value(routeOptions.month);
+    if (routeOptions.operator) this.operator.set_value(routeOptions.operator);
+    if (routeOptions.agent) this.agent.set_value(routeOptions.agent);
   }
 
   make_layout() {
@@ -121,6 +129,7 @@ cclms.OpsControlRoom = class {
 
   render_cards(k) {
     const items = [
+      ['Submitted', k.submitted],
       ['Approved', k.approved], ['Rejected', k.rejected],
       ['Agreement Sent', k.agreement_sent], ['Signed', k.signed],
       ['Converted', k.converted], ['Installed', k.installed],
@@ -159,7 +168,7 @@ cclms.OpsControlRoom = class {
   }
 
   render_agent_table(rows) {
-    const cols = ['agent','posted','approved','agreement_sent','signed','converted','installed','rejected','cancelled','net_signed'];
+    const cols = ['agent','submitted','approved','agreement_sent','signed','converted','installed','rejected','cancelled','net_signed'];
     let html = `<h5 style="margin:6px 8px;">${__('Agent KPIs')}</h5>`;
     html += `<div style="overflow:auto;"><table class="table table-bordered" style="margin:0;">`;
     html += `<thead><tr>${cols.map(c => `<th>${frappe.utils.escape_html(c)}</th>`).join('')}</tr></thead>`;
@@ -180,7 +189,7 @@ cclms.OpsControlRoom = class {
       html += `<tr>
         <td><a href="/app/operator-deal/${encodeURIComponent(r.name)}">${frappe.utils.escape_html(r.name)}</a></td>
         <td>${frappe.utils.escape_html(r.operator_company || '')}</td>
-        <td>${frappe.utils.escape_html(r.assigned_agent || '')}</td>
+        <td>${frappe.utils.escape_html(r.sales_agent || r.sales_agent_name_text || r.assigned_agent || '')}</td>
         <td>${frappe.utils.escape_html(r.business_type || '')}</td>
         <td>${frappe.utils.escape_html(String(r.signed_date || ''))}</td>
       </tr>`;
@@ -214,10 +223,10 @@ cclms.OpsControlRoom = class {
       html += `<tr>
         <td><a href="/app/operator-deal/${encodeURIComponent(r.name)}">${frappe.utils.escape_html(r.name)}</a></td>
         <td>${frappe.utils.escape_html(r.operator_company || '')}</td>
-        <td>${frappe.utils.escape_html(r.assigned_agent || '')}</td>
+        <td>${frappe.utils.escape_html(r.sales_agent || r.sales_agent_name_text || r.assigned_agent || '')}</td>
         <td>${frappe.utils.escape_html(r.location || '')}</td>
         <td>${frappe.utils.escape_html(r.business_type || '')}</td>
-        <td>${frappe.utils.escape_html(r.tier || '')}</td>
+        <td>${frappe.utils.escape_html(r.tier_suggestion || r.tier || '')}</td>
         <td>${frappe.utils.escape_html(String(r.signed_date || ''))}</td>
       </tr>`;
     });

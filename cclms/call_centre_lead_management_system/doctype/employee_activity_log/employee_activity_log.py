@@ -3,60 +3,117 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import time_diff_in_seconds, get_datetime, now_datetime
+from frappe.utils import get_datetime, now_datetime, time_diff_in_seconds
+
 
 class EmployeeActivityLog(Document):
     def before_insert(self):
-        # Automatically mark Attendance in HRMS when the first log of the day is created
+        if not self.login_time:
+            self.login_time = now_datetime()
+        self.last_heartbeat = self.last_heartbeat or now_datetime()
         self.mark_attendance()
 
     def validate(self):
-        self.calculate_call_metrics()
+        self.calculate_metrics()
 
     def mark_attendance(self):
-        # Prevent duplicate check-ins for the same session
-        if not frappe.db.exists("Employee Checkin", {"employee": self.employee, "time": [">=", self.date]}):
-            checkin = frappe.get_doc({
+        if not self.employee:
+            return
+        if not frappe.db.exists("DocType", "Employee Checkin"):
+            return
+
+        existing = frappe.db.exists(
+            "Employee Checkin",
+            {
+                "employee": self.employee,
+                "log_type": "IN",
+                "time": [">=", str(self.date)],
+            },
+        )
+        if existing:
+            return
+
+        frappe.get_doc(
+            {
                 "doctype": "Employee Checkin",
                 "employee": self.employee,
-                "time": now_datetime(),
+                "time": self.login_time or now_datetime(),
                 "log_type": "IN",
-                "device_id": self.name 
-            })
-            checkin.insert(ignore_permissions=True)
+                "device_id": self.device_id or self.machine_name or self.name,
+            }
+        ).insert(ignore_permissions=True)
 
-    def calculate_call_metrics(self):
+    def calculate_metrics(self):
         total_calls = 0
-        total_seconds = 0
-        for row in self.activity_logs:
+        total_call_seconds = 0
+        total_active_minutes = 0.0
+        total_idle_minutes = 0.0
+        unauthorized_site_hits = 0
+
+        for row in self.activity_logs or []:
+            minutes = float(row.event_minutes or 0)
+            if row.event_type == "Idle":
+                total_idle_minutes += minutes
+            else:
+                total_active_minutes += minutes
+
+            if int(row.is_authorized or 0) == 0 and row.event_type == "Website Visit":
+                unauthorized_site_hits += 1
+
             if row.event_type == "Call" and row.call_start and row.call_end:
                 total_calls += 1
-                diff = time_diff_in_seconds(row.call_end, row.call_start)
+                diff = max(0, int(time_diff_in_seconds(row.call_end, row.call_start)))
                 row.duration = diff
-                total_seconds += diff
-        
-        self.total_calls_today = total_calls
-        self.total_talk_time = total_seconds
+                total_call_seconds += diff
 
-@frappe.whitelist()
-def upload_activity_snap(employee, screenshot_base64, active_app):
-    # 1. Get today's parent session
-    session_name = get_or_create_daily_session(employee)
-    
-    # 2. Save the image file
-    file_url = save_base64_image(screenshot_base64, employee)
-    
-    # 3. Add to the child table 'activity_logs'
-    doc = frappe.get_doc("Employee Activity Log", session_name)
-    doc.append("activity_logs", {
-        "event_time": frappe.utils.now_datetime(),
-        "event_type": "Screen Snap",
-        "screenshot": file_url,
-        "active_app": active_app,
-        "summary": f"Automatic snap from {active_app}"
-    })
-    
-    doc.save(ignore_permissions=True)
-    frappe.db.commit() # Important for background/API triggers
-    
-    return {"status": "success", "file_url": file_url}
+        if self.login_time and self.logout_time:
+            shift_seconds = max(0, int(time_diff_in_seconds(self.logout_time, self.login_time)))
+            if total_active_minutes <= 0 and total_idle_minutes <= 0 and shift_seconds:
+                total_active_minutes = round(shift_seconds / 60.0, 2)
+
+        self.total_calls_today = total_calls
+        self.total_talk_time = total_call_seconds
+        self.total_active_minutes = round(total_active_minutes, 2)
+        self.total_idle_minutes = round(total_idle_minutes, 2)
+        self.unauthorized_site_hits = unauthorized_site_hits
+        self.log_time = self.last_heartbeat or self.log_time or now_datetime()
+
+        if self.logout_time:
+            self.status = "Logged Out"
+        elif total_idle_minutes > total_active_minutes and total_idle_minutes > 10:
+            self.status = "Idle"
+        else:
+            self.status = self.status or "Active"
+
+
+def close_stale_logs(idle_minutes=15):
+    cutoff = now_datetime()
+    rows = frappe.get_all(
+        "Employee Activity Log",
+        filters={"status": ["in", ["Active", "Idle"]]},
+        fields=["name", "last_heartbeat"],
+        limit_page_length=500,
+    )
+
+    updated = 0
+    for row in rows:
+        heartbeat = get_datetime(row.last_heartbeat) if row.last_heartbeat else None
+        if not heartbeat:
+            continue
+        if time_diff_in_seconds(cutoff, heartbeat) < int(idle_minutes) * 60:
+            continue
+        frappe.db.set_value(
+            "Employee Activity Log",
+            row.name,
+            {
+                "status": "Closed",
+                "logout_time": heartbeat,
+            },
+            update_modified=False,
+        )
+        updated += 1
+
+    if updated:
+        frappe.db.commit()
+    return {"updated": updated}
+

@@ -1,0 +1,151 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-03-17 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "action_type",
+  "status",
+  "requested_by",
+  "started_on",
+  "finished_on",
+  "batch_offset",
+  "batch_limit",
+  "processed_count",
+  "success_count",
+  "failed_count",
+  "skipped_count",
+  "model_used",
+  "provider",
+  "confidence",
+  "summary_json",
+  "error_log"
+ ],
+ "fields": [
+  {
+   "default": "RUN-.YYYY.-.MM.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "RUN-.YYYY.-.MM.-.#####"
+  },
+  {
+   "fieldname": "action_type",
+   "fieldtype": "Data",
+   "label": "Action Type"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Queued\nRunning\nSuccess\nFailed\nPartial"
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Link",
+   "label": "Requested By",
+   "options": "User"
+  },
+  {
+   "fieldname": "started_on",
+   "fieldtype": "Datetime",
+   "label": "Started On"
+  },
+  {
+   "fieldname": "finished_on",
+   "fieldtype": "Datetime",
+   "label": "Finished On"
+  },
+  {
+   "fieldname": "batch_offset",
+   "fieldtype": "Int",
+   "label": "Batch Offset"
+  },
+  {
+   "fieldname": "batch_limit",
+   "fieldtype": "Int",
+   "label": "Batch Limit"
+  },
+  {
+   "fieldname": "processed_count",
+   "fieldtype": "Int",
+   "label": "Processed Count"
+  },
+  {
+   "fieldname": "success_count",
+   "fieldtype": "Int",
+   "label": "Success Count"
+  },
+  {
+   "fieldname": "failed_count",
+   "fieldtype": "Int",
+   "label": "Failed Count"
+  },
+  {
+   "fieldname": "skipped_count",
+   "fieldtype": "Int",
+   "label": "Skipped Count"
+  },
+  {
+   "fieldname": "model_used",
+   "fieldtype": "Data",
+   "label": "Model Used"
+  },
+  {
+   "fieldname": "provider",
+   "fieldtype": "Data",
+   "label": "Provider"
+  },
+  {
+   "fieldname": "confidence",
+   "fieldtype": "Float",
+   "label": "Confidence"
+  },
+  {
+   "fieldname": "summary_json",
+   "fieldtype": "Long Text",
+   "label": "Summary JSON"
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Long Text",
+   "label": "Error Log"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Ops Run Log",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Director",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

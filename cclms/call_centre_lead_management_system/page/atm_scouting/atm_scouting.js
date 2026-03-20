@@ -474,29 +474,111 @@ _applyLeadFilters(){
 
   async _inspectLocation(latLng){
     const info = await this._lookupPlaceAndAddress(latLng);
-    const { address='', zip='', state='', country='', placeName='Nearest Place', placeTypes=[], rating=null, userRatingsTotal=null, placeUrl='', openNow=null } = info || {};
-    const lines = [];
-    lines.push(`<b>${frappe.utils.escape_html(placeName)}</b>`);
-    if (placeTypes?.length)  lines.push(`<div>${frappe.utils.escape_html(placeTypes.join(', '))}</div>`);
-    if (rating !== null)     lines.push(`<div>Rating: <b>${rating.toFixed(1)}</b>${userRatingsTotal ? ` (${userRatingsTotal})` : ''}</div>`);
-    if (openNow !== null)    lines.push(`<div>${openNow ? 'Open now' : 'Closed now'}</div>`);
-    if (address)             lines.push(`<div>${frappe.utils.escape_html(address)}</div>`);
-    if (zip || state || country) lines.push(`<div>ZIP/Region: ${frappe.utils.escape_html([zip,state,country].filter(Boolean).join(', '))}</div>`);
-    if (placeUrl)            lines.push(`<div style="margin-top:6px;"><a class="btn btn-xs btn-default" href="${placeUrl}" target="_blank">View in Google Maps</a></div>`);
-    new google.maps.InfoWindow({ content: `<div style="min-width:260px">${lines.join('')}</div>` }).open({ map: this.map, position: latLng });
+    const leadLookup = await this._lookupExistingLead(info, latLng);
+    const { address="", zip="", stateCode="", country="", placeName="Nearest Place", placeTypes=[], rating=null, userRatingsTotal=null, placeUrl="", openNow=null } = info || {};
+    const bestMatch = leadLookup?.best_match || null;
+
+    const container = document.createElement("div");
+    container.style.minWidth = "290px";
+    container.innerHTML = `
+      <div>
+        <b>${frappe.utils.escape_html(placeName)}</b>
+        ${placeTypes?.length ? `<div>${frappe.utils.escape_html(placeTypes.join(", "))}</div>` : ""}
+        ${rating !== null ? `<div>Rating: <b>${rating.toFixed(1)}</b>${userRatingsTotal ? ` (${userRatingsTotal})` : ""}</div>` : ""}
+        ${openNow !== null ? `<div>${openNow ? "Open now" : "Closed now"}</div>` : ""}
+        ${address ? `<div>${frappe.utils.escape_html(address)}</div>` : ""}
+        ${(zip || stateCode || country) ? `<div>ZIP/Region: ${frappe.utils.escape_html([zip, stateCode, country].filter(Boolean).join(", "))}</div>` : ""}
+        ${bestMatch ? `
+          <div style="margin-top:8px;padding:8px;border-radius:8px;background:#fef3c7;border:1px solid #f59e0b;">
+            <div><b>Already exists</b></div>
+            <div>${frappe.utils.escape_html(bestMatch.business_name || bestMatch.name)}</div>
+            <div>Stage: <b>${frappe.utils.escape_html(bestMatch.workflow_state || "Draft")}</b></div>
+            ${bestMatch.distance_miles !== undefined ? `<div>Distance: ${frappe.utils.escape_html(String(bestMatch.distance_miles))} mi</div>` : ""}
+          </div>
+        ` : `
+          <div style="margin-top:8px;padding:8px;border-radius:8px;background:#ecfdf5;border:1px solid #10b981;">
+            <div><b>No matching ATM Lead found</b></div>
+            <div>This location looks available for a new lead.</div>
+          </div>
+        `}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+          ${bestMatch ? `<button class="btn btn-xs btn-default" data-action="open-existing">Open Existing Lead</button>` : `<button class="btn btn-xs btn-primary" data-action="create-lead">Create ATM Lead</button>`}
+          <button class="btn btn-xs btn-default" data-action="create-lead">Open Prefilled Lead</button>
+          ${placeUrl ? `<a class="btn btn-xs btn-default" href="${placeUrl}" target="_blank">View in Google Maps</a>` : ""}
+        </div>
+      </div>
+    `;
+
+    container.querySelectorAll("[data-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const action = button.getAttribute("data-action");
+        if (action === "open-existing" && bestMatch?.name) {
+          window.open(`/app/atm-leads/${encodeURIComponent(bestMatch.name)}`, "_blank");
+          return;
+        }
+        this._openLeadFromMap(info, latLng);
+      });
+    });
+
+    new google.maps.InfoWindow({ content: container }).open({ map: this.map, position: latLng });
+  }
+
+  async _lookupExistingLead(info, latLng){
+    try {
+      const response = await frappe.call({
+        method: "cclms.api.atm_lead_helper.lookup_existing_lead",
+        args: {
+          address: info?.address || "",
+          zip_code: info?.zip || "",
+          business_name: info?.placeName || "",
+          latitude: latLng?.lat?.(),
+          longitude: latLng?.lng?.(),
+        },
+      });
+      return response.message || {};
+    } catch (error) {
+      console.error("Lead lookup failed", error);
+      return {};
+    }
+  }
+
+  _openLeadFromMap(info, latLng){
+    frappe.route_options = {
+      business_name: info?.placeName || "",
+      address: info?._streetAddress || info?.address || "",
+      full_address: info?.address || "",
+      city: info?.city || "",
+      state: info?.stateName || info?.stateCode || "",
+      state_code: info?.stateCode || "",
+      zip_code: info?.zip || "",
+      country: info?.country || "",
+      latitude: latLng?.lat?.(),
+      longitude: latLng?.lng?.(),
+      google_maps_url: info?.placeUrl || "",
+      google_place_types: (info?.placeTypes || []).join(", "),
+      google_rating: info?.rating ?? "",
+    };
+    frappe.new_doc("ATM Leads");
   }
 
   // reverse geocode + nearest place
   async _lookupPlaceAndAddress(latLng){
     const geocoder = new google.maps.Geocoder();
     const gc = await geocoder.geocode({ location: latLng }).catch(() => null);
-    let address='', zip='', state='', country='';
+    let address="", zip="", stateCode="", stateName="", country="", city="", streetAddress="";
     if (gc?.results?.[0]) {
-      address = gc.results[0].formatted_address || '';
+      address = gc.results[0].formatted_address || "";
       const ac = gc.results[0].address_components || [];
-      zip     = (ac.find(x => x.types.includes('postal_code')) || {}).long_name || '';
-      state   = (ac.find(x => x.types.includes('administrative_area_level_1')) || {}).short_name || '';
-      country = (ac.find(x => x.types.includes('country')) || {}).long_name || '';
+      const streetNumber = (ac.find((x) => x.types.includes("street_number")) || {}).long_name || "";
+      const route = (ac.find((x) => x.types.includes("route")) || {}).long_name || "";
+      streetAddress = [streetNumber, route].filter(Boolean).join(" ").trim();
+      zip = (ac.find((x) => x.types.includes("postal_code")) || {}).long_name || "";
+      city = (ac.find((x) => x.types.includes("locality")) || {}).long_name
+        || (ac.find((x) => x.types.includes("postal_town")) || {}).long_name
+        || "";
+      stateCode = (ac.find((x) => x.types.includes("administrative_area_level_1")) || {}).short_name || "";
+      stateName = (ac.find((x) => x.types.includes("administrative_area_level_1")) || {}).long_name || "";
+      country = (ac.find((x) => x.types.includes("country")) || {}).long_name || "";
     }
     const service = new google.maps.places.PlacesService(this.map);
     const nearby  = await new Promise(res => {
@@ -504,7 +586,7 @@ _applyLeadFilters(){
         if (st === google.maps.places.PlacesServiceStatus.OK && r && r.length) res(r); else res(null);
       });
     });
-    let placeName='', placeTypes=[], rating=null, userRatingsTotal=null, placeUrl='', openNow=null;
+    let placeName="", placeTypes=[], rating=null, userRatingsTotal=null, placeUrl="", openNow=null;
     if (nearby && nearby[0]?.place_id) {
       const details = await new Promise(res => {
         service.getDetails({ placeId: nearby[0].place_id, fields: ['url','name','types','rating','user_ratings_total','opening_hours'] },
@@ -519,7 +601,21 @@ _applyLeadFilters(){
         openNow          = details.opening_hours ? details.opening_hours.isOpen() : null;
       }
     }
-    return { address, zip, state, country, placeName, placeTypes, rating, userRatingsTotal, placeUrl, openNow };
+    return {
+      address,
+      zip,
+      city,
+      stateCode,
+      stateName,
+      country,
+      placeName,
+      placeTypes,
+      rating,
+      userRatingsTotal,
+      placeUrl,
+      openNow,
+      _streetAddress: streetAddress,
+    };
   }
 }
 

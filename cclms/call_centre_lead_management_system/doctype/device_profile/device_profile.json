@@ -1,0 +1,184 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:device_id",
+ "creation": "2026-03-17 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "device_id",
+  "status",
+  "device_type",
+  "column_break_1",
+  "tracked_user",
+  "employee",
+  "sales_agent",
+  "allowed_service_user",
+  "identity_section",
+  "machine_name",
+  "windows_username",
+  "ip_address",
+  "tracker_device",
+  "column_break_2",
+  "remote_access_tool",
+  "remote_access_id",
+  "admin_username",
+  "admin_password",
+  "last_seen_on",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "device_id",
+   "fieldtype": "Data",
+   "label": "Device ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nBlocked\nRetired"
+  },
+  {
+   "default": "Laptop",
+   "fieldname": "device_type",
+   "fieldtype": "Select",
+   "label": "Device Type",
+   "options": "Laptop\nDesktop\nMini PC\nOther"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tracked_user",
+   "fieldtype": "Link",
+   "label": "Tracked User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "sales_agent",
+   "fieldtype": "Link",
+   "label": "Sales Agent",
+   "options": "Sales Agent"
+  },
+  {
+   "fieldname": "allowed_service_user",
+   "fieldtype": "Link",
+   "label": "Allowed Service User",
+   "options": "User"
+  },
+  {
+   "fieldname": "identity_section",
+   "fieldtype": "Section Break",
+   "label": "Identity And Remote Support"
+  },
+  {
+   "fieldname": "machine_name",
+   "fieldtype": "Data",
+   "label": "Machine Name"
+  },
+  {
+   "fieldname": "windows_username",
+   "fieldtype": "Data",
+   "label": "Windows Username"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address"
+  },
+  {
+   "fieldname": "tracker_device",
+   "fieldtype": "Link",
+   "label": "Tracker Device",
+   "options": "Tracker Device",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "remote_access_tool",
+   "fieldtype": "Data",
+   "label": "Remote Access Tool"
+  },
+  {
+   "fieldname": "remote_access_id",
+   "fieldtype": "Data",
+   "label": "Remote Access ID"
+  },
+  {
+   "fieldname": "admin_username",
+   "fieldtype": "Data",
+   "label": "Admin Username"
+  },
+  {
+   "fieldname": "admin_password",
+   "fieldtype": "Password",
+   "label": "Admin Password"
+  },
+  {
+   "fieldname": "last_seen_on",
+   "fieldtype": "Datetime",
+   "label": "Last Seen On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Device Profile",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Director",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
