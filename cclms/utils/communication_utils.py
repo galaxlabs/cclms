@@ -17,7 +17,7 @@ def handle_incoming_operations_email(doc, method=None):
         notify_authorized_inbox_users(doc)
         
         # 3. Generate Gemini Draft
-        generate_gemini_draft(doc)
+        # generate_gemini_draft(doc)
 
 def notify_authorized_inbox_users(doc):
     authorized_users = frappe.get_all("User Email", filters={
@@ -40,7 +40,7 @@ def notify_authorized_inbox_users(doc):
             "document_name": doc.name
         }).insert(ignore_permissions=True)
 
-def generate_gemini_draft(doc):
+def # generate_gemini_draft(doc):
     api_key = frappe.db.get_single_value('Google Maps Settings', 'api_key')
     if not api_key: return
 

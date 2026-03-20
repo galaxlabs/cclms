@@ -24,15 +24,16 @@
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
+ "icon": "",
  "idx": 10,
- "indicator_color": "green",
+ "indicator_color": "",
  "is_hidden": 0,
- "label": "PW Admin",
+ "label": "XG Admin",
  "links": [],
- "modified": "2026-02-04 19:39:23.029938",
+ "modified": "2026-03-18 22:50:36.007132",
  "modified_by": "Administrator",
  "module": "Call Centre Lead Management System",
- "name": "PW Admin",
+ "name": "XG Admin",
  "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
@@ -153,5 +154,5 @@
    "type": "DocType"
   }
  ],
- "title": "PW Admin"
+ "title": "XG Admin"
 }
