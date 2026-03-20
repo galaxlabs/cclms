@@ -184,7 +184,7 @@ def _tracker_runtime_policy(binding):
         "device_health_enabled": _config_bool("tracker_device_health_enabled", False),
         "device_health_poll_seconds": _config_int("tracker_device_health_poll_seconds", 300),
         "notifications_enabled": int(tracker.get("notifications_enabled") or 0) == 1
-        or _config_bool("tracker_notifications_enabled", False),
+        or _config_bool("tracker_notifications_enabled", True),
         "notifications_poll_seconds": tracker.get("notifications_poll_seconds")
         or _config_int("tracker_notifications_poll_seconds", 60),
         "biometric_device": biometric_device,

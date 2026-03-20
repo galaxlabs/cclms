@@ -140,13 +140,14 @@ app_include_js = [
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Communication": {
+		"after_insert": "cclms.utils.communication_utils.handle_incoming_operations_email",
+	},
+	"ATM Leads": {
+		"on_update": "cclms.utils.communication_utils.handle_atm_lead_workflow",
+	},
+}
 
 # Scheduled Tasks
 # ---------------
@@ -245,18 +246,6 @@ app_include_js = [
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-# doc_events = {
-#     "Leads": {
-#         "validate": "cclms.call_centre_lead_management_system.doctype.leads.leads.validate_lead_state"
-#     }
-# }
-
-
-# doc_events = {
-#     "ATM Leads": {
-#         "before_save": "cclms.call_centre_lead_management_system.doctype.leads.leads.update_days"
-#     }
-# }
 
 # scheduler_events = {
 #     "hourly": [

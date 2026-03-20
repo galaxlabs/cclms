@@ -111,17 +111,25 @@ def handle_atm_lead_workflow(doc, method=None):
         return
 
     current_state = doc.workflow_state
-    user_who_saved = frappe.session.user
 
     recipients = set()
     if doc.owner:
         recipients.add(doc.owner)
+    for fieldname in ("kpi_agent", "executive_name"):
+        agent_name = getattr(doc, fieldname, None)
+        if not agent_name:
+            continue
+        user_id = frappe.db.get_value("Sales Agent", agent_name, "user_id")
+        if user_id:
+            recipients.add(user_id)
 
-    allowed_role = frappe.db.get_value(
-        "Workflow Document State", {"parent": "Track", "state": current_state}, "allow_edit"
+    workflow_name = get_active_workflow_name(doc.doctype) or "Track"
+    allowed_roles = frappe.get_all(
+        "Workflow Document State",
+        filters={"parent": workflow_name, "state": current_state},
+        pluck="allow_edit",
     )
-
-    if allowed_role:
+    for allowed_role in {role for role in allowed_roles if role}:
         recipients.update(
             frappe.get_all(
                 "Has Role",
@@ -130,7 +138,7 @@ def handle_atm_lead_workflow(doc, method=None):
             )
         )
 
-    for recipient in get_enabled_notification_recipients(recipients, exclude_users=[user_who_saved]):
+    for recipient in get_enabled_notification_recipients(recipients):
         if recipient == doc.owner:
             message = f"Lead {doc.name} moved to {current_state}"
         else:
@@ -164,6 +172,10 @@ def get_enabled_notification_recipients(users, exclude_users=None):
         pluck="name",
     )
     return sorted(set(enabled_users))
+
+
+def get_active_workflow_name(doctype):
+    return frappe.db.get_value("Workflow", {"document_type": doctype, "is_active": 1}, "name")
 
 
 def get_workflow_indicator(state):
