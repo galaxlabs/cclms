@@ -1,17 +1,30 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{employee}-{#####}",
+ "autoname": "format:SGN-{YYYY}-{MM}-{#####}",
  "creation": "2025-04-23 12:29:43.891745",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "sign_date",
   "atm_leads",
-  "employee",
+  "sign_date",
+  "column_break_hdr",
+  "company",
   "branch",
+  "section_lead_details",
+  "business_name",
+  "business_type",
+  "column_break_det",
+  "state_code",
+  "city",
+  "state",
+  "section_address",
   "address",
-  "company"
+  "section_attribution",
+  "employee",
+  "column_break_attr",
+  "closing_agent",
+  "closing_notes"
  ],
  "fields": [
   {
@@ -31,8 +44,10 @@
    "fetch_from": "atm_leads.executive_name",
    "fieldname": "employee",
    "fieldtype": "Link",
-   "label": "Employee",
-   "options": "Sales Agent"
+   "label": "Lead Agent",
+   "options": "Sales Agent",
+   "read_only": 1,
+   "description": "Agent assigned to this lead at the time of signing."
   },
   {
    "fetch_from": "atm_leads.branch",
@@ -40,19 +55,102 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Branch"
+   "label": "Branch",
+   "read_only": 1
   },
   {
    "fetch_from": "atm_leads.full_address",
    "fieldname": "address",
    "fieldtype": "Data",
-   "label": "Address"
+   "label": "Address",
+   "read_only": 1
   },
   {
    "fetch_from": "atm_leads.company",
    "fieldname": "company",
    "fieldtype": "Data",
-   "label": "Company"
+   "label": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hdr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_lead_details",
+   "fieldtype": "Section Break",
+   "label": "Lead Details"
+  },
+  {
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "label": "Business Name",
+   "fetch_from": "atm_leads.business_name",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Data",
+   "label": "Business Type",
+   "fetch_from": "atm_leads.business_type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_det",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code",
+   "fetch_from": "atm_leads.state_code",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City",
+   "fetch_from": "atm_leads.city",
+   "read_only": 1
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State",
+   "fetch_from": "atm_leads.state",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_address",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "section_attribution",
+   "fieldtype": "Section Break",
+   "label": "Agent Attribution & Commission",
+   "description": "Lead Agent is auto-filled. Manager selects Closing Agent who receives the commission/reward."
+  },
+  {
+   "fieldname": "column_break_attr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "closing_agent",
+   "fieldtype": "Link",
+   "label": "Closing Agent (Commission)",
+   "options": "Sales Agent",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Manager assigns which agent receives commission/reward for this signed deal."
+  },
+  {
+   "fieldname": "closing_notes",
+   "fieldtype": "Small Text",
+   "label": "Commission Notes"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -80,6 +178,30 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 0,
+   "write": 0
   }
  ],
  "sort_field": "modified",

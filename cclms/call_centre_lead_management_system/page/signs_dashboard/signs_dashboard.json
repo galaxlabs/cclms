@@ -1,0 +1,19 @@
+{
+ "creation": "2026-04-10 00:00:00.000000",
+ "doctype": "Page",
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "signs-dashboard",
+ "owner": "Administrator",
+ "page_name": "signs-dashboard",
+ "restrict_to_domain": "",
+ "roles": [
+  {"role": "System Manager"},
+  {"role": "Sales Manager"},
+  {"role": "Manager"}
+ ],
+ "standard": "Yes",
+ "system_page": 0,
+ "title": "Signs & Attribution Dashboard"
+}

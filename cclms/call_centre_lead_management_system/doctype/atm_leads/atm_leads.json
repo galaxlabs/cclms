@@ -72,6 +72,8 @@
   "refrence",
   "section_break_tnof",
   "sign_by",
+  "mark_signed",
+  "signed_record",
   "kpi_min",
   "status",
   "column_break_hyxs",
@@ -493,6 +495,26 @@
    "hidden": 1,
    "label": "AI Score",
    "read_only": 1
+  },
+  {
+   "fieldname": "mark_signed",
+   "fieldtype": "Check",
+   "label": "Signed Record Created",
+   "read_only": 1,
+   "default": "0",
+   "description": "Set to 1 automatically when the Signs record is created for this lead.",
+   "in_list_view": 0,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "signed_record",
+   "fieldtype": "Link",
+   "label": "Signs Record",
+   "options": "Signs",
+   "read_only": 1,
+   "description": "Auto-linked to the Signs record created when this lead was signed.",
+   "in_list_view": 0,
+   "in_standard_filter": 0
   }
  ],
  "index_web_pages_for_search": 1,

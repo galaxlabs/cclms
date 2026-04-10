@@ -1,0 +1,171 @@
+{
+ "actions": [],
+ "autoname": "format:ASL-{YYYY}-{MM}-{#####}",
+ "creation": "2026-04-10 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lead",
+  "employee",
+  "company",
+  "column_break_1",
+  "branch",
+  "state_code",
+  "changed_by",
+  "section_transition",
+  "from_state",
+  "to_state",
+  "column_break_2",
+  "stage_datetime",
+  "stage_date",
+  "days_in_prev_state"
+ ],
+ "fields": [
+  {
+   "fieldname": "lead",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "ATM Lead",
+   "options": "ATM Leads",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Agent",
+   "options": "Sales Agent",
+   "search_index": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company",
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Branch"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "State Code"
+  },
+  {
+   "fieldname": "changed_by",
+   "fieldtype": "Data",
+   "label": "Changed By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_transition",
+   "fieldtype": "Section Break",
+   "label": "Transition"
+  },
+  {
+   "fieldname": "from_state",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "From State",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_state",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "To State",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stage_datetime",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Transition Datetime",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stage_date",
+   "fieldtype": "Date",
+   "in_standard_filter": 1,
+   "label": "Transition Date"
+  },
+  {
+   "fieldname": "days_in_prev_state",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Days in Previous State",
+   "read_only": 1
+  }
+ ],
+ "links": [
+  {
+   "link_doctype": "ATM Leads",
+   "link_fieldname": "name"
+  }
+ ],
+ "modified": "2026-04-10 11:21:34.538799",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Agent Stage Ledger",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Agent"
+  },
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Data Executive"
+  },
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Onboarding Executive"
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "lead,employee,from_state,to_state",
+ "sort_field": "stage_datetime",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "lead"
+}

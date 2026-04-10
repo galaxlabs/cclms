@@ -53,10 +53,17 @@ def _mile_distance(lat1, lng1, lat2, lng2):
 def _score_match(row, fingerprint, business_name=None, latitude=None, longitude=None):
     score = 0
     row_fp = build_address_fingerprint(row.get("address") or row.get("full_address"), row.get("zip_code"))
-    if fingerprint and row_fp == fingerprint:
-        score += 100
+    normalized_business = normalize_text(business_name) if business_name else ""
+    normalized_row_business = normalize_text(row.get("business_name"))
+    has_address_match = bool(fingerprint and row_fp == fingerprint)
+    if not has_address_match:
+        return 0
 
-    if business_name and normalize_text(row.get("business_name")) == normalize_text(business_name):
+    if normalized_business and normalized_row_business and normalized_business != normalized_row_business:
+        return 0
+
+    score += 100
+    if normalized_business and normalized_row_business and normalized_business == normalized_row_business:
         score += 25
 
     if latitude not in (None, "") and longitude not in (None, "") and row.get("latitude") and row.get("longitude"):
@@ -96,4 +103,3 @@ def lookup_existing_lead(address=None, zip_code=None, business_name=None, latitu
             else _("No existing ATM Lead found for this location")
         ),
     }
-

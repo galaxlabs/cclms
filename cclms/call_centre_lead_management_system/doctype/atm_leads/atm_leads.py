@@ -1,7 +1,6 @@
 # Copyright (c) 2024, Galaxy and contributors
 # For license information, please see license.txt
 
-
 import re
 
 import frappe
@@ -12,6 +11,30 @@ from frappe.utils import now_datetime, nowdate, getdate
 
 US_PHONE_FIELDS = ("business_phone_number", "personal_cell_phone")
 
+# ---------------------------------------------------------------------------
+# Duplicate-location detection constants
+# ---------------------------------------------------------------------------
+# States where a location is considered "committed" – new leads ARE allowed
+# even when an existing lead for the same company+location is in these states.
+DEDUP_ALLOWED_STATES = frozenset(["Signed", "Installed"])
+
+# Pre-built SQL literal for IN clauses (safe – only our own constants)
+_EXEMPT_SQL = ", ".join(f"'{s}'" for s in sorted(DEDUP_ALLOWED_STATES))
+
+# Window in days: within this period, a duplicate blocks creation.
+# After this period, the stale (non-Signed/Installed) lead is auto-deleted.
+DEDUP_WINDOW_DAYS = 15
+
+# lat/lng match tolerance: ~11 metres (0.0001 decimal degrees)
+_LAT_LNG_TOL = 0.0001
+
+# Address-related fields monitored for change on updates
+_LOC_FIELDS = ("address", "zip_code", "full_address", "latitude", "longitude", "city")
+
+
+# ---------------------------------------------------------------------------
+# Module-level helpers
+# ---------------------------------------------------------------------------
 
 def _normalize_phone_value(value):
     if value in (None, ""):
@@ -33,55 +56,269 @@ def _normalize_phone_value(value):
     return raw
 
 
+def _norm(value):
+    """Normalise a string for dedup comparison: lowercase, strip, collapse spaces."""
+    if not value:
+        return ""
+    return re.sub(r"\s+", " ", str(value).strip().lower())
+
+
+def _build_location_sql(doc_or_ns):
+    """
+    Build a SQL fragment (sql_str, params_dict) that matches rows by location
+    using OR of whichever fields (full_address / address+zip / lat+lng) are set.
+    Works with both Document objects and plain namespaces/dicts.
+    Returns (None, {}) when no usable location fields are found.
+    """
+    def _get(field):
+        if isinstance(doc_or_ns, dict):
+            return doc_or_ns.get(field)
+        return getattr(doc_or_ns, field, None)
+
+    parts = []
+    params = {}
+
+    fa = _norm(_get("full_address"))
+    if fa:
+        parts.append("LOWER(TRIM(full_address)) = %(loc_fa)s")
+        params["loc_fa"] = fa
+
+    addr = _norm(_get("address"))
+    zc   = _norm(_get("zip_code"))
+    if addr and zc:
+        parts.append(
+            "(LOWER(TRIM(address)) = %(loc_addr)s AND LOWER(TRIM(zip_code)) = %(loc_zc)s)"
+        )
+        params["loc_addr"] = addr
+        params["loc_zc"]   = zc
+
+    try:
+        lat = float(_get("latitude") or 0)
+        lng = float(_get("longitude") or 0)
+    except (TypeError, ValueError):
+        lat = lng = 0.0
+    if lat and lng:
+        parts.append(
+            "(latitude  BETWEEN %(loc_lat_lo)s AND %(loc_lat_hi)s"
+            " AND longitude BETWEEN %(loc_lng_lo)s AND %(loc_lng_hi)s)"
+        )
+        params.update({
+            "loc_lat_lo": lat - _LAT_LNG_TOL,
+            "loc_lat_hi": lat + _LAT_LNG_TOL,
+            "loc_lng_lo": lng - _LAT_LNG_TOL,
+            "loc_lng_hi": lng + _LAT_LNG_TOL,
+        })
+
+    if not parts:
+        return None, {}
+    return f"({' OR '.join(parts)})", params
+
+
 class ATMLeads(Document):
     """
     ATM Leads DocType controller.
 
     Responsibilities:
+    - Duplicate location detection (before_insert and on address change).
     - Business validation (company, state restrictions, etc.)
-    - Tracking workflow_state changes into child table `state_history`
-      (DocType: "ATM Lead State History")
-    - Computing `days_in_state` per transition.
+    - Workflow state history tracking (child table + Agent Stage Ledger).
+    - Phone field normalisation.
     """
 
-    # -------------------------------
-    # Standard hooks
-    # -------------------------------
+    # -----------------------------------------------------------------------
+    # Frappe document hooks
+    # -----------------------------------------------------------------------
+
+    def before_insert(self):
+        """
+        Runs before the very first DB insert – blocks even Draft creation
+        when a duplicate location already exists in an active pipeline state.
+        """
+        self.check_duplicate_location()
 
     def validate(self):
         self.normalize_phone_fields()
         self.validate_lead_state()
+        # On updates, re-run dedup only when an address field was actually changed
+        if not self.is_new():
+            self._recheck_dedup_on_address_change()
 
     def before_save(self):
-        # Track workflow changes into child table
         self.log_workflow_change()
 
-    # -------------------------------
+    # -----------------------------------------------------------------------
+    # Duplicate-location detection
+    # -----------------------------------------------------------------------
+
+    def _recheck_dedup_on_address_change(self):
+        """Re-check dedup on save only when at least one location field changed."""
+        old = self.get_doc_before_save() or frappe._dict()
+        changed = any(
+            _norm(getattr(old, f, "")) != _norm(getattr(self, f, ""))
+            for f in _LOC_FIELDS
+        )
+        if changed:
+            self.check_duplicate_location()
+
+    def check_duplicate_location(self):
+        """
+        Two-tier location dedup.
+
+        Tier 1 – CROSS-COMPANY, no age window:
+            If ANY lead at this location is in Signed or Installed state
+            (regardless of which company owns it) → block permanently.
+            No one, from any company, may create a new lead at a committed location.
+
+        Tier 2 – SAME-COMPANY only, 15-day window:
+            If the SAME company already has a non-committed lead at this location:
+              age < 15 days → block with countdown.
+              age ≥ 15 days → auto-delete stale lead, allow creation.
+            Other companies are NOT affected by Tier 2.
+
+        Skip entirely when THIS document is already Signed/Installed (no re-check on edit).
+        Administrator always bypasses.
+        """
+        if frappe.session.user == "Administrator":
+            return
+
+        # If this lead itself is already committed, don't re-validate on edits
+        current_state = self.workflow_state or "Draft"
+        if current_state in DEDUP_ALLOWED_STATES:
+            return
+
+        self_name = self.name or "__new__"
+
+        # Build the location predicate (OR of whichever fields are populated)
+        loc_sql, loc_params = _build_location_sql(self)
+        if not loc_sql:
+            return  # no location data to compare
+
+        from frappe.utils import date_diff, nowdate
+
+        today = getdate(nowdate())
+
+        # ── Tier 1: Cross-company Signed/Installed check ─────────────────────
+        tier1 = frappe.db.sql(
+            f"""
+            SELECT name, workflow_state, company, post_date, creation
+            FROM `tabATM Leads`
+            WHERE name != %(sn)s
+              AND docstatus < 2
+              AND workflow_state IN ({_EXEMPT_SQL})
+              AND {loc_sql}
+            ORDER BY creation ASC
+            LIMIT 1
+            """,
+            {"sn": self_name, **loc_params},
+            as_dict=True,
+        )
+        if tier1:
+            dup = tier1[0]
+            lead_link = frappe.utils.get_link_to_form("ATM Leads", dup["name"])
+            state_label = dup.get("workflow_state") or "Signed/Installed"
+            company_label = dup.get("company") or _("Unknown Company")
+            frappe.throw(
+                _(
+                    "<b>Location Permanently Locked</b><br><br>"
+                    "A committed ATM deal already exists at this location:<br>"
+                    "Lead: {0} &nbsp;|&nbsp; State: <b>{1}</b> &nbsp;|&nbsp; Company: <b>{2}</b><br><br>"
+                    "Once a location reaches <b>Signed</b> or <b>Installed</b> status, "
+                    "no new lead can be created at that location by <b>any company</b>."
+                ).format(lead_link, state_label, company_label),
+                title=_("Duplicate Location – Committed Deal"),
+            )
+
+        # ── Tier 2: Same-company windowed check (non-committed states) ────────
+        if not self.company:
+            return
+
+        tier2 = frappe.db.sql(
+            f"""
+            SELECT name, workflow_state, company, post_date, creation
+            FROM `tabATM Leads`
+            WHERE name != %(sn)s
+              AND docstatus < 2
+              AND IFNULL(company, '') = %(company)s
+              AND (workflow_state IS NULL OR workflow_state NOT IN ({_EXEMPT_SQL}))
+              AND {loc_sql}
+            ORDER BY creation ASC
+            """,
+            {"sn": self_name, "company": self.company, **loc_params},
+            as_dict=True,
+        )
+        if not tier2:
+            return
+
+        blocked = []   # age < 15 d → block with countdown
+        purged   = []  # age ≥ 15 d → auto-delete, then allow
+
+        for dup in tier2:
+            ref_date = getdate(dup.get("post_date") or dup.get("creation"))
+            age_days = date_diff(today, ref_date)
+            if age_days < DEDUP_WINDOW_DAYS:
+                blocked.append((dup, age_days))
+            else:
+                purged.append(dup)
+
+        # Purge stale leads so they don't block creation
+        for dup in purged:
+            try:
+                frappe.delete_doc("ATM Leads", dup["name"], ignore_permissions=True, force=True)
+                frappe.logger("atm_dedup").info(
+                    f"[ATMLeads.dedup] Purged stale lead {dup['name']} "
+                    f"(state={dup['workflow_state']}, age≥{DEDUP_WINDOW_DAYS}d, "
+                    f"company={self.company})"
+                )
+            except Exception:
+                frappe.log_error(frappe.get_traceback(), f"ATM Dedup: failed to purge {dup['name']}")
+
+        if blocked:
+            dup, age_days = blocked[0]
+            remaining = DEDUP_WINDOW_DAYS - age_days
+            lead_link = frappe.utils.get_link_to_form("ATM Leads", dup["name"])
+            state_label = dup.get("workflow_state") or "Draft"
+            frappe.throw(
+                _(
+                    "<b>Location Locked – {0}-Day Window</b><br><br>"
+                    "Your company already has an active lead at this location:<br>"
+                    "Lead: {1} &nbsp;|&nbsp; State: <b>{2}</b> &nbsp;|&nbsp; "
+                    "Created: <b>{3} day(s) ago</b><br><br>"
+                    "Lock expires in <b>{4} more day(s)</b> (window: {5} days).<br>"
+                    "Update the existing lead or wait for the window to expire."
+                ).format(
+                    DEDUP_WINDOW_DAYS,
+                    lead_link,
+                    state_label,
+                    age_days,
+                    remaining,
+                    DEDUP_WINDOW_DAYS,
+                ),
+                title=_("Duplicate Location – Within {0}-Day Window").format(DEDUP_WINDOW_DAYS),
+            )
+
+    # -----------------------------------------------------------------------
     # Business validation
-    # -------------------------------
+    # -----------------------------------------------------------------------
 
     def normalize_phone_fields(self):
         for fieldname in US_PHONE_FIELDS:
             self.set(fieldname, _normalize_phone_value(self.get(fieldname)))
 
     def validate_lead_state(self):
-        """Basic lead validation: company, address, permitted states, etc."""
+        """Validate company, required fields, and permitted state restrictions."""
 
-        # Company required
         if not self.company:
             frappe.throw(
                 _("Please select a company before saving the lead."),
                 title=_("Company Not Selected"),
             )
 
-        # Address required
         if not self.address:
             frappe.throw(
                 _("Please enter a valid address."),
                 title=_("Address Required"),
             )
 
-        # Company must exist
         company = frappe.get_doc("Operator Companies", self.company)
         if not company:
             frappe.throw(
@@ -89,35 +326,33 @@ class ATMLeads(Document):
                 title=_("Invalid Company"),
             )
 
-        # State restriction based on company.permitted_states child table
         permitted_states = company.get("permitted_states")
         if permitted_states:
-            if not any(state.state_code == self.state_code for state in permitted_states):
+            if not any(s.state_code == self.state_code for s in permitted_states):
                 frappe.throw(
                     _("The selected state ({0}) is not allowed for the company {1}.")
                     .format(self.state_code, self.company),
                     title=_("State Not Allowed"),
                 )
         else:
-            # No restrictions configured
             frappe.msgprint(
                 _("No restricted states specified for this company. All states are allowed."),
                 alert=True,
             )
 
-    # -------------------------------
-    # Workflow state history tracking (runtime)
-    # -------------------------------
+    # -----------------------------------------------------------------------
+    # Workflow state history tracking
+    # -----------------------------------------------------------------------
 
     def log_workflow_change(self):
         """
-        Append a row in state_history whenever `workflow_state` changes.
+        On every workflow_state change:
+          1. Append a row to the state_history child table.
+          2. Insert an immutable row in Agent Stage Ledger.
 
         Rules:
-        - We ignore doc creation as a "state change" (no None -> Draft row).
-        - First meaningful transition is usually Draft -> Submitted.
-        - For each transition, we update `days_in_state` for the previous state.
-        - Child fieldname on ATM Leads: state_history (Table → ATM Lead State History)
+        - Ignores initial Draft creation (None → Draft).
+        - Updates days_in_state on the previous child-table row.
         """
 
         old_doc = self.get_doc_before_save() or frappe._dict()
@@ -142,7 +377,6 @@ class ATMLeads(Document):
 
         # Determine start date for previous state's duration
         if prev_row and prev_row.change_date:
-            # Previous state started at last transition
             start_date = getdate(prev_row.change_date)
         else:
             # First tracked transition: assume we were in Draft from post_date
@@ -150,32 +384,110 @@ class ATMLeads(Document):
 
         days_in_prev_state = (today_date - start_date).days
 
-        # Update duration on previous row (for its "to_state")
+        # Update duration on previous child-table row
         if prev_row:
             prev_row.days_in_state = days_in_prev_state
 
-        # Determine from_state for new row
-        if first_change:
-            # First meaningful event: Draft -> new_state
-            from_state = "Draft"
-        else:
-            from_state = old_state or "Draft"
+        from_state = "Draft" if first_change else (old_state or "Draft")
 
-        # Append new history row
+        # --- 1. Child table row ---
         row = self.append("state_history", {})
         row.from_state = from_state
         row.to_state = new_state
         row.change_datetime = now_datetime()
         row.change_date = today
         row.changed_by = frappe.session.user or "Administrator"
-        row.agent_name = self.executive_name or ""   # plain text
-        row.days_in_state = 0  # will be updated on next transition
+        row.agent_name = self.executive_name or ""
+        row.days_in_state = 0  # updated on the NEXT transition
 
-        # Optional debug log (remove if noisy)
+        # --- 2. Immutable Agent Stage Ledger entry ---
+        self._write_stage_ledger(from_state, new_state, days_in_prev_state)
+
+        # --- 3. Auto-create Signs record on first Signed transition ---
+        if new_state == "Signed" and not self.mark_signed:
+            self._create_signs_record()
+
         frappe.logger("atm_state_history").info(
             f"[ATMLeads] {self.name}: {from_state} -> {new_state}, "
             f"prev_days={days_in_prev_state}"
         )
+
+    def _write_stage_ledger(self, from_state: str, to_state: str, days_in_prev: int):
+        """
+        Insert one immutable row in Agent Stage Ledger.
+        Silently skips if the DocType is not yet installed (pre-migration).
+        Never raises – a ledger failure must never block a workflow transition.
+        """
+        try:
+            if not frappe.db.exists("DocType", "Agent Stage Ledger"):
+                return
+            frappe.get_doc({
+                "doctype": "Agent Stage Ledger",
+                "lead": self.name,
+                "employee": self.executive_name or "",
+                "company": self.company or "",
+                "branch": self.branch or "",
+                "state_code": self.state_code or "",
+                "from_state": from_state,
+                "to_state": to_state,
+                "stage_datetime": now_datetime(),
+                "stage_date": nowdate(),
+                "days_in_prev_state": days_in_prev,
+                "changed_by": frappe.session.user or "Administrator",
+            }).insert(ignore_permissions=True)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "Agent Stage Ledger: insert failed")
+
+    def _create_signs_record(self):
+        """
+        Auto-create a Signs record when this ATM Lead transitions to 'Signed'.
+
+        - Snapshots all key lead data into the Signs document.
+        - Sets employee = current executive_name (the lead's agent at sign time).
+        - Leaves closing_agent blank — manager fills this in later to assign commission.
+        - Sets mark_signed = 1 and signed_record = <Signs name> on this document.
+        - Idempotent: skips if mark_signed is already 1 or a Signs record already exists.
+        - Never raises — a failure here must not block the workflow transition.
+        """
+        try:
+            if not frappe.db.exists("DocType", "Signs"):
+                return
+
+            # Safety: check DB as well in case of concurrent saves
+            existing = frappe.db.get_value("Signs", {"atm_leads": self.name}, "name")
+            if existing:
+                self.mark_signed = 1
+                self.signed_record = existing
+                return
+
+            signs_doc = frappe.get_doc({
+                "doctype": "Signs",
+                "_auto_created_by_system": True,
+                "atm_leads": self.name,
+                "sign_date": self.sign_date or nowdate(),
+                "employee": self.executive_name or "",
+                # Lead details snapshot
+                "company": self.company or "",
+                "branch": self.branch or "",
+                "state_code": self.state_code or "",
+                "business_name": getattr(self, "business_name", "") or "",
+                "business_type": getattr(self, "business_type", "") or "",
+                "city": getattr(self, "city", "") or "",
+                "state": getattr(self, "state", "") or "",
+                "address": getattr(self, "full_address", "") or getattr(self, "address", "") or "",
+                # closing_agent is intentionally blank — manager assigns later
+            })
+            signs_doc.insert(ignore_permissions=True)
+
+            # Update this document's indicator fields (they'll be saved with this save)
+            self.mark_signed = 1
+            self.signed_record = signs_doc.name
+
+            frappe.logger("atm_signs").info(
+                f"[ATMLeads] Auto-created Signs {signs_doc.name} for lead {self.name}"
+            )
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "ATM Leads: _create_signs_record failed")
 
     # -------------------------------
     # Simple backfill for a single lead (fallback)
@@ -767,3 +1079,256 @@ def validate(doc, method):
                     doc.longitude = location['lng']
             except Exception as e:
                 frappe.log_error(frappe.get_traceback(), "ATM Leads Geocode Error")
+
+
+# ---------------------------------------------------------------------------
+# Client-side pre-save dedup check (returns JSON, does NOT throw)
+# ---------------------------------------------------------------------------
+
+@frappe.whitelist()
+def check_location_conflict(
+    full_address=None,
+    address=None,
+    zip_code=None,
+    latitude=None,
+    longitude=None,
+    company=None,
+    lead_name=None,
+):
+    """
+    Pre-save duplicate-location check for the client-side dialog.
+
+    Returns a dict describing the conflict, or None when there is no conflict.
+
+    Return schema:
+        {
+            "type":           "permanent" | "windowed",
+            "lead":           <name>,
+            "state":          <workflow_state>,
+            "company":        <company>,
+            "age_days":       int | None,      # None for permanent
+            "remaining_days": int | None,      # None for permanent
+            "window":         DEDUP_WINDOW_DAYS,
+        }
+    """
+    self_name = lead_name or "__new__"
+
+    loc_data = {
+        "full_address": full_address,
+        "address":      address,
+        "zip_code":     zip_code,
+        "latitude":     latitude,
+        "longitude":    longitude,
+    }
+    loc_sql, loc_params = _build_location_sql(loc_data)
+    if not loc_sql:
+        return None
+
+    # ── Tier 1: Cross-company Signed/Installed ────────────────────────────
+    tier1 = frappe.db.sql(
+        f"""
+        SELECT name, workflow_state, company, post_date, creation
+        FROM `tabATM Leads`
+        WHERE name != %(sn)s
+          AND docstatus < 2
+          AND workflow_state IN ({_EXEMPT_SQL})
+          AND {loc_sql}
+        ORDER BY creation ASC
+        LIMIT 1
+        """,
+        {"sn": self_name, **loc_params},
+        as_dict=True,
+    )
+    if tier1:
+        dup = tier1[0]
+        return {
+            "type":           "permanent",
+            "lead":           dup["name"],
+            "state":          dup.get("workflow_state") or "Signed/Installed",
+            "company":        dup.get("company") or "",
+            "age_days":       None,
+            "remaining_days": None,
+            "window":         DEDUP_WINDOW_DAYS,
+        }
+
+    # ── Tier 2: Same-company windowed (non-committed) ─────────────────────
+    if not company:
+        return None
+
+    tier2 = frappe.db.sql(
+        f"""
+        SELECT name, workflow_state, company, post_date, creation
+        FROM `tabATM Leads`
+        WHERE name != %(sn)s
+          AND docstatus < 2
+          AND IFNULL(company, '') = %(company)s
+          AND (workflow_state IS NULL OR workflow_state NOT IN ({_EXEMPT_SQL}))
+          AND {loc_sql}
+        ORDER BY creation ASC
+        """,
+        {"sn": self_name, "company": company, **loc_params},
+        as_dict=True,
+    )
+    if not tier2:
+        return None
+
+    from frappe.utils import date_diff, nowdate, getdate as _getdate
+    today = _getdate(nowdate())
+
+    for dup in tier2:
+        ref_date = _getdate(dup.get("post_date") or dup.get("creation"))
+        age_days  = date_diff(today, ref_date)
+        if age_days < DEDUP_WINDOW_DAYS:
+            return {
+                "type":           "windowed",
+                "lead":           dup["name"],
+                "state":          dup.get("workflow_state") or "Draft",
+                "company":        dup.get("company") or company,
+                "age_days":       age_days,
+                "remaining_days": DEDUP_WINDOW_DAYS - age_days,
+                "window":         DEDUP_WINDOW_DAYS,
+            }
+
+    # All candidates are stale – they will be purged on actual save
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Company availability check for "Duplicate for Companies" dialog
+# ---------------------------------------------------------------------------
+
+@frappe.whitelist()
+def get_company_availability_for_location(
+    lead_name,
+    full_address=None,
+    address=None,
+    zip_code=None,
+    latitude=None,
+    longitude=None,
+    source_company=None,
+):
+    """
+    For the "Duplicate for Companies" button: returns every Operator Company
+    with its availability status at this physical location.
+
+    Status values:
+        "source"    – this is the lead's own company (cannot duplicate to itself)
+        "committed" – ANY company has Signed/Installed at this location (blocks all)
+        "locked"    – this company already has a non-committed lead within 15-day window
+        "available" – no duplicate exists, safe to create
+
+    Return list item schema:
+        {
+            "name":          <company docname>,
+            "operator_name": <display name>,
+            "status":        "source" | "committed" | "locked" | "available",
+            "lead":          <lead name> | null,
+            "lead_state":    <workflow_state> | null,
+            "age_days":      int | null,
+            "remaining_days": int | null,
+        }
+    """
+    from frappe.utils import date_diff, nowdate, getdate as _getdate
+
+    loc_data = {
+        "full_address": full_address,
+        "address":      address,
+        "zip_code":     zip_code,
+        "latitude":     latitude,
+        "longitude":    longitude,
+    }
+    loc_sql, loc_params = _build_location_sql(loc_data)
+
+    today = _getdate(nowdate())
+
+    # ── Step 1: Is there a cross-company committed lead? (blocks everyone) ──
+    committed_lead = None
+    if loc_sql:
+        tier1 = frappe.db.sql(
+            f"""
+            SELECT name, workflow_state, company, post_date, creation
+            FROM `tabATM Leads`
+            WHERE name != %(sn)s
+              AND docstatus < 2
+              AND workflow_state IN ({_EXEMPT_SQL})
+              AND {loc_sql}
+            ORDER BY creation ASC
+            LIMIT 1
+            """,
+            {"sn": lead_name or "__new__", **loc_params},
+            as_dict=True,
+        )
+        if tier1:
+            committed_lead = tier1[0]
+
+    # ── Step 2: Per-company non-committed leads (same-company window check) ─
+    per_company_leads: dict = {}   # company_name -> row
+    if loc_sql and not committed_lead:
+        rows = frappe.db.sql(
+            f"""
+            SELECT name, workflow_state, company, post_date, creation
+            FROM `tabATM Leads`
+            WHERE name != %(sn)s
+              AND docstatus < 2
+              AND (workflow_state IS NULL OR workflow_state NOT IN ({_EXEMPT_SQL}))
+              AND {loc_sql}
+            ORDER BY creation ASC
+            """,
+            {"sn": lead_name or "__new__", **loc_params},
+            as_dict=True,
+        )
+        for row in rows:
+            co = row.get("company") or ""
+            if co not in per_company_leads:
+                per_company_leads[co] = row
+
+    # ── Step 3: Fetch all Operator Companies ─────────────────────────────────
+    all_companies = frappe.db.sql(
+        "SELECT name, operator_name FROM `tabOperator Companies` ORDER BY operator_name",
+        as_dict=True,
+    )
+
+    result = []
+    for co in all_companies:
+        co_name      = co["name"]
+        op_name      = co.get("operator_name") or co_name
+        entry = {
+            "name":           co_name,
+            "operator_name":  op_name,
+            "status":         "available",
+            "lead":           None,
+            "lead_state":     None,
+            "age_days":       None,
+            "remaining_days": None,
+        }
+
+        # Source company
+        if source_company and co_name == source_company:
+            entry["status"] = "source"
+            result.append(entry)
+            continue
+
+        # Cross-company committed block → status = "committed" for ALL
+        if committed_lead:
+            entry["status"]     = "committed"
+            entry["lead"]       = committed_lead["name"]
+            entry["lead_state"] = committed_lead.get("workflow_state") or "Signed/Installed"
+            result.append(entry)
+            continue
+
+        # Same-company windowed check
+        if co_name in per_company_leads:
+            dup = per_company_leads[co_name]
+            ref_date  = _getdate(dup.get("post_date") or dup.get("creation"))
+            age_days  = date_diff(today, ref_date)
+            if age_days < DEDUP_WINDOW_DAYS:
+                entry["status"]         = "locked"
+                entry["lead"]           = dup["name"]
+                entry["lead_state"]     = dup.get("workflow_state") or "Draft"
+                entry["age_days"]       = age_days
+                entry["remaining_days"] = DEDUP_WINDOW_DAYS - age_days
+            # else: stale lead → will be purged on actual save → available
+
+        result.append(entry)
+
+    return result

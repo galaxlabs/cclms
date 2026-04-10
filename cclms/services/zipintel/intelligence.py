@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 from typing import Dict, List, Optional
 
@@ -13,7 +14,7 @@ SCOUTING_CSV_PATH = (
 )
 GOOGLE_GEMINI_ENDPOINT = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-1.5-flash:generateContent"
+    "{model}:generateContent"
 )
 
 
@@ -42,6 +43,15 @@ def _as_int(value, default=0):
 
 def _normalize_score(value, floor=0, ceiling=100):
     return max(floor, min(ceiling, flt(value)))
+
+
+def _strip_json_fences(text: str) -> str:
+    value = (text or "").strip()
+    if value.startswith("```"):
+        value = value.split("\n", 1)[1] if "\n" in value else value
+        if value.endswith("```"):
+            value = value[:-3]
+    return value.strip()
 
 
 def _compute_scores(zip_row):
@@ -370,19 +380,64 @@ def build_lead_intelligence(lead_or_name, write_zip_centroid: bool = False) -> D
     }
 
 
-def _get_google_api_key() -> Optional[str]:
-    key = frappe.db.get_single_value("Google Maps Settings", "api_key")
-    return key or frappe.conf.get("gemini_api_key")
+def _get_gemini_api_key() -> Optional[str]:
+    key = frappe.conf.get("gemini_api_key")
+    if key:
+        return key
+
+    try:
+        if frappe.db.exists("DocType", "AI Policy"):
+            policy = frappe.get_single("AI Policy")
+            if getattr(policy, "gemini_api_key", None):
+                try:
+                    secret = policy.get_password("gemini_api_key")
+                    if secret:
+                        return secret
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+    # Backward-compatible fallback for environments that stored a single Google key.
+    return frappe.db.get_single_value("Google Maps Settings", "api_key")
 
 
-def generate_zip_ai_hint(zip_code: str) -> Optional[Dict]:
+def _get_gemini_model() -> str:
+    model = frappe.conf.get("gemini_model")
+    if model:
+        return model
+
+    try:
+        if frappe.db.exists("DocType", "AI Policy"):
+            policy = frappe.get_single("AI Policy")
+            if getattr(policy, "gemini_model", None):
+                return policy.gemini_model
+    except Exception:
+        pass
+
+    return "gemini-2.5-flash"
+
+
+def generate_zip_ai_hint(zip_code: str, place_context: Optional[Dict] = None) -> Optional[Dict]:
     zip_row = _zip_row(zip_code)
     if not zip_row:
         return None
 
-    key = _get_google_api_key()
+    key = _get_gemini_api_key()
+    model = _get_gemini_model()
     if not key:
-        return None
+        return {
+            "provider": "gemini",
+            "zip_code": zip_code,
+            "raw_text": "",
+            "summary": "",
+            "next_action": "",
+            "caution": "",
+            "foot_traffic_estimate": "",
+            "suitability_note": "",
+            "available": False,
+            "reason": "missing_gemini_key",
+        }
 
     prompt = {
         "zip_code": zip_code,
@@ -397,6 +452,20 @@ def generate_zip_ai_hint(zip_code: str) -> Optional[Dict]:
         "company_kiosks": zip_row.get("company_kiosks"),
         "matched_rule": zip_row.get("matched_rule"),
     }
+    if place_context:
+        prompt["place_context"] = {
+            "business_name": place_context.get("business_name"),
+            "category": place_context.get("category"),
+            "address": place_context.get("address"),
+            "city": place_context.get("city"),
+            "state_code": place_context.get("state_code") or place_context.get("state"),
+            "google_rating": place_context.get("google_rating"),
+            "user_ratings_total": place_context.get("user_ratings_total"),
+            "open_now_text": place_context.get("open_now_text"),
+            "website": place_context.get("website"),
+            "phone": place_context.get("phone"),
+            "distance_metrics": place_context.get("distance_metrics"),
+        }
 
     body = {
         "contents": [
@@ -404,8 +473,18 @@ def generate_zip_ai_hint(zip_code: str) -> Optional[Dict]:
                 "parts": [
                     {
                         "text": (
-                            "You are helping a Bitcoin ATM scouting team. "
-                            "Write a short JSON object with keys summary, next_action, and caution. "
+                            "You are Galaxy Smart Tool, a strategic Bitcoin ATM scouting assistant for CCLMS. "
+                            "Write a short JSON object with keys summary, next_action, caution, "
+                            "foot_traffic_estimate, and suitability_note. "
+                            "Use real values from the provided ZIP and place context such as Google rating, "
+                            "review count, category, hours, and distance metrics when available. "
+                            "Do not invent exact foot traffic or private Google Business Manager data. "
+                            "If exact foot traffic is unavailable from current public sources, say that clearly "
+                            "and give only a cautious estimate based on public proxies. "
+                            "If the ZIP score is good and the location distance metrics are healthy, clearly say "
+                            "that this location will have more chance to win. "
+                            "If a nearby Bitcoin Depot machine or competitor is too close, explain that the kiosk "
+                            "distance metrics are important and should be reviewed. "
                             f"Analyze this ZIP: {frappe.as_json(prompt)}"
                         )
                     }
@@ -416,7 +495,7 @@ def generate_zip_ai_hint(zip_code: str) -> Optional[Dict]:
 
     try:
         response = requests.post(
-            f"{GOOGLE_GEMINI_ENDPOINT}?key={key}",
+            f"{GOOGLE_GEMINI_ENDPOINT.format(model=model)}?key={key}",
             json=body,
             timeout=20,
         )
@@ -428,10 +507,39 @@ def generate_zip_ai_hint(zip_code: str) -> Optional[Dict]:
         ).strip()
         if not text:
             return None
-        return {"provider": "gemini", "zip_code": zip_code, "raw_text": text}
+        parsed = {}
+        try:
+            parsed = json.loads(_strip_json_fences(text))
+        except Exception:
+            parsed = {}
+        return {
+            "provider": "gemini",
+            "zip_code": zip_code,
+            "model": model,
+            "raw_text": text,
+            "summary": parsed.get("summary") or "",
+            "next_action": parsed.get("next_action") or "",
+            "caution": parsed.get("caution") or "",
+            "foot_traffic_estimate": parsed.get("foot_traffic_estimate") or "",
+            "suitability_note": parsed.get("suitability_note") or "",
+            "available": True,
+            "reason": "",
+        }
     except Exception:
         frappe.log_error(frappe.get_traceback(), f"ZIP Gemini hint failed for {zip_code}")
-        return None
+        return {
+            "provider": "gemini",
+            "zip_code": zip_code,
+            "model": model,
+            "raw_text": "",
+            "summary": "",
+            "next_action": "",
+            "caution": "",
+            "foot_traffic_estimate": "",
+            "suitability_note": "",
+            "available": False,
+            "reason": "gemini_request_failed",
+        }
 
 
 @frappe.whitelist()

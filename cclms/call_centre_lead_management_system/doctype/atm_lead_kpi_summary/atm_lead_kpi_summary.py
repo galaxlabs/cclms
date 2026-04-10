@@ -6,8 +6,14 @@ from datetime import date
 from collections import defaultdict
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate
+
+
+# Fields that are always allowed to change even on a Final record
+# (so managers can look at a Final record without accidentally corrupting it)
+_FINAL_EDITABLE_FIELDS = frozenset()
 
 
 class ATMLeadKPISummary(Document):
@@ -16,7 +22,46 @@ class ATMLeadKPISummary(Document):
     - One document per Year + Month (optionally filtered by Executive).
     - Child rows per (Company, State, State Code, Agent).
     - Counts & average days calculated from ATM Lead State History.
+
+    Immutability rules:
+    - Status "Final": blocks all saves and deletions (except Administrator).
+    - Status "Adjusted": blocks rebuild_rows() but allows manual field edits.
     """
+
+    # -----------------------------------------------------------------------
+    # Hooks
+    # -----------------------------------------------------------------------
+
+    def validate(self):
+        self._enforce_final_lock()
+
+    def on_trash(self):
+        if (getattr(self, "status", None) == "Final"
+                and frappe.session.user != "Administrator"):
+            frappe.throw(
+                _("A Final KPI Summary cannot be deleted. Contact Administrator."),
+                title=_("Deletion Blocked"),
+                exc=frappe.PermissionError,
+            )
+
+    def _enforce_final_lock(self):
+        """Block saving a Final summary by anyone except Administrator."""
+        if frappe.session.user == "Administrator":
+            return
+        if getattr(self, "status", None) != "Final":
+            return
+        # Allow if this is a status change away from Final (unlikely via normal UI)
+        old = self.get_doc_before_save()
+        if old and getattr(old, "status", None) != "Final":
+            return
+        frappe.throw(
+            _(
+                "This KPI Summary is marked <b>Final</b> and cannot be edited. "
+                "Duplicate it if you need a new calculation."
+            ),
+            title=_("Summary Locked"),
+            exc=frappe.PermissionError,
+        )
 
     @frappe.whitelist()
     def rebuild_rows(self):
