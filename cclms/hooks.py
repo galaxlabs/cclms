@@ -281,6 +281,11 @@ scheduler_events = {
         "0 0 * * *": [
             "cclms.call_centre_lead_management_system.doctype.atm_leads.atm_leads.sync_recent_lead_state_history",
         ],
+        # Night shift ends at 3 AM PKT (22:00 UTC prev day).
+        # Auto-mark absent 30 min after shift end: 3:30 AM PKT = 22:30 UTC
+        "30 22 * * *": [
+            "cclms.call_centre_lead_management_system.api.attendance.auto_mark_absent",
+        ],
     },
         #     "cclms.api.competitor_agent.run_competitor_minutely",
         # ],

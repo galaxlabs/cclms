@@ -1,0 +1,204 @@
+{
+ "actions": [],
+ "autoname": "format:CHK-{shift_date}-{#####}",
+ "creation": "2026-04-10 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "column_break_hdr",
+  "shift_settings",
+  "shift_date",
+  "section_checkin",
+  "checkin_time",
+  "checkin_location",
+  "column_break_checkin",
+  "checkout_time",
+  "checkout_location",
+  "section_computed",
+  "hours_worked",
+  "status",
+  "column_break_computed",
+  "late_minutes",
+  "overtime_hours",
+  "is_half_day",
+  "section_notes",
+  "notes",
+  "marked_by"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Sales Agent",
+   "reqd": 1,
+   "in_list_view": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "fetch_from": "employee.agent_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hdr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_settings",
+   "fieldtype": "Link",
+   "label": "Shift Settings",
+   "options": "Shift Settings",
+   "reqd": 1
+  },
+  {
+   "fieldname": "shift_date",
+   "fieldtype": "Date",
+   "label": "Shift Date",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_checkin",
+   "fieldtype": "Section Break",
+   "label": "Check-In / Check-Out"
+  },
+  {
+   "fieldname": "checkin_time",
+   "fieldtype": "Datetime",
+   "label": "Check-In Time",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "checkin_location",
+   "fieldtype": "Data",
+   "label": "Check-In Location / IP",
+   "description": "IP address or office name recorded at check-in"
+  },
+  {
+   "fieldname": "column_break_checkin",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "checkout_time",
+   "fieldtype": "Datetime",
+   "label": "Check-Out Time",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "checkout_location",
+   "fieldtype": "Data",
+   "label": "Check-Out Location / IP"
+  },
+  {
+   "fieldname": "section_computed",
+   "fieldtype": "Section Break",
+   "label": "Computed Attendance"
+  },
+  {
+   "fieldname": "hours_worked",
+   "fieldtype": "Float",
+   "label": "Hours Worked",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Attendance Status",
+   "options": "\nPresent\nLate\nHalf Day\nAbsent\nOvertime",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_computed",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "late_minutes",
+   "fieldtype": "Int",
+   "label": "Late By (minutes)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overtime_hours",
+   "fieldtype": "Float",
+   "label": "Overtime Hours",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_half_day",
+   "fieldtype": "Check",
+   "label": "Half Day",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "marked_by",
+   "fieldtype": "Link",
+   "label": "Marked By",
+   "options": "User",
+   "read_only": 1,
+   "default": "__user"
+  }
+ ],
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Agent Checkin",
+ "naming_rule": "Expression (old-style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "HR Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "HR User",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Sales User",
+   "write": 1,
+   "permlevel": 0
+  }
+ ],
+ "sort_field": "shift_date",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

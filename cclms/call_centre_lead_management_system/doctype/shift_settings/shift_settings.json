@@ -1,0 +1,299 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SHIFT-{shift_name}",
+ "creation": "2026-04-10 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "shift_name",
+  "is_night_shift",
+  "column_break_basic",
+  "shift_start_time",
+  "shift_end_time",
+  "crosses_midnight",
+  "section_work_hours",
+  "working_hours",
+  "grace_period_minutes",
+  "column_break_hours",
+  "late_mark_after_minutes",
+  "half_day_threshold_hours",
+  "absent_threshold_hours",
+  "section_overtime",
+  "allow_overtime",
+  "overtime_rate_multiplier",
+  "column_break_ot",
+  "max_overtime_hours",
+  "section_breaks",
+  "break_duration_minutes",
+  "break_deductible",
+  "column_break_breaks",
+  "number_of_breaks_allowed",
+  "section_policy",
+  "late_arrival_policy",
+  "early_departure_policy",
+  "column_break_policy",
+  "absent_policy",
+  "section_applicable",
+  "applicable_days",
+  "section_applicable_employees",
+  "applicable_to",
+  "default_for_all_agents",
+  "column_break_emp",
+  "branch",
+  "company"
+ ],
+ "fields": [
+  {
+   "fieldname": "shift_name",
+   "fieldtype": "Data",
+   "label": "Shift Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_night_shift",
+   "fieldtype": "Check",
+   "label": "Is Night Shift",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "18:00:00",
+   "fieldname": "shift_start_time",
+   "fieldtype": "Time",
+   "label": "Shift Start Time",
+   "reqd": 1,
+   "description": "For Pakistan Night Shift use 18:00 (6 PM)"
+  },
+  {
+   "default": "03:00:00",
+   "fieldname": "shift_end_time",
+   "fieldtype": "Time",
+   "label": "Shift End Time",
+   "reqd": 1,
+   "description": "For Pakistan Night Shift use 03:00 (3 AM next day)"
+  },
+  {
+   "default": "1",
+   "fieldname": "crosses_midnight",
+   "fieldtype": "Check",
+   "label": "Crosses Midnight",
+   "description": "Check this if the shift ends the next calendar day"
+  },
+  {
+   "fieldname": "section_work_hours",
+   "fieldtype": "Section Break",
+   "label": "Work Hours & Thresholds"
+  },
+  {
+   "default": "9",
+   "fieldname": "working_hours",
+   "fieldtype": "Float",
+   "label": "Working Hours (per shift)",
+   "reqd": 1,
+   "description": "Night shift 6PM-3AM = 9 hours"
+  },
+  {
+   "default": "15",
+   "fieldname": "grace_period_minutes",
+   "fieldtype": "Int",
+   "label": "Grace Period (minutes)",
+   "description": "Minutes after shift start allowed before marking late"
+  },
+  {
+   "fieldname": "column_break_hours",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "30",
+   "fieldname": "late_mark_after_minutes",
+   "fieldtype": "Int",
+   "label": "Late Mark After (minutes)",
+   "description": "Minutes after grace period before marking as Late"
+  },
+  {
+   "default": "4.5",
+   "fieldname": "half_day_threshold_hours",
+   "fieldtype": "Float",
+   "label": "Half Day Threshold (hours)",
+   "description": "Minimum hours to count as half day instead of absent"
+  },
+  {
+   "default": "2",
+   "fieldname": "absent_threshold_hours",
+   "fieldtype": "Float",
+   "label": "Absent Threshold (hours)",
+   "description": "Hours worked below this = Absent"
+  },
+  {
+   "fieldname": "section_overtime",
+   "fieldtype": "Section Break",
+   "label": "Overtime Policy"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_overtime",
+   "fieldtype": "Check",
+   "label": "Allow Overtime"
+  },
+  {
+   "default": "1.5",
+   "fieldname": "overtime_rate_multiplier",
+   "fieldtype": "Float",
+   "label": "Overtime Rate Multiplier",
+   "depends_on": "allow_overtime"
+  },
+  {
+   "fieldname": "column_break_ot",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "3",
+   "fieldname": "max_overtime_hours",
+   "fieldtype": "Float",
+   "label": "Max Overtime Hours / Shift",
+   "depends_on": "allow_overtime"
+  },
+  {
+   "fieldname": "section_breaks",
+   "fieldtype": "Section Break",
+   "label": "Break Policy"
+  },
+  {
+   "default": "30",
+   "fieldname": "break_duration_minutes",
+   "fieldtype": "Int",
+   "label": "Break Duration (minutes)"
+  },
+  {
+   "default": "1",
+   "fieldname": "break_deductible",
+   "fieldtype": "Check",
+   "label": "Deduct Break from Working Hours"
+  },
+  {
+   "fieldname": "column_break_breaks",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "number_of_breaks_allowed",
+   "fieldtype": "Int",
+   "label": "Number of Breaks Allowed"
+  },
+  {
+   "fieldname": "section_policy",
+   "fieldtype": "Section Break",
+   "label": "Attendance Policy Descriptions"
+  },
+  {
+   "fieldname": "late_arrival_policy",
+   "fieldtype": "Text Editor",
+   "label": "Late Arrival Policy",
+   "default": "<p>Agents arriving after the grace period will be marked LATE. Three (3) late marks in a month will result in one (1) day deduction from salary.</p>"
+  },
+  {
+   "fieldname": "early_departure_policy",
+   "fieldtype": "Text Editor",
+   "label": "Early Departure Policy",
+   "default": "<p>Agents leaving before the minimum hours threshold will be marked for early departure. A half day will be recorded if hours logged are between the half day and absent thresholds.</p>"
+  },
+  {
+   "fieldname": "column_break_policy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "absent_policy",
+   "fieldtype": "Text Editor",
+   "label": "Absent Policy",
+   "default": "<p>Agents who do not check in for a shift or log less than the absent threshold hours will be marked ABSENT. No pay for absent days unless approved leave is submitted.</p>"
+  },
+  {
+   "fieldname": "section_applicable",
+   "fieldtype": "Section Break",
+   "label": "Applicable Days"
+  },
+  {
+   "fieldname": "applicable_days",
+   "fieldtype": "Table MultiSelect",
+   "label": "Applicable Days",
+   "options": "Shift Applicable Day"
+  },
+  {
+   "fieldname": "section_applicable_employees",
+   "fieldtype": "Section Break",
+   "label": "Scope"
+  },
+  {
+   "fieldname": "applicable_to",
+   "fieldtype": "Select",
+   "label": "Applicable To",
+   "options": "All\nBranch\nCompany",
+   "default": "All"
+  },
+  {
+   "default": "1",
+   "fieldname": "default_for_all_agents",
+   "fieldtype": "Check",
+   "label": "Default for All Agents",
+   "depends_on": "eval:doc.applicable_to == 'All'"
+  },
+  {
+   "fieldname": "column_break_emp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch",
+   "depends_on": "eval:doc.applicable_to == 'Branch'"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "depends_on": "eval:doc.applicable_to == 'Company'"
+  }
+ ],
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Shift Settings",
+ "naming_rule": "Expression (old-style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "HR Manager",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
