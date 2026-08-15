@@ -1,0 +1,242 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:FLU-{YYYY}-{MM}-{DD}-{####}",
+ "creation": "2026-08-15 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lead",
+  "business_name",
+  "business_phone",
+  "company",
+  "operating_company",
+  "priority",
+  "column_break_assign",
+  "follow_up_time",
+  "status",
+  "assigned_to",
+  "assigned_branch",
+  "dialed_at",
+  "completed_at",
+  "section_break_notes",
+  "notes",
+  "dial_result",
+  "business_address",
+  "city",
+  "state",
+  "state_code",
+  "zip_code",
+  "website_url",
+  "source_url"
+ ],
+ "fields": [
+  {
+   "fieldname": "lead",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "ATM Lead",
+   "options": "ATM Leads"
+  },
+  {
+   "fetch_from": "lead.business_name",
+   "fieldname": "business_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Business Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lead.business_phone_number",
+   "fieldname": "business_phone",
+   "fieldtype": "Data",
+   "label": "Business Phone",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lead.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Operator Companies",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lead.owner_name",
+   "fieldname": "operating_company",
+   "fieldtype": "Data",
+   "label": "Owner / Operating Company"
+  },
+  {
+   "default": "Normal",
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Priority",
+   "options": "Low\nNormal\nHigh\nUrgent"
+  },
+  {
+   "fieldname": "column_break_assign",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "follow_up_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Follow-up Time"
+  },
+  {
+   "default": "Scheduled",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Scheduled\nDue\nDialing\nCompleted\nMissed\nCancelled"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Assigned To",
+   "options": "Sales Agent"
+  },
+  {
+   "fetch_from": "assigned_to.branch",
+   "fieldname": "assigned_branch",
+   "fieldtype": "Data",
+   "label": "Assigned Branch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "dialed_at",
+   "fieldtype": "Datetime",
+   "label": "Dialed At"
+  },
+  {
+   "fieldname": "completed_at",
+   "fieldtype": "Datetime",
+   "label": "Completed At"
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "dial_result",
+   "fieldtype": "Small Text",
+   "label": "Dial Result"
+  },
+  {
+   "fieldname": "business_address",
+   "fieldtype": "Data",
+   "label": "Business Address"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "zip_code",
+   "fieldtype": "Data",
+   "label": "ZIP Code"
+  },
+  {
+   "fieldname": "website_url",
+   "fieldtype": "Data",
+   "label": "Website URL"
+  },
+  {
+   "fieldname": "source_url",
+   "fieldtype": "Data",
+   "label": "Source URL"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-15 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Follow-up Schedule",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Data Executive",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "follow_up_time",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

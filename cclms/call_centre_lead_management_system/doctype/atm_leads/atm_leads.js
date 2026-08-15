@@ -156,8 +156,24 @@
         },
         validate(frm) {
             sanitizeOpeningHoursField(frm);
+
+            // "Please select company" on save — not on form init.
+            if (!frm.doc.company) {
+                frappe.validated = false;
+                frappe.msgprint({
+                    title: __("Company Not Selected"),
+                    indicator: "orange",
+                    message: __("Please select a company before saving this lead."),
+                });
+            }
         },
         before_save(frm) {
+            // Skip dedup entirely for committed states — allow self-state re-save
+            const COMMITTED = ["Signed", "Installed", "Converted"];
+            if (COMMITTED.includes(frm.doc.workflow_state)) {
+                return;
+            }
+
             // Skip if we already ran the check this save cycle
             if (frm._dedupChecked) {
                 frm._dedupChecked = false;

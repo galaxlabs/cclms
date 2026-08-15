@@ -1,0 +1,140 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-08-15 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "operator_company",
+  "contract_title",
+  "template_name",
+  "template_file",
+  "column_break_fee",
+  "base_fee",
+  "fee_type",
+  "revenue_share_percent",
+  "flat_fee",
+  "column_break_terms",
+  "special_terms",
+  "enabled",
+  "lead_state_trigger",
+  "section_break_fields",
+  "fill_fields_json",
+  "contract_attachment",
+  "field_mappings"
+ ],
+ "fields": [
+  {
+   "fieldname": "operator_company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Operator Company",
+   "options": "Operator Companies",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contract_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Contract Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "label": "Template Name",
+   "description": "Name of the esign_app TempleteList to use (e.g. KPF RevShare, KPF Distributors, Harding Capital Lease)."
+  },
+  {
+   "fieldname": "template_file",
+   "fieldtype": "Attach",
+   "label": "Template File",
+   "description": "Upload a PDF/image contract template."
+  },
+  {
+   "fieldname": "column_break_fee",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "base_fee",
+   "fieldtype": "Currency",
+   "label": "Base Fee"
+  },
+  {
+   "fieldname": "fee_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Fee Type",
+   "options": "\nFlat\nRevenue Share\nFlat + Revenue Share\nPer Transaction\nCustom"
+  },
+  {
+   "fieldname": "revenue_share_percent",
+   "fieldtype": "Percent",
+   "label": "Revenue Share %"
+  },
+  {
+   "fieldname": "flat_fee",
+   "fieldtype": "Currency",
+   "label": "Flat Fee"
+  },
+  {
+   "fieldname": "column_break_terms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "special_terms",
+   "fieldtype": "Small Text",
+   "label": "Special Terms"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "lead_state_trigger",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Trigger On Lead State",
+   "options": "\nRequested for Agreement Sent\nApproved\nSigned\nInstalled"
+  },
+  {
+   "fieldname": "section_break_fields",
+   "fieldtype": "Section Break",
+   "label": "Auto-Fill Fields"
+  },
+  {
+   "fieldname": "fill_fields_json",
+   "fieldtype": "Code",
+   "label": "Fill Fields JSON",
+   "options": "JSON",
+   "description": "JSON mapping of template label -> ATM Lead / Agreement Sign Form field, e.g. {\"Location DBA Name\": \"business_name\", \"Location Legal Entity\": \"owner_name\", \"Phone\": \"business_phone_number\"}."
+  },
+  {
+   "fieldname": "contract_attachment",
+   "fieldtype": "Attach",
+   "label": "Contract Attachment (PDF/Image)"
+  },
+  {
+   "fieldname": "field_mappings",
+   "fieldtype": "Table",
+   "label": "Field Mapping (Template Label -> ATM Leads Field)",
+   "options": "Contract Field Mapping"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 0,
+ "links": [],
+ "modified": "2026-08-15 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Operator Contract Setting",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "format:CT-{#####}"
+}

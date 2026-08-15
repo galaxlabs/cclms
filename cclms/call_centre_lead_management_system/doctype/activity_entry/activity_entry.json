@@ -24,7 +24,9 @@
   "event_type",
   "reference_id",
   "screenshot",
-  "summary"
+  "summary",
+  "idle_seconds",
+  "system_awake"
  ],
  "fields": [
   {
@@ -131,6 +133,16 @@
   {
    "fieldname": "column_break_hamu",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "idle_seconds",
+   "fieldtype": "Int",
+   "label": "Idle Seconds"
+  },
+  {
+   "fieldname": "system_awake",
+   "fieldtype": "Check",
+   "label": "System Awake"
   }
  ],
  "grid_page_length": 50,

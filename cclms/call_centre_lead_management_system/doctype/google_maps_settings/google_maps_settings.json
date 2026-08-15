@@ -38,6 +38,42 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Sales User"
+  },
+  {
+   "read": 1,
+   "role": "Data Executive"
+  },
+  {
+   "read": 1,
+   "role": "Sales Executive"
+  },
+  {
+   "read": 1,
+   "role": "Sales Manager"
+  },
+  {
+   "read": 1,
+   "role": "Onboarding Executive"
+  },
+  {
+   "read": 1,
+   "role": "OC"
+  },
+  {
+   "read": 1,
+   "role": "Employee"
+  },
+  {
+   "read": 1,
+   "role": "Karachi Team"
+  },
+  {
+   "read": 1,
+   "role": "India Team"
   }
  ],
  "row_format": "Dynamic",

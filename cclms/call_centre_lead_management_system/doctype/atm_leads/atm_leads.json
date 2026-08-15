@@ -91,7 +91,6 @@
   {
    "allow_in_quick_entry": 1,
    "bold": 1,
-   "default": "Bitcoin Depot",
    "fieldname": "company",
    "fieldtype": "Link",
    "in_filter": 1,
@@ -99,7 +98,8 @@
    "in_list_view": 1,
    "label": "Company",
    "options": "Operator Companies",
-   "search_index": 1
+   "search_index": 1,
+   "reqd": 1
   },
   {
    "fieldname": "section_break_hmqm",
@@ -465,6 +465,22 @@
    "fieldname": "sign_rejected",
    "fieldtype": "Date",
    "label": "Sign Rejected"
+  },
+  {
+   "fieldname": "reject_reason",
+   "fieldtype": "Select",
+   "label": "Reject Reason",
+   "options": "Not Interested\nOut of Space\nLow on Space\nLocation Closed\nLow Population\nNot Answering Calls\nProximity to Existing ATM\nAlready Dealt with Another Company\nCompetitor ATM at Location\nSafety Concerns\nBad Store\nStore Type Not Suitable\nNo Store Listing\nOther",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "reject_reason_other",
+   "fieldtype": "Small Text",
+   "label": "Reject Reason (Other)",
+   "depends_on": "eval:doc.reject_reason == \"Other\"",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_tnof",

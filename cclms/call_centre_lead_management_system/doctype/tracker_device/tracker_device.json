@@ -9,6 +9,7 @@
   "device_id",
   "tracked_user",
   "employee",
+  "sales_agent",
   "active",
   "column_break_1",
   "allowed_service_user",
@@ -22,6 +23,17 @@
   "notifications_enabled",
   "notifications_poll_seconds",
   "productivity_rules_json",
+  "health_section",
+  "device_health_status",
+  "latest_app_version",
+  "latest_health_report_at",
+  "latest_queue_count",
+  "latest_tracker_process_count",
+  "latest_dns_ok",
+  "latest_dns_ip",
+  "latest_memory_percent",
+  "latest_cpu_percent",
+  "latest_log_excerpt",
   "biometric_section",
   "biometric_enabled",
   "biometric_ip",
@@ -29,7 +41,12 @@
   "biometric_password",
   "biometric_device_identifier",
   "biometric_sync_minutes",
-  "biometric_last_sync_on"
+  "biometric_last_sync_on",
+  "dial_section",
+  "follow_up_dial_start_hour",
+  "follow_up_dial_end_hour",
+  "follow_up_dial_timezone",
+  "follow_up_dial_enabled"
  ],
  "fields": [
   {
@@ -51,6 +68,12 @@
    "fieldtype": "Link",
    "label": "Employee",
    "options": "Employee"
+  },
+  {
+   "fieldname": "sales_agent",
+   "fieldtype": "Link",
+   "label": "Sales Agent",
+   "options": "Sales Agent"
   },
   {
    "default": "1",
@@ -126,6 +149,72 @@
    "options": "JSON"
   },
   {
+   "fieldname": "health_section",
+   "fieldtype": "Section Break",
+   "label": "Device Health"
+  },
+  {
+   "fieldname": "device_health_status",
+   "fieldtype": "Select",
+   "label": "Health Status",
+   "options": "Healthy\nWarning\nOffline\nError",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_app_version",
+   "fieldtype": "Data",
+   "label": "Latest App Version",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_health_report_at",
+   "fieldtype": "Datetime",
+   "label": "Latest Health Report At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_queue_count",
+   "fieldtype": "Int",
+   "label": "Latest Queue Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_tracker_process_count",
+   "fieldtype": "Int",
+   "label": "Latest Tracker Process Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_dns_ok",
+   "fieldtype": "Check",
+   "label": "Latest DNS OK",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_dns_ip",
+   "fieldtype": "Data",
+   "label": "Latest DNS IP",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_memory_percent",
+   "fieldtype": "Percent",
+   "label": "Latest Memory Percent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_cpu_percent",
+   "fieldtype": "Percent",
+   "label": "Latest CPU Percent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "latest_log_excerpt",
+   "fieldtype": "Small Text",
+   "label": "Latest Log Excerpt",
+   "read_only": 1
+  },
+  {
    "fieldname": "biometric_section",
    "fieldtype": "Section Break",
    "label": "Optional Biometric Sync"
@@ -168,6 +257,35 @@
    "fieldtype": "Datetime",
    "label": "Biometric Last Sync On",
    "read_only": 1
+  },
+  {
+   "fieldname": "dial_section",
+   "fieldtype": "Section Break",
+   "label": "Auto-Dial Settings"
+  },
+  {
+   "default": "9",
+   "fieldname": "follow_up_dial_start_hour",
+   "fieldtype": "Int",
+   "label": "Dial Start Hour"
+  },
+  {
+   "default": "21",
+   "fieldname": "follow_up_dial_end_hour",
+   "fieldtype": "Int",
+   "label": "Dial End Hour"
+  },
+  {
+   "fieldname": "follow_up_dial_timezone",
+   "fieldtype": "Data",
+   "label": "Dial Timezone",
+   "description": "IANA zone e.g. America/New_York. Empty = system local time."
+  },
+  {
+   "default": "1",
+   "fieldname": "follow_up_dial_enabled",
+   "fieldtype": "Check",
+   "label": "Auto-Dial Enabled"
   }
  ],
  "grid_page_length": 50,

@@ -1,0 +1,68 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-08-15 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "template_field_label",
+  "atm_leads_field",
+  "source_doctype",
+  "column_break_opt",
+  "static_value",
+  "enabled"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_field_label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Field Label",
+   "reqd": 1,
+   "description": "Exact label as it appears on the PDF/image template (e.g. 'Location DBA Name', 'Phone', 'Address to be used for payment')."
+  },
+  {
+   "fieldname": "atm_leads_field",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "ATM Leads Field",
+   "options": "\ncompany\nexecutive_name\npost_date\nbranch\nowner_name\nbusiness_name\nbusiness_type\naddress\nstate\ncity\ncountry\nzip_code\ncontract_length\nbase_rent\nhours\nemail\nbusiness_phone_number\npersonal_cell_phone\napprove_date\nagreement_sent_date\nsign_date\npercentage\nstate_code\nconvert_date\ninstall_date\nremove_date\nfull_address\nsign_by\nlead_owner\nreject_reason\nreject_reason_other"
+  },
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Source",
+   "options": "\nATM Leads\nAgreement Sign Form\nStatic"
+  },
+  {
+   "fieldname": "column_break_opt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.source_doctype=='Static'",
+   "fieldname": "static_value",
+   "fieldtype": "Data",
+   "label": "Static Value"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-15 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Contract Field Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

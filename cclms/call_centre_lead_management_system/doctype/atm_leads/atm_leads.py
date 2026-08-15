@@ -14,9 +14,9 @@ US_PHONE_FIELDS = ("business_phone_number", "personal_cell_phone")
 # ---------------------------------------------------------------------------
 # Duplicate-location detection constants
 # ---------------------------------------------------------------------------
-# States where a location is considered "committed" – new leads ARE allowed
-# even when an existing lead for the same company+location is in these states.
-DEDUP_ALLOWED_STATES = frozenset(["Signed", "Installed"])
+# States where a location is considered "committed" – blocks new leads
+# from any company at this location. Also skips dedup re-validation on save.
+DEDUP_ALLOWED_STATES = frozenset(["Signed", "Installed", "Converted"])
 
 # Pre-built SQL literal for IN clauses (safe – only our own constants)
 _EXEMPT_SQL = ", ".join(f"'{s}'" for s in sorted(DEDUP_ALLOWED_STATES))
@@ -30,6 +30,13 @@ _LAT_LNG_TOL = 0.0001
 
 # Address-related fields monitored for change on updates
 _LOC_FIELDS = ("address", "zip_code", "full_address", "latitude", "longitude", "city")
+
+# Companies whose records are excluded from cross-company Tier-1 dedup
+# when the current company is NOT one of these exempt companies.
+DEDUP_EXEMPT_TIER1_COMPANIES = frozenset(["Bitcoin Depot"])
+
+# Pre-built SQL literal for Tier-1 company exclusions
+_EXEMPT_COMPANIES_SQL = ", ".join(f"'{c}'" for c in sorted(DEDUP_EXEMPT_TIER1_COMPANIES))
 
 
 # ---------------------------------------------------------------------------
@@ -139,6 +146,10 @@ class ATMLeads(Document):
     def validate(self):
         self.normalize_phone_fields()
         self.validate_lead_state()
+        # Reject reason only makes sense on rejected states — clear it otherwise
+        if self.reject_reason and self.workflow_state not in ("Rejected", "Signed Rejected"):
+            self.reject_reason = None
+            self.reject_reason_other = None
         # On updates, re-run dedup only when an address field was actually changed
         if not self.is_new():
             self._recheck_dedup_on_address_change()
@@ -197,6 +208,15 @@ class ATMLeads(Document):
 
         today = getdate(nowdate())
 
+        # Build Tier 1 company-exclusion clauses
+        tier1_exclusions = []
+        if self.company and self.company not in DEDUP_EXEMPT_TIER1_COMPANIES:
+            tier1_exclusions.append(f"company NOT IN ({_EXEMPT_COMPANIES_SQL})")
+        tier1_exclusions.append(
+            "company NOT IN (SELECT name FROM `tabOperator Companies` WHERE active = 0)"
+        )
+        tier1_exclude_sql = " AND " + " AND ".join(tier1_exclusions)
+
         # ── Tier 1: Cross-company Signed/Installed check ─────────────────────
         tier1 = frappe.db.sql(
             f"""
@@ -205,6 +225,7 @@ class ATMLeads(Document):
             WHERE name != %(sn)s
               AND docstatus < 2
               AND workflow_state IN ({_EXEMPT_SQL})
+              {tier1_exclude_sql}
               AND {loc_sql}
             ORDER BY creation ASC
             LIMIT 1
@@ -313,6 +334,10 @@ class ATMLeads(Document):
                 title=_("Company Not Selected"),
             )
 
+        # Accept full_address as a fallback when street address is not split out.
+        if not self.address and self.full_address:
+            self.address = self.full_address
+
         if not self.address:
             frappe.throw(
                 _("Please enter a valid address."),
@@ -403,6 +428,9 @@ class ATMLeads(Document):
         # --- 2. Immutable Agent Stage Ledger entry ---
         self._write_stage_ledger(from_state, new_state, days_in_prev_state)
 
+        # --- 2b. Stamp the action date for this transition ---
+        self._stamp_action_dates(new_state)
+
         # --- 3. Auto-create Signs record on first Signed transition ---
         if new_state == "Signed" and not self.mark_signed:
             self._create_signs_record()
@@ -437,6 +465,25 @@ class ATMLeads(Document):
             }).insert(ignore_permissions=True)
         except Exception:
             frappe.log_error(frappe.get_traceback(), "Agent Stage Ledger: insert failed")
+
+    def _stamp_action_dates(self, new_state):
+        """
+        Stamp the action date field when the workflow moves to a milestone state.
+        Only sets the field if it is currently empty, so a manually entered
+        date is never overwritten.
+        """
+        mapping = {
+            "Approved": "approve_date",
+            "Agreement Sent": "agreement_sent_date",
+            "Signed": "sign_date",
+            "Signed Rejected": "sign_rejected",
+            "Converted": "convert_date",
+            "Installed": "install_date",
+            "installed/Removed": "remove_date",
+        }
+        date_field = mapping.get(new_state)
+        if date_field and not self.get(date_field):
+            self.set(date_field, nowdate())
 
     def _create_signs_record(self):
         """
@@ -1124,6 +1171,15 @@ def check_location_conflict(
     if not loc_sql:
         return None
 
+    # Build Tier 1 company-exclusion clauses
+    tier1_exclusions = []
+    if company and company not in DEDUP_EXEMPT_TIER1_COMPANIES:
+        tier1_exclusions.append(f"company NOT IN ({_EXEMPT_COMPANIES_SQL})")
+    tier1_exclusions.append(
+        "company NOT IN (SELECT name FROM `tabOperator Companies` WHERE active = 0)"
+    )
+    tier1_exclude_sql = " AND " + " AND ".join(tier1_exclusions)
+
     # ── Tier 1: Cross-company Signed/Installed ────────────────────────────
     tier1 = frappe.db.sql(
         f"""
@@ -1132,6 +1188,7 @@ def check_location_conflict(
         WHERE name != %(sn)s
           AND docstatus < 2
           AND workflow_state IN ({_EXEMPT_SQL})
+          {tier1_exclude_sql}
           AND {loc_sql}
         ORDER BY creation ASC
         LIMIT 1
@@ -1241,6 +1298,15 @@ def get_company_availability_for_location(
 
     today = _getdate(nowdate())
 
+    # Build Tier 1 company-exclusion clauses
+    tier1_exclusions = []
+    if source_company and source_company not in DEDUP_EXEMPT_TIER1_COMPANIES:
+        tier1_exclusions.append(f"company NOT IN ({_EXEMPT_COMPANIES_SQL})")
+    tier1_exclusions.append(
+        "company NOT IN (SELECT name FROM `tabOperator Companies` WHERE active = 0)"
+    )
+    tier1_exclude_sql = " AND " + " AND ".join(tier1_exclusions)
+
     # ── Step 1: Is there a cross-company committed lead? (blocks everyone) ──
     committed_lead = None
     if loc_sql:
@@ -1251,6 +1317,7 @@ def get_company_availability_for_location(
             WHERE name != %(sn)s
               AND docstatus < 2
               AND workflow_state IN ({_EXEMPT_SQL})
+              {tier1_exclude_sql}
               AND {loc_sql}
             ORDER BY creation ASC
             LIMIT 1
@@ -1282,9 +1349,16 @@ def get_company_availability_for_location(
             if co not in per_company_leads:
                 per_company_leads[co] = row
 
-    # ── Step 3: Fetch all Operator Companies ─────────────────────────────────
+    # ── Step 3: Fetch active Operator Companies (exclude Bitcoin Depot from
+    #            the duplicate-target list; only active == 1 are offered) ──────
     all_companies = frappe.db.sql(
-        "SELECT name, operator_name FROM `tabOperator Companies` ORDER BY operator_name",
+        """
+        SELECT name, operator_name
+        FROM `tabOperator Companies`
+        WHERE active = 1
+          AND name != 'Bitcoin Depot'
+        ORDER BY operator_name
+        """,
         as_dict=True,
     )
 

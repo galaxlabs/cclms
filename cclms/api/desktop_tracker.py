@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 import frappe
 from frappe import _
-from frappe.utils import get_datetime, now_datetime
+from frappe.utils import add_to_date, get_datetime, now_datetime
 from frappe.utils.file_manager import save_file
 
 from cclms.api import browser_extension
@@ -143,14 +143,16 @@ def _resolve_tracker_binding(data):
         },
         update_modified=False,
     )
+    # Resolve sales agent: prefer the explicit Tracker Device field, then derive.
+    sales_agent = (tracker.get("sales_agent") or "").strip() or _resolve_sales_agent(
+        user=tracker.tracked_user,
+        employee=tracker.employee or _resolve_employee(user=tracker.tracked_user),
+    )
     _sync_device_profile(
         device_id=device_id,
         user=tracker.tracked_user,
         employee=tracker.employee or _resolve_employee(user=tracker.tracked_user),
-        sales_agent=_resolve_sales_agent(
-            user=tracker.tracked_user,
-            employee=tracker.employee or _resolve_employee(user=tracker.tracked_user),
-        ),
+        sales_agent=sales_agent,
         system_info=system_info,
     )
     return {
@@ -158,10 +160,7 @@ def _resolve_tracker_binding(data):
         "device_id": device_id,
         "tracked_user": tracker.tracked_user,
         "employee": tracker.employee or _resolve_employee(user=tracker.tracked_user),
-        "sales_agent": _resolve_sales_agent(
-            user=tracker.tracked_user,
-            employee=tracker.employee or _resolve_employee(user=tracker.tracked_user),
-        ),
+        "sales_agent": sales_agent,
     }
 
 
@@ -197,6 +196,10 @@ def _tracker_runtime_policy(binding):
         "map_context_debounce_seconds": _config_int("tracker_map_context_debounce_seconds", 20),
         "competitor_keywords": _safe_json(frappe.conf.get("tracker_competitor_keywords"), default=DEFAULT_COMPETITOR_KEYWORDS),
         "map_popup_enabled": _config_bool("tracker_map_popup_enabled", True),
+        "follow_up_dial_enabled": int(tracker.get("follow_up_dial_enabled", 1) if tracker.get("follow_up_dial_enabled") is not None else 1) == 1,
+        "follow_up_dial_start_hour": tracker.get("follow_up_dial_start_hour") or 9,
+        "follow_up_dial_end_hour": tracker.get("follow_up_dial_end_hour") or 21,
+        "follow_up_dial_timezone": tracker.get("follow_up_dial_timezone") or "",
     }
 
 
@@ -312,6 +315,12 @@ def _append_activity_row(log_doc, payload, screenshot_url=None):
     website_url = payload.get("website_url") or ""
     domain = (urlparse(website_url).netloc or "").lower().strip() if website_url else ""
     event_type = payload.get("event_type") or "Heartbeat"
+    idle_seconds = int(payload.get("idle_seconds") or 0)
+    system_awake = payload.get("system_awake", True)
+    event_minutes = payload.get("event_minutes") or 0
+    # Classify event as idle when user input stopped for the threshold
+    idle_threshold = int(frappe.conf.get("tracker_idle_threshold_seconds") or 120)
+    is_idle_event = idle_seconds > idle_threshold or not system_awake
     row = {
         "event_time": get_datetime(payload.get("event_time")) if payload.get("event_time") else now_datetime(),
         "event_type": _clip(event_type),
@@ -324,7 +333,9 @@ def _append_activity_row(log_doc, payload, screenshot_url=None):
         "productivity_score": payload.get("productivity_score"),
         "productivity_rule_name": _clip(payload.get("productivity_rule_name")),
         "is_authorized": _is_authorized_url(website_url),
-        "event_minutes": payload.get("event_minutes") or 0,
+        "event_minutes": event_minutes,
+        "idle_seconds": idle_seconds,
+        "system_awake": 1 if system_awake else 0,
         "call_start": payload.get("call_start"),
         "call_end": payload.get("call_end"),
         "reference_id": _clip(payload.get("reference_id") or payload.get("call_id")),
@@ -332,6 +343,47 @@ def _append_activity_row(log_doc, payload, screenshot_url=None):
         "summary": payload.get("summary"),
     }
     log_doc.append("activity_logs", row)
+
+    # Roll up active/idle minutes on the daily log from a 9-hour workday baseline.
+    _rollup_daily_active_minutes(log_doc, row, is_idle_event, event_minutes)
+
+
+def _rollup_daily_active_minutes(log_doc, row, is_idle_event, event_minutes):
+    """
+    Track active vs idle minutes on the Employee Activity Log.
+
+    Baseline: a 9-hour workday (540 minutes). Breaks, lunch and party/off time are
+    NOT counted as active. Active minutes accumulate from non-idle events; idle
+    minutes accumulate when the user was away (idle threshold exceeded or system
+    asleep/locked).
+    """
+    try:
+        minutes = float(event_minutes or 0)
+        if minutes <= 0:
+            return
+        active = 0.0
+        idle = 0.0
+        if is_idle_event:
+            idle = minutes
+        else:
+            active = minutes
+
+        total_active = float(log_doc.get("total_active_minutes") or 0) + active
+        total_idle = float(log_doc.get("total_idle_minutes") or 0) + idle
+
+        # Cap net productive time at the 9-hour workday baseline.
+        workday_minutes = int(frappe.conf.get("tracker_workday_minutes") or 540)
+        if total_active > workday_minutes:
+            total_active = float(workday_minutes)
+
+        log_doc.set("total_active_minutes", round(total_active, 2))
+        log_doc.set("total_idle_minutes", round(total_idle, 2))
+        if is_idle_event and row.get("event_type") == "Heartbeat":
+            log_doc.set("status", "Idle")
+        elif log_doc.get("status") != "Logged Out":
+            log_doc.set("status", "Active")
+    except Exception:
+        frappe.log_error(frappe.get_traceback(), "Tracker idle rollup failed")
 
 
 def _upsert_call_daily_summary(call_doc):
@@ -502,8 +554,45 @@ def report_device_health(payload=None):
             "windows_username": data.get("windows_username") or system_info.get("windows_username") or system_info.get("username"),
         },
     )
+
+    # Denormalize latest health snapshot onto Tracker Device for fleet dashboards
+    tracker_name = binding.get("tracker_name")
+    if tracker_name and frappe.db.exists("Tracker Device", tracker_name):
+        dns = data.get("dns_status") or {}
+        frappe.db.set_value(
+            "Tracker Device",
+            tracker_name,
+            {
+                "latest_app_version": _clip(data.get("version"), length=140),
+                "latest_health_report_at": get_datetime(data.get("time_utc")) if data.get("time_utc") else now_datetime(),
+                "latest_queue_count": int(data.get("queue_count") or 0),
+                "latest_tracker_process_count": int(data.get("process_count") or 0),
+                "latest_dns_ok": 1 if dns.get("ok") else 0,
+                "latest_dns_ip": _clip(dns.get("ip"), length=255),
+                "latest_memory_percent": float((system_info or {}).get("memory_percent") or 0),
+                "latest_cpu_percent": float((system_info or {}).get("cpu_percent") or 0),
+                "latest_log_excerpt": _clip((data.get("last_log_lines") or [""])[-1] if data.get("last_log_lines") else "", length=1400),
+                "device_health_status": _classify_device_health(data),
+            },
+            update_modified=False,
+        )
+
     frappe.db.commit()
     return {"message": {"ok": True, "device_id": binding.get("device_id"), "received_at": str(now_datetime())}}
+
+
+def _classify_device_health(data):
+    """Classify a device as Healthy / Warning / Offline / Error per BACKEND_LOGIC_SPEC 6.1."""
+    queue_count = int(data.get("queue_count") or 0)
+    process_count = int(data.get("process_count") or 0)
+    dns_ok = bool((data.get("dns_status") or {}).get("ok"))
+    system_info = data.get("system_info") or {}
+    memory = float(system_info.get("memory_percent") or 0)
+    if not dns_ok:
+        return "Error"
+    if queue_count > 0 or process_count > 1 or memory > 85:
+        return "Warning"
+    return "Healthy"
 
 
 @frappe.whitelist(allow_guest=False)
@@ -687,7 +776,84 @@ def get_device_notifications(payload=None):
             }
         )
 
+    # --- Tracked user's own ATM Leads status changes -------------------------
+    # Notify the laptop owner about leads assigned to their Sales Agent that
+    # were recently Approved / Rejected / Signed / Signed Rejected / Installed.
+    lead_notifications = _atm_lead_status_notifications(binding)
+    notifications.extend(lead_notifications)
+
     return {"message": notifications}
+
+
+def _atm_lead_status_notifications(binding, since_minutes=1440):
+    """Return recent workflow-state changes on the tracked user's own ATM Leads.
+
+    Matches leads where ANY of the following point at the tracked user:
+      - executive_name == the device's Sales Agent
+      - lead_owner == the user's full name
+      - owner       == the user email (CRM document owner)
+    """
+    agent = binding.get("sales_agent")
+    tracked_user = binding.get("tracked_user")
+    if not agent and not tracked_user:
+        return []
+
+    notify_states = {
+        "Approved": ("Approved", "green"),
+        "Rejected": ("Rejected", "red"),
+        "Installed": ("Installed", "teal"),
+    }
+
+    base = [["workflow_state", "in", list(notify_states)], ["modified", ">=", add_to_date(now_datetime(), minutes=-since_minutes)]]
+
+    # Build a set of unique lead names matched by any of the three paths.
+    match_names = set()
+    candidate_filters = []
+    if agent:
+        candidate_filters.append(base + [["executive_name", "=", agent]])
+    if tracked_user:
+        full_name = frappe.db.get_value("User", tracked_user, "full_name")
+        if full_name:
+            candidate_filters.append(base + [["lead_owner", "=", full_name]])
+        candidate_filters.append(base + [["owner", "=", tracked_user]])
+
+    for filters in candidate_filters:
+        names = frappe.get_all("ATM Leads", filters=filters, pluck="name", limit_page_length=15)
+        match_names.update(names)
+
+    if not match_names:
+        return []
+
+    rows = frappe.get_all(
+        "ATM Leads",
+        filters=[["name", "in", list(match_names)]],
+        fields=["name", "business_name", "workflow_state", "city", "state", "modified", "post_date"],
+        order_by="modified desc",
+        limit_page_length=15,
+    )
+
+    notifications = []
+    for row in rows:
+        state, indicator = notify_states[row["workflow_state"]]
+        title = f"ATM Lead {state}"
+        location = " ".join(filter(None, [row.get("business_name"), row.get("city"), row.get("state")])).strip() or row["name"]
+        notifications.append(
+            {
+                "notification_id": f"atm-lead-{row['name']}-{state}",
+                "enabled": True,
+                "title": title,
+                "message": f"{location} → {state}",
+                "body": f"{location}\nStatus: {state}",
+                "repeat_seconds": 3600,
+                "severity": "warning" if indicator == "red" else "info",
+                "type": "ATM Lead",
+                "document_type": "ATM Leads",
+                "document_name": row["name"],
+                "route": ["Form", "ATM Leads", row["name"]],
+                "changed_on": str(row.get("modified") or ""),
+            }
+        )
+    return notifications
 
 
 @frappe.whitelist(allow_guest=False)
@@ -821,6 +987,9 @@ def ingest_call(payload=None):
     call_doc.source_system = data.get("source_system") or data.get("event_source") or "windows-agent"
     call_doc.customer_number = data.get("customer_number") or data.get("phone_number") or data.get("caller_phone") or data.get("callee_phone")
     call_doc.duration = data.get("duration") or data.get("duration_seconds") or call_doc.duration
+    call_doc.call_outcome = data.get("call_outcome") or call_doc.call_outcome or None
+    call_doc.talk_duration_seconds = int(data.get("talk_duration_seconds") or data.get("duration_seconds") or call_doc.duration or 0)
+    call_doc.reference_id = data.get("reference_id") or data.get("ringcentral_call_id") or data.get("call_id") or call_doc.reference_id
     call_doc.sentiment = data.get("sentiment")
     call_doc.client_response = data.get("client_response")
     call_doc.transcript = data.get("transcript")

@@ -22,6 +22,9 @@
   "source_system",
   "client_response",
   "section_break_mxsq",
+  "call_outcome",
+  "talk_duration_seconds",
+  "reference_id",
   "transcript"
  ],
  "fields": [
@@ -114,6 +117,23 @@
   {
    "fieldname": "section_break_mxsq",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "call_outcome",
+   "fieldtype": "Select",
+   "label": "Call Outcome",
+   "options": "\nTalked\nNot Answered\nMissed\nFailed\nBusy",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "talk_duration_seconds",
+   "fieldtype": "Int",
+   "label": "Talk Duration (seconds)"
+  },
+  {
+   "fieldname": "reference_id",
+   "fieldtype": "Data",
+   "label": "Call Reference ID"
   },
   {
    "fieldname": "transcript",
