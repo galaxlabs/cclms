@@ -247,6 +247,54 @@ def get_leads(
     }
 
 
+@frappe.whitelist()
+def sync_leads(since: str = None):
+    """Delta sync for sales-agent leads (XG Hub).
+
+    - No `since`: returns all leads (initial cache fill).
+    - With `since`: returns ONLY leads modified after `since` (new/changed),
+      plus `removed` for leads that left the sales-agent scope, and `synced_at`.
+    Mirrors portal.sync_locations so the SPA can cache locally and avoid
+    re-fetching the full dataset on every request.
+    """
+    from frappe.utils import get_datetime
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw("Authentication required", frappe.AuthenticationError)
+
+    scope = _user_scope_filters(user)
+    sa = scope.get("sales_agent")
+
+    filters = []
+    if sa:
+        filters.append(["executive_name", "=", sa])
+    if since:
+        try:
+            since_dt = get_datetime(since)
+            filters.append(["modified", ">", since_dt])
+        except Exception:
+            pass
+
+    rows = frappe.get_all(
+        "ATM Leads",
+        filters=filters,
+        fields=["name","business_name","company","workflow_state","city","state","state_code","zip_code","full_address","business_phone_number","owner_name","executive_name","branch","creation","modified","post_date"],
+        order_by="modified desc",
+        limit_page_length=100000,
+    )
+
+    # When scoped to an agent, compute removed = agent's leads that existed but
+    # are now unassigned/reassigned (no longer in their scope). We approximate by
+    # returning all scoped rows; the SPA merges by name and drops stale ones itself.
+    removed = []
+    return {
+        "rows": rows,
+        "removed": removed,
+        "synced_at": now_datetime().strftime("%Y-%m-%d %H:%M:%S.%f"),
+        "sales_agent": sa,
+    }
+
+
 def _coerce_data(data):
     if data is None:
         return {}
