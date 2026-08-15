@@ -4,24 +4,52 @@ from frappe.utils import add_to_date, get_datetime, now_datetime
 
 
 @frappe.whitelist()
-def schedule_follow_up(lead_name, follow_up_time=None, priority="Normal", notes=None, assign=None):
-    """Create a follow-up schedule for a lead. Optionally auto-assign an agent."""
-    if not lead_name or not frappe.db.exists("ATM Leads", lead_name):
-        frappe.throw(_("ATM Lead not found"))
-    lead = frappe.get_doc("ATM Leads", lead_name)
+def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", notes=None, assign=None, business_name=None, business_phone=None, business_address=None, city=None, state=None, state_code=None, zip_code=None):
+    """Create a follow-up schedule for a lead OR a standalone prospect.
+
+    - If `lead_name` is given: copy business/phone/company from the lead.
+    - Otherwise: use the supplied prospect fields (business_name/phone/address).
+    Auto-assigns to the caller's Sales Agent when not provided.
+    """
     follow_up_time = follow_up_time or now_datetime()
 
-    doc = frappe.get_doc({
+    doc_data = {
         "doctype": "Follow-up Schedule",
-        "lead": lead_name,
-        "business_name": lead.business_name or "",
-        "business_phone": lead.business_phone_number or "",
-        "company": lead.company or "",
         "priority": priority or "Normal",
         "follow_up_time": follow_up_time,
         "status": "Scheduled",
         "notes": notes or "",
-    })
+    }
+
+    if lead_name and frappe.db.exists("ATM Leads", lead_name):
+        lead = frappe.get_doc("ATM Leads", lead_name)
+        doc_data.update({
+            "lead": lead_name,
+            "business_name": lead.business_name or "",
+            "business_phone": lead.business_phone_number or "",
+            "company": lead.company or "",
+            "business_address": lead.full_address or lead.address or "",
+            "city": lead.city or "",
+            "state": lead.state or "",
+            "state_code": lead.state_code or "",
+            "zip_code": lead.zip_code or "",
+        })
+    else:
+        if not business_name and not notes:
+            frappe.throw(_("Provide a business name or an ATM Lead to schedule a follow-up"))
+        doc_data.update({
+            "business_name": business_name or "",
+            "business_phone": business_phone or "",
+            "business_address": business_address or "",
+            "city": city or "",
+            "state": state or "",
+            "state_code": state_code or "",
+            "zip_code": zip_code or "",
+        })
+        if not assign:
+            assign = _resolve_current_sales_agent()
+
+    doc = frappe.get_doc(doc_data)
     if assign:
         doc.assigned_to = assign
         doc.assigned_branch = frappe.db.get_value("Sales Agent", assign, "branch") or ""
