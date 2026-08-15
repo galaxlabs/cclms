@@ -348,6 +348,9 @@ def update_lead(name: str, data: dict = None):
         if key in allowed and value is not None:
             setattr(doc, key, value)
             changed = True
+    if "opening_hours" in data:
+        _set_opening_hours(doc, data.get("opening_hours"))
+        changed = True
     if not changed:
         frappe.throw("No valid fields provided")
 
@@ -396,7 +399,47 @@ def create_lead(data: dict = None):
         doc_data["lead_owner"] = user
 
     doc = frappe.get_doc({"doctype": "ATM Leads", "workflow_state": "Draft", "status": "Draft", **doc_data})
+    _set_opening_hours(doc, data.get("opening_hours"))
     doc.flags.ignore_permissions = True
     doc.insert(ignore_permissions=True)
     frappe.db.commit()
     return {"ok": True, "name": doc.name}
+
+
+def _set_opening_hours(doc, rows):
+    """Set the opening_hours child table from [{weekday, opening_time, closing_time, is_off}]."""
+    if not rows or not isinstance(rows, list):
+        return
+    doc.set("opening_hours", [])
+    weekday_map = {
+        "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4,
+        "Friday": 5, "Saturday": 6, "Sunday": 7,
+    }
+    ordered = sorted(rows, key=lambda r: weekday_map.get((r or {}).get("weekday", ""), 0))
+    for r in ordered:
+        r = r or {}
+        opening = (r.get("opening_time") or "")[:5]
+        closing = (r.get("closing_time") or "")[:5]
+        off = bool(r.get("is_off") or r.get("off"))
+        total = _hours_total(opening, closing, off)
+        doc.append("opening_hours", {
+            "weekday": r.get("weekday") or "",
+            "opening_time": opening,
+            "closing_time": closing,
+            "total_hours": total,
+            "is_off": 1 if off else 0,
+        })
+
+
+def _hours_total(open_time, close_time, off):
+    if off or not open_time or not close_time:
+        return 0
+    try:
+        oh, om = [int(x) for x in open_time.split(":")]
+        ch, cm = [int(x) for x in close_time.split(":")]
+        minutes = ch * 60 + cm - (oh * 60 + om)
+        if minutes < 0:
+            minutes += 24 * 60
+        return round(minutes / 60.0, 2)
+    except Exception:
+        return 0

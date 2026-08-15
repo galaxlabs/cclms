@@ -9,7 +9,8 @@
   "weekday",
   "opening_time",
   "closing_time",
-  "total_hours"
+  "total_hours",
+  "is_off"
  ],
  "fields": [
   {
@@ -38,6 +39,12 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Opening Time"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_off",
+   "fieldtype": "Check",
+   "label": "Off"
   }
  ],
  "index_web_pages_for_search": 1,
