@@ -92,12 +92,63 @@ def overview(start_date=None, end_date=None, month=None, operator=None, agent=No
         as_dict=True,
     )
 
+    # Fallback: when Operator Deal is unused, aggregate ATM Leads by workflow state.
+    if not status_rows and not any(counts.values()):
+        counts, status_rows = _atm_leads_overview(start_date, end_date, operator, agent)
+
     return {
         "start_date": start_date,
         "end_date": end_date,
         "counts": counts,
         "status_snapshot": status_rows,
     }
+
+
+def _atm_leads_overview(start_date, end_date, operator=None, agent=None):
+    """Count ATM Leads by workflow state + key milestone dates (fallback when
+    the Operator Deal doctype is not populated)."""
+    conds, vals = [], []
+    if operator:
+        conds.append("company = %s"); vals.append(operator)
+    if agent:
+        conds.append("executive_name = %s"); vals.append(agent)
+    date_conds = list(conds)
+    date_vals = list(vals)
+    if start_date and end_date:
+        date_conds.append("creation >= %s AND creation < %s")
+        date_vals.extend([start_date, frappe.utils.add_days(getdate(end_date), 1)])
+    where_sql = f"WHERE {' AND '.join(conds)}" if conds else ""
+    date_where = " AND ".join(date_conds) if date_conds else "1=1"
+
+    snapshot = frappe.db.sql(
+        f"SELECT COALESCE(workflow_state, 'Unknown') AS label, COUNT(*) AS value FROM `tabATM Leads` {where_sql} GROUP BY COALESCE(workflow_state, 'Unknown') ORDER BY value DESC, label ASC",
+        vals,
+        as_dict=True,
+    )
+
+    date_map = {
+        "submitted":      "creation",
+        "approved":       "approve_date",
+        "rejected":       "custom_signedrejected_date",
+        "agreement_sent": "agreement_sent_date",
+        "signed":         "sign_date",
+        "converted":      "convert_date",
+        "installed":      "install_date",
+        "cancelled":      "remove_date",
+        "disputed":       None,
+    }
+    counts = {}
+    end_ex = frappe.utils.add_days(getdate(end_date), 1)
+    for kpi, col in date_map.items():
+        if not col or not frappe.db.has_column("ATM Leads", col):
+            counts[kpi] = 0
+            continue
+        counts[kpi] = frappe.db.sql(
+            f"SELECT COUNT(*) FROM `tabATM Leads` WHERE {date_where} AND {col} >= %s AND {col} < %s",
+            [*date_vals, start_date, end_ex],
+        )[0][0]
+    counts["net_signed"] = (counts.get("signed") or 0) - (counts.get("cancelled") or 0)
+    return counts, snapshot
 
 
 @frappe.whitelist()
@@ -139,10 +190,48 @@ def company_breakdown(start_date=None, end_date=None, month=None, operator=None,
 
     for row in rows:
         row["net_signed"] = (row.get("signed") or 0) - (row.get("cancelled") or 0)
-    return _normalize_number_fields(
+    normalized = _normalize_number_fields(
         rows,
         ["submitted", "approved", "agreement_sent", "signed", "converted", "installed", "rejected", "cancelled", "total_deals", "net_signed"],
     )
+
+    # Fallback: aggregate ATM Leads by company when Operator Deal is unused.
+    if not normalized:
+        normalized = _company_breakdown_from_atm_leads(start_date, end_date, operator, agent)
+    return normalized
+
+
+def _company_breakdown_from_atm_leads(start_date, end_date, operator=None, agent=None):
+    conds, vals = [], []
+    if operator:
+        conds.append("company = %s"); vals.append(operator)
+    if agent:
+        conds.append("executive_name = %s"); vals.append(agent)
+    where_sql = f"WHERE {' AND '.join(conds)}" if conds else ""
+    rows = frappe.db.sql(
+        f"""
+        SELECT
+            COALESCE(company, 'Unknown') AS operator_company,
+            SUM(CASE WHEN workflow_state = 'Approved' THEN 1 ELSE 0 END) AS approved,
+            SUM(CASE WHEN workflow_state = 'Agreement Sent' THEN 1 ELSE 0 END) AS agreement_sent,
+            SUM(CASE WHEN workflow_state = 'Signed' THEN 1 ELSE 0 END) AS signed,
+            SUM(CASE WHEN workflow_state = 'Converted' THEN 1 ELSE 0 END) AS converted,
+            SUM(CASE WHEN workflow_state = 'Installed' THEN 1 ELSE 0 END) AS installed,
+            SUM(CASE WHEN workflow_state = 'Rejected' THEN 1 ELSE 0 END) AS rejected,
+            COUNT(*) AS total_deals
+        FROM `tabATM Leads`
+        {where_sql}
+        GROUP BY COALESCE(company, 'Unknown')
+        ORDER BY signed DESC, approved DESC, operator_company ASC
+        """,
+        vals,
+        as_dict=True,
+    )
+    for row in rows:
+        row["net_signed"] = (row.get("signed") or 0) - (row.get("cancelled") or 0)
+        row.setdefault("submitted", 0)
+        row.setdefault("cancelled", 0)
+    return rows
 
 
 @frappe.whitelist()
