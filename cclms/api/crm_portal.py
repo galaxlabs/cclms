@@ -85,13 +85,17 @@ def get_current_sales_agent():
         return {
             "is_authenticated": False,
             "message": "Guest",
-            "user": None,
+            "user": "Guest",
             "name": "Guest",
             "email": None,
             "full_name": "Guest",
             "roles": [],
+            "is_manager": False,
             "salesAgentName": None,
             "salesAgent": None,
+            "branch": None,
+            "company": None,
+            "employee": None,
         }
 
     info = _user_info(user)
