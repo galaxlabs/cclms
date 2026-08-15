@@ -247,6 +247,19 @@ def get_leads(
     }
 
 
+def _coerce_data(data):
+    if data is None:
+        return {}
+    if isinstance(data, str):
+        import json as _json
+        try:
+            parsed = _json.loads(data)
+            return parsed if isinstance(parsed, dict) else {}
+        except Exception:
+            return {}
+    return data if isinstance(data, dict) else {}
+
+
 @frappe.whitelist()
 def update_lead(name: str, data: dict = None):
     """Sales-agent safe update of an ATM Lead (create/edit from xg-system / XG Hub).
@@ -255,7 +268,7 @@ def update_lead(name: str, data: dict = None):
     - Sales agents: may only edit leads assigned to them (executive_name == their Sales Agent)
       or owned by them, and only allowed fields (no workflow_state via this method).
     """
-    data = data or {}
+    data = _coerce_data(data)
     user = frappe.session.user
     if not user or user == "Guest":
         frappe.throw("Authentication required", frappe.AuthenticationError)
@@ -303,7 +316,7 @@ def create_lead(data: dict = None):
     Auto-sets executive_name / lead_owner / branch from the caller's Sales Agent
     profile when not provided. Accepts full_address as address fallback.
     """
-    data = data or {}
+    data = _coerce_data(data)
     user = frappe.session.user
     if not user or user == "Guest":
         frappe.throw("Authentication required", frappe.AuthenticationError)
