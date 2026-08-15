@@ -362,6 +362,68 @@ def multi_trend(months_back=12, operator=None, agent=None):
             }
         )
 
+    # Fallback: when Operator Deal is unused, build the monthly trend from ATM Leads
+    # milestone dates (post_date = born date; status updates after post_date).
+    if not months:
+        return _multi_trend_from_atm_leads(int(months_back), operator, agent)
+
+    return {"categories": months, "series": series}
+
+
+def _multi_trend_from_atm_leads(months_back=12, operator=None, agent=None):
+    """Monthly milestone trend from ATM Leads (fallback when Operator Deal is empty)."""
+    conds, params = [], {}
+    if operator:
+        conds.append("company = %(op)s"); params["op"] = operator
+    if agent:
+        conds.append("executive_name = %(ag)s"); params["ag"] = agent
+    base_where = f"WHERE {' AND '.join(conds)}" if conds else ""
+
+    # Milestone columns on ATM Leads. post_date is the "born" date; status updates
+    # happen on their own date columns after post_date.
+    kpi_cols = {
+        "approved": "approve_date",
+        "agreement_sent": "agreement_sent_date",
+        "signed": "sign_date",
+        "installed": "install_date",
+        "rejected": "custom_signedrejected_date",
+        "cancelled": "remove_date",
+    }
+    data_maps = {}
+    all_month_labels = set()
+    for kpi, col in kpi_cols.items():
+        if not frappe.db.has_column("ATM Leads", col):
+            data_maps[kpi] = {}
+            continue
+        # base_where already starts with WHERE when conds exist; append AND clauses.
+        and_part = f" AND {' AND '.join(conds)}" if conds else ""
+        where_full = f"{base_where}{' AND' if base_where else ' WHERE'} {col} IS NOT NULL{and_part}"
+        rows = frappe.db.sql(
+            f"SELECT DATE_FORMAT({col}, '%%Y-%%m') AS ym, COUNT(*) AS value FROM `tabATM Leads` {where_full} GROUP BY ym ORDER BY ym DESC LIMIT %(mb)s",
+            {**params, "mb": int(months_back)},
+            as_dict=True,
+        )
+        data_maps[kpi] = {row.ym: int(row.value) for row in rows}
+        all_month_labels.update(data_maps[kpi].keys())
+
+    # Ensure a continuous 12-month range ending this month (fill missing with 0).
+    from frappe.utils import add_months as _am
+    end = getdate(frappe.utils.nowdate()).replace(day=1)
+    full = []
+    for i in range(int(months_back) - 1, -1, -1):
+        full.append(_am(end, -i).strftime("%Y-%m"))
+    all_month_labels.update(full)
+    months = sorted(all_month_labels)
+
+    series = []
+    for kpi in ("approved", "agreement_sent", "signed", "installed", "rejected", "cancelled"):
+        series.append(
+            {
+                "name": kpi.replace("_", " ").title(),
+                "key": kpi,
+                "data": [data_maps.get(kpi, {}).get(m, 0) for m in months],
+            }
+        )
     return {"categories": months, "series": series}
 
 
