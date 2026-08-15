@@ -1,46 +1,133 @@
 import frappe
 
 
+SALES_AGENT_FIELDS = [
+    "name",
+    "full_name",
+    "agent_name",
+    "email",
+    "user",
+    "branch",
+    "company",
+    "employee",
+    "designation",
+    "department",
+    "phone",
+    "enable",
+]
+
+SYSTEM_ROLES = {"All", "Guest"}
+STAFF_ROLES = {"Admin", "System Manager", "Administrator", "Sales Manager"}
+PORTAL_ROLES = {"Sales Agent", "Sales User", "Data Executive", "Onboarding Executive", "OC", "Sales Manager"}
+
+
+def _user_info(user):
+    info = frappe.db.get_value(
+        "User",
+        user,
+        ["name", "email", "full_name", "first_name", "last_name", "enabled"],
+        as_dict=True,
+    ) or {}
+    return {
+        "name": info.get("name") or user,
+        "email": info.get("email") or user,
+        "full_name": info.get("full_name") or info.get("first_name") or user,
+        "first_name": info.get("first_name"),
+        "last_name": info.get("last_name"),
+        "enabled": info.get("enabled"),
+    }
+
+
+def _get_sales_agent(name):
+    if not name:
+        return None
+    return frappe.db.get_value("Sales Agent", name, SALES_AGENT_FIELDS, as_dict=True)
+
+
+def _find_sales_agent(user, email):
+    """Resolve the Sales Agent linked to a user, mirroring the SANHA pattern:
+    User Permission -> Sales Agent, then email, then owner fallback."""
+    if not frappe.db.exists("DocType", "Sales Agent"):
+        return None
+
+    permission_rows = frappe.get_all(
+        "User Permission",
+        filters={"user": user, "allow": "Sales Agent"},
+        fields=["for_value", "is_default"],
+        order_by="is_default desc, modified desc",
+        limit=5,
+        ignore_permissions=True,
+    )
+    for row in permission_rows:
+        agent = _get_sales_agent(row.get("for_value"))
+        if agent:
+            return agent
+
+    if email:
+        agent_name = frappe.db.get_value("Sales Agent", {"email": email}, "name")
+        agent = _get_sales_agent(agent_name)
+        if agent:
+            return agent
+
+    agent_name = frappe.db.get_value("Sales Agent", {"user": user}, "name")
+    return _get_sales_agent(agent_name)
+
+
 @frappe.whitelist(allow_guest=True)
 def get_current_sales_agent():
-    """Return the current portal user's sales-agent context for the CRM Portal (xg-system).
+    """SPA-safe auth state for the CRM Portal (xg-system / XG Hub) sales agents.
 
-    This is the CRM Portal (sales-agent) identity, separate from the operator portal.
-    Resolves the Sales Agent record by the logged-in user's email / user link.
+    Server-side lookups only — no need for the SPA to read User / User Permission /
+    Sales Agent through REST. Mirrors the SANHA get_current_user pattern.
     """
     user = frappe.session.user
     if not user or user == "Guest":
-        frappe.throw("Authentication required", frappe.PermissionError)
+        return {
+            "is_authenticated": False,
+            "message": "Guest",
+            "user": None,
+            "name": "Guest",
+            "email": None,
+            "full_name": "Guest",
+            "roles": [],
+            "salesAgentName": None,
+            "salesAgent": None,
+        }
 
-    full_name = frappe.db.get_value("User", user, "full_name") or user
-    roles = frappe.get_roles(user)
+    info = _user_info(user)
+    roles = [role for role in frappe.get_roles(user) if role not in SYSTEM_ROLES]
+    agent = None
 
-    sales_agent = None
-    branch = None
-    employee = None
-    company = None
-    if frappe.db.exists("DocType", "Sales Agent"):
-        meta = frappe.get_meta("Sales Agent")
-        fieldnames = {f.fieldname for f in meta.fields}
-        sales_agent = frappe.db.get_value("Sales Agent", {"user": user}, "name") or None
-        if not sales_agent and "email" in fieldnames:
-            sales_agent = frappe.db.get_value("Sales Agent", {"email": user}, "name") or None
-        if sales_agent:
-            agent = frappe.get_doc("Sales Agent", sales_agent)
-            branch = agent.get("branch")
-            employee = agent.get("employee")
-            company = agent.get("company")
-            if not full_name or full_name == user:
-                full_name = agent.get("full_name") or agent.get("agent_name") or full_name
+    is_admin = bool(STAFF_ROLES.intersection(roles))
+    if not is_admin:
+        agent = _find_sales_agent(user, info.get("email"))
+        if agent and not any(role in PORTAL_ROLES for role in roles):
+            roles.append("Sales Agent")
 
+    agent_name = agent.get("name") if agent else None
     return {
         "is_authenticated": True,
+        "message": user,
         "user": user,
-        "full_name": full_name,
+        "name": user,
+        "email": info.get("email"),
+        "full_name": info.get("full_name"),
         "roles": roles,
-        "sales_agent": sales_agent,
-        "branch": branch,
-        "employee": employee,
-        "company": company,
-        "is_manager": "System Manager" in roles or "Sales Manager" in roles,
+        "is_manager": is_admin or "Sales Manager" in roles,
+        "salesAgentName": agent_name,
+        "salesAgent": agent,
+        "branch": agent.get("branch") if agent else None,
+        "company": agent.get("company") if agent else None,
+        "employee": agent.get("employee") if agent else None,
     }
+
+
+@frappe.whitelist(allow_guest=True)
+def get_current_user():
+    """Alias matching the SANHA pattern for generic SPA consumers."""
+    return get_current_sales_agent()
+
+
+@frappe.whitelist(allow_guest=True)
+def get_me():
+    return get_current_sales_agent()

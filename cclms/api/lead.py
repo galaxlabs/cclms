@@ -245,3 +245,97 @@ def get_leads(
             "cutoff_pending": str(cutoff_pending),
         }
     }
+
+
+@frappe.whitelist()
+def update_lead(name: str, data: dict = None):
+    """Sales-agent safe update of an ATM Lead (create/edit from xg-system / XG Hub).
+
+    - System Manager / Administrator: full access.
+    - Sales agents: may only edit leads assigned to them (executive_name == their Sales Agent)
+      or owned by them, and only allowed fields (no workflow_state via this method).
+    """
+    data = data or {}
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw("Authentication required", frappe.AuthenticationError)
+
+    if not name or not frappe.db.exists("ATM Leads", name):
+        frappe.throw("Lead not found")
+
+    doc = frappe.get_doc("ATM Leads", name)
+
+    roles = set(frappe.get_roles(user))
+    is_admin = "System Manager" in roles or user == "Administrator"
+    if not is_admin:
+        scope = _user_scope_filters(user)
+        sa = scope.get("sales_agent")
+        owns = doc.get("executive_name") == sa or doc.get("owner") == user or doc.get("lead_owner") == user
+        if not owns:
+            frappe.throw("You are not allowed to edit this lead", frappe.PermissionError)
+
+    allowed = {
+        "business_name", "business_type", "owner_name", "email", "business_phone_number",
+        "personal_cell_phone", "address", "full_address", "city", "state", "state_code",
+        "zip_code", "country", "latitude", "longitude", "contract_length", "base_rent",
+        "hours", "percentage", "notes", "priority", "branch", "executive_name", "lead_owner",
+        "post_date", "approve_date", "agreement_sent_date", "sign_date", "convert_date",
+        "install_date", "remove_date",
+    }
+    changed = False
+    for key, value in data.items():
+        if key in allowed and value is not None:
+            setattr(doc, key, value)
+            changed = True
+    if not changed:
+        frappe.throw("No valid fields provided")
+
+    doc.flags.ignore_permissions = True
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    return {"ok": True, "name": doc.name}
+
+
+@frappe.whitelist()
+def create_lead(data: dict = None):
+    """Sales-agent safe create of an ATM Lead (create from xg-system / XG Hub).
+
+    Auto-sets executive_name / lead_owner / branch from the caller's Sales Agent
+    profile when not provided. Accepts full_address as address fallback.
+    """
+    data = data or {}
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw("Authentication required", frappe.AuthenticationError)
+
+    allowed = {
+        "business_name", "business_type", "owner_name", "email", "business_phone_number",
+        "personal_cell_phone", "address", "full_address", "city", "state", "state_code",
+        "zip_code", "country", "latitude", "longitude", "contract_length", "base_rent",
+        "hours", "percentage", "notes", "priority", "company", "branch", "executive_name",
+        "post_date",
+    }
+    doc_data = {k: v for k, v in data.items() if k in allowed and v is not None}
+    if not doc_data.get("full_address") and doc_data.get("address"):
+        doc_data["full_address"] = doc_data["address"]
+    if not doc_data.get("address") and doc_data.get("full_address"):
+        doc_data["address"] = doc_data["full_address"]
+    if not doc_data.get("company"):
+        frappe.throw("Please select a company before saving the lead.")
+
+    # Auto-assign to the caller's Sales Agent profile when not provided.
+    if not doc_data.get("executive_name"):
+        agent = frappe.get_all("Sales Agent", filters={"user": user}, fields=["name", "branch"], limit=1)
+        if not agent:
+            agent = frappe.get_all("Sales Agent", filters={"email": user}, fields=["name", "branch"], limit=1)
+        if agent:
+            doc_data["executive_name"] = agent[0]["name"]
+            doc_data.setdefault("branch", agent[0].get("branch"))
+    if not doc_data.get("lead_owner"):
+        doc_data["lead_owner"] = user
+
+    doc = frappe.get_doc({"doctype": "ATM Leads", "workflow_state": "Draft", "status": "Draft", **doc_data})
+    doc.flags.ignore_permissions = True
+    doc.insert(ignore_permissions=True)
+    frappe.db.commit()
+    return {"ok": True, "name": doc.name}

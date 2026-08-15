@@ -23,4 +23,5 @@ def get_agent_performance(state="Signed", start_date=None, end_date=None, compan
         ORDER BY total DESC
     """
     rows = frappe.db.sql(sql, values=vals, as_dict=True)
-    return {"state": state, "rows": rows}
+    # The xg-system frontend expects an array of agent rows.
+    return rows

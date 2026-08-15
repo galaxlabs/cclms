@@ -185,10 +185,50 @@ def agent_breakdown(start_date=None, end_date=None, month=None, operator=None):
 
     for row in rows:
         row["net_signed"] = (row.get("signed") or 0) - (row.get("cancelled") or 0)
-    return _normalize_number_fields(
+    normalized = _normalize_number_fields(
         rows,
         ["submitted", "approved", "agreement_sent", "signed", "converted", "installed", "rejected", "cancelled", "total_deals", "net_signed"],
     )
+
+    # Fallback: when there are no Operator Deal records (e.g. deal doctype unused),
+    # aggregate ATM Leads by Sales Agent (executive_name) so the Agents page is wired.
+    if not normalized:
+        normalized = _agent_breakdown_from_atm_leads(start_date, end_date, operator)
+    return normalized
+
+
+def _agent_breakdown_from_atm_leads(start_date, end_date, operator=None):
+    conds, vals = [], []
+    if operator:
+        conds.append("company = %s"); vals.append(operator)
+    if start_date and end_date:
+        conds.append("creation >= %s AND creation < %s")
+        vals.extend([start_date, frappe.utils.add_days(getdate(end_date), 1)])
+    where_sql = f"WHERE {' AND '.join(conds)}" if conds else ""
+    rows = frappe.db.sql(
+        f"""
+        SELECT
+            COALESCE(NULLIF(executive_name, ''), 'Unassigned') AS agent,
+            SUM(CASE WHEN workflow_state = 'Approved' THEN 1 ELSE 0 END) AS approved,
+            SUM(CASE WHEN workflow_state = 'Agreement Sent' THEN 1 ELSE 0 END) AS agreement_sent,
+            SUM(CASE WHEN workflow_state = 'Signed' THEN 1 ELSE 0 END) AS signed,
+            SUM(CASE WHEN workflow_state = 'Converted' THEN 1 ELSE 0 END) AS converted,
+            SUM(CASE WHEN workflow_state = 'Installed' THEN 1 ELSE 0 END) AS installed,
+            SUM(CASE WHEN workflow_state = 'Rejected' THEN 1 ELSE 0 END) AS rejected,
+            COUNT(*) AS total_deals
+        FROM `tabATM Leads`
+        {where_sql}
+        GROUP BY agent
+        ORDER BY signed DESC, approved DESC, agent ASC
+        """,
+        vals,
+        as_dict=True,
+    )
+    for row in rows:
+        row["net_signed"] = (row.get("signed") or 0) - (row.get("cancelled") or 0)
+        row.setdefault("submitted", 0)
+        row.setdefault("cancelled", 0)
+    return rows
 
 
 @frappe.whitelist()
