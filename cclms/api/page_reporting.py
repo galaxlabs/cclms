@@ -458,7 +458,40 @@ def recent_signed(start_date=None, end_date=None, month=None, operator=None, age
         """,
         {**params, "start": start_date, "end": end_exclusive, "limit": int(limit)},
         as_dict=True,
+    ) or _recent_signed_from_atm_leads(start_date, end_date, operator, agent, limit)
+
+
+def _recent_signed_from_atm_leads(start_date, end_date, operator=None, agent=None, limit=20):
+    """Latest signed ATM Leads (fallback when Operator Deal is empty)."""
+    conds, params = [], {}
+    if operator:
+        conds.append("company = %(op)s"); params["op"] = operator
+    if agent:
+        conds.append("executive_name = %(ag)s"); params["ag"] = agent
+    if start_date and end_date:
+        conds.append("sign_date >= %(st)s AND sign_date < %(en)s")
+        params["st"] = start_date
+        params["en"] = frappe.utils.add_days(getdate(end_date), 1)
+    where_sql = f"WHERE {' AND '.join(conds)}" if conds else "WHERE sign_date IS NOT NULL"
+    rows = frappe.db.sql(
+        f"""
+        SELECT
+            name,
+            business_name,
+            company,
+            executive_name,
+            state_code,
+            city,
+            sign_date
+        FROM `tabATM Leads`
+        {where_sql}
+        ORDER BY sign_date DESC
+        LIMIT %(limit)s
+        """,
+        {**params, "limit": int(limit)},
+        as_dict=True,
     )
+    return rows
 
 
 @frappe.whitelist()
