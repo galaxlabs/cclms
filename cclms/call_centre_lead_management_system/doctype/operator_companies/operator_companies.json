@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "operator_name",
+  "domain",
   "state_name",
   "restricted_type"
  ],
@@ -19,6 +20,13 @@
    "in_list_view": 1,
    "label": "Operator Name",
    "unique": 1
+  },
+  {
+   "fieldname": "domain",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Domain",
+   "options": "\nBTM\nATM\nInternet\nInsurance"
   },
   {
    "fieldname": "state_name",

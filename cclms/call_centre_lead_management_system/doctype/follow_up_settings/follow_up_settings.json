@@ -1,0 +1,106 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_domains",
+  "domains",
+  "default_domain",
+  "section_break_slots",
+  "slot_start_hour",
+  "slot_end_hour",
+  "slot_minutes",
+  "section_break_notes",
+  "require_company",
+  "require_domain"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_domains",
+   "fieldtype": "Section Break",
+   "label": "Business Domains"
+  },
+  {
+   "fieldname": "domains",
+   "fieldtype": "Table",
+   "label": "Domains",
+   "options": "Follow-up Domain"
+  },
+  {
+   "fieldname": "default_domain",
+   "fieldtype": "Select",
+   "label": "Default Domain"
+  },
+  {
+   "fieldname": "section_break_slots",
+   "fieldtype": "Section Break",
+   "label": "Time Slots"
+  },
+  {
+   "default": "8",
+   "fieldname": "slot_start_hour",
+   "fieldtype": "Int",
+   "label": "Slot Start Hour"
+  },
+  {
+   "default": "20",
+   "fieldname": "slot_end_hour",
+   "fieldtype": "Int",
+   "label": "Slot End Hour"
+  },
+  {
+   "default": "5",
+   "fieldname": "slot_minutes",
+   "fieldtype": "Int",
+   "label": "Slot Minutes"
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Validation"
+  },
+  {
+   "default": "1",
+   "fieldname": "require_company",
+   "fieldtype": "Check",
+   "label": "Require Operator Company"
+  },
+  {
+   "default": "1",
+   "fieldname": "require_domain",
+   "fieldtype": "Check",
+   "label": "Require Domain"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "Follow-up Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "All"
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -10,6 +10,7 @@
   "business_name",
   "business_phone",
   "company",
+  "domain",
   "operating_company",
   "priority",
   "column_break_assign",
@@ -19,13 +20,13 @@
   "assigned_branch",
   "dialed_at",
   "completed_at",
-   "section_break_notes",
-   "notes",
-   "dial_result",
-   "opening_hours_section",
-   "opening_hours",
-   "section_break_hours_extra",
-   "business_address",
+  "section_break_notes",
+  "notes",
+  "dial_result",
+  "opening_hours_section",
+  "opening_hours",
+  "section_break_hours_extra",
+  "business_address",
   "city",
   "state",
   "state_code",
@@ -34,6 +35,13 @@
   "source_url"
  ],
  "fields": [
+  {
+   "fieldname": "domain",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Domain",
+   "options": "\nBTM\nATM\nInternet\nInsurance"
+  },
   {
    "fieldname": "lead",
    "fieldtype": "Link",

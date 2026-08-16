@@ -24,8 +24,47 @@ def _coerce_json(value):
 
 
 SLOT_START_HOUR = 8   # 08:00 local
-SLOT_END_HOUR = 17    # 17:00 local (exclusive) — 8am to 5pm only
+SLOT_END_HOUR = 20    # 20:00 local (exclusive)
 SLOT_MINUTES = 5
+
+
+def _followup_settings():
+    """Merge Follow-up Settings (if present) with defaults + domain list."""
+    domains = ["BTM", "ATM", "Internet", "Insurance"]
+    default_domain = "BTM"
+    start, end, minutes = SLOT_START_HOUR, SLOT_END_HOUR, SLOT_MINUTES
+    require_company = True
+    require_domain = True
+    if frappe.db.exists("DocType", "Follow-up Settings"):
+        try:
+            s = frappe.get_single("Follow-up Settings")
+            if s.domains:
+                domains = [d.domain for d in s.domains if d.domain] or domains
+            if s.default_domain:
+                default_domain = s.default_domain
+            if s.slot_start_hour:
+                start = int(s.slot_start_hour)
+            if s.slot_end_hour:
+                end = int(s.slot_end_hour)
+            if s.slot_minutes:
+                minutes = int(s.slot_minutes)
+            require_company = bool(s.require_company)
+            require_domain = bool(s.require_domain)
+        except Exception:
+            pass
+    return {
+        "domains": domains,
+        "default_domain": default_domain,
+        "slot_start_hour": start,
+        "slot_end_hour": end,
+        "slot_minutes": minutes,
+        "require_company": require_company,
+        "require_domain": require_domain,
+    }
+
+
+def _domain_valid(domain):
+    return domain in _followup_settings()["domains"]
 
 
 def _server_timezone_name():
@@ -59,14 +98,19 @@ def follow_up_slots(date=None, timezone=None, agent=None):
     if not agent:
         agent = ""
 
+    cfg = _followup_settings()
+    start_hour = cfg["slot_start_hour"]
+    end_hour = cfg["slot_end_hour"]
+    slot_minutes = cfg["slot_minutes"]
+
     tz_name = timezone
     if not tz_name and agent:
         tz_name = frappe.db.get_value("Sales Agent", agent, "portal_timezone") or None
     tz_name = tz_name or "America/New_York"
 
     # Collect existing follow-ups for the agent on that day (server local).
-    filters = [["follow_up_time", ">=", _slot_start_dt(date, f"{SLOT_START_HOUR:02d}:00", tz_name)]]
-    filters.append(["follow_up_time", "<", _slot_start_dt(date, f"{SLOT_END_HOUR:02d}:00", tz_name) + timedelta(days=0)])
+    filters = [["follow_up_time", ">=", _slot_start_dt(date, f"{start_hour:02d}:00", tz_name)]]
+    filters.append(["follow_up_time", "<", _slot_start_dt(date, f"{end_hour:02d}:00", tz_name) + timedelta(days=0)])
     if agent:
         filters.append(["assigned_to", "=", agent])
     booked_rows = frappe.get_all(
@@ -85,34 +129,34 @@ def follow_up_slots(date=None, timezone=None, agent=None):
             })
 
     slots = []
-    t = SLOT_START_HOUR * 60
-    end = SLOT_END_HOUR * 60
+    t = start_hour * 60
+    end = end_hour * 60
     while t < end:
         hh = t // 60
         mm = t % 60
         label = f"{hh:02d}:{mm:02d}"
         value = _slot_start_dt(date, label, tz_name)
         value_str = value.strftime("%Y-%m-%d %H:%M:%S")
-        taken = any(abs((get_datetime(b["value"]) - value).total_seconds()) < SLOT_MINUTES * 60 for b in booked)
+        taken = any(abs((get_datetime(b["value"]) - value).total_seconds()) < slot_minutes * 60 for b in booked)
         slots.append({
             "label": label,
             "value": value_str,
             "booked": taken,
-            "booked_by": next((b["business_name"] for b in booked if abs((get_datetime(b["value"]) - value).total_seconds()) < SLOT_MINUTES * 60), ""),
+            "booked_by": next((b["business_name"] for b in booked if abs((get_datetime(b["value"]) - value).total_seconds()) < slot_minutes * 60), ""),
         })
-        t += SLOT_MINUTES
+        t += slot_minutes
 
     return {
         "date": date,
         "timezone": tz_name,
-        "slot_minutes": SLOT_MINUTES,
+        "slot_minutes": slot_minutes,
         "slots": slots,
         "booked": booked,
     }
 
 
 @frappe.whitelist()
-def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", notes=None, assign=None, business_name=None, business_phone=None, business_address=None, city=None, state=None, state_code=None, zip_code=None, company=None, operating_company=None, business_type=None, owner_name=None, email=None, personal_cell_phone=None, country=None, website_url=None, source_url=None, contact=None, opening_hours=None):
+def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", notes=None, assign=None, business_name=None, business_phone=None, business_address=None, city=None, state=None, state_code=None, zip_code=None, company=None, operating_company=None, business_type=None, owner_name=None, email=None, personal_cell_phone=None, country=None, website_url=None, source_url=None, contact=None, opening_hours=None, domain=None):
     """Create a follow-up schedule for a lead OR a standalone prospect.
 
     - If `lead_name` is given: copy business/phone/company from the lead.
@@ -121,12 +165,21 @@ def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", n
     """
     follow_up_time = follow_up_time or now_datetime()
 
+    settings = _followup_settings()
+    if settings.get("require_domain") and not domain:
+        frappe.throw(_("Select a business domain for this follow-up."))
+    if settings.get("require_company") and not company:
+        frappe.throw(_("Select an operator company for this follow-up."))
+    if domain and not _domain_valid(domain):
+        frappe.throw(_("Invalid domain. Choose from the predefined list."))
+
     doc_data = {
         "doctype": "Follow-up Schedule",
         "priority": priority or "Normal",
         "follow_up_time": follow_up_time,
         "status": "Scheduled",
         "notes": notes or "",
+        "domain": domain or "",
     }
 
     if lead_name and frappe.db.exists("ATM Leads", lead_name):
@@ -439,6 +492,12 @@ def _resolve_current_sales_agent():
         if name:
             return name
     return None
+
+
+@frappe.whitelist()
+def get_followup_settings():
+    """Return follow-up settings (domains, slot config, validation toggles) for the SPA."""
+    return _followup_settings()
 
 
 def _round_robin_pool(branch=None):
