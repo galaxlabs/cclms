@@ -47,7 +47,7 @@ def _slot_start_dt(date_str, slot_hhmm, tz_name):
 
 
 @frappe.whitelist()
-def follow_up_slots(date=None, timezone=None):
+def follow_up_slots(date=None, timezone=None, agent=None):
     """Return 5-minute time slots for a day, flagged booked for the caller's agent.
 
     Slots are generated in the agent's chosen timezone (default America/New_York)
@@ -55,7 +55,7 @@ def follow_up_slots(date=None, timezone=None):
     """
     if not date:
         date = str(datetime.now().date())
-    agent = _resolve_current_sales_agent()
+    agent = agent or _resolve_current_sales_agent()
     if not agent:
         agent = ""
 
