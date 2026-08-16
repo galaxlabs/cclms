@@ -162,17 +162,21 @@ def list_groups():
     me = _resolve_username()
     groups = frappe.get_all(
         "Chat Group",
-        filters=[["members", "like", f"%{me}%"]],
         fields=["name", "group_name", "created_by"],
         order_by="modified desc",
     )
     out = []
     for g in groups:
+        members = frappe.get_all("Chat Group Member", filters={"parent": g["name"]}, fields=["user", "full_name"])
+        is_member = any(m["user"] == me for m in members)
+        if not is_member:
+            continue
         out.append({
             "name": g["name"],
             "group_name": g["group_name"],
             "created_by": g["created_by"],
-            "group_member_count": frappe.db.count("Chat Group Member", {"parent": g["name"]}),
+            "members": [{"user": m["user"], "full_name": m["full_name"]} for m in members],
+            "group_member_count": len(members),
         })
     return out
 
