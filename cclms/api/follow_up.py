@@ -1,8 +1,14 @@
 import frappe
 from frappe import _
-from frappe.utils import add_to_date, get_datetime, now_datetime
+from frappe.utils import add_to_date, get_datetime, now_datetime, get_system_timezone
 from frappe.utils import cint
+from datetime import datetime, timedelta
 import json
+
+try:
+    import pytz
+except ImportError:
+    pytz = None
 
 
 def _coerce_json(value):
@@ -15,6 +21,94 @@ def _coerce_json(value):
             except Exception:
                 return value
     return value
+
+
+SLOT_START_HOUR = 8   # 08:00 local
+SLOT_END_HOUR = 20    # 20:00 local (exclusive)
+SLOT_MINUTES = 5
+
+
+def _server_timezone_name():
+    return get_system_timezone() or "Asia/Karachi"
+
+
+def _slot_start_dt(date_str, slot_hhmm, tz_name):
+    """Return a server-local naive datetime for a local-time slot.
+
+    slot_hhmm like '09:00' is interpreted in tz_name, converted to the
+    Frappe server timezone (Asia/Karachi) and returned as a naive datetime.
+    """
+    dt = datetime.strptime(f"{date_str} {slot_hhmm}", "%Y-%m-%d %H:%M")
+    if pytz and tz_name:
+        local = pytz.timezone(tz_name).localize(dt)
+        server = local.astimezone(pytz.timezone(_server_timezone_name()))
+        return server.replace(tzinfo=None)
+    return dt
+
+
+@frappe.whitelist()
+def follow_up_slots(date=None, timezone=None):
+    """Return 5-minute time slots for a day, flagged booked for the caller's agent.
+
+    Slots are generated in the agent's chosen timezone (default America/New_York)
+    and compared against existing Follow-up Schedule rows for that agent.
+    """
+    if not date:
+        date = str(datetime.now().date())
+    agent = _resolve_current_sales_agent()
+    if not agent:
+        agent = ""
+
+    tz_name = timezone
+    if not tz_name and agent:
+        tz_name = frappe.db.get_value("Sales Agent", agent, "portal_timezone") or None
+    tz_name = tz_name or "America/New_York"
+
+    # Collect existing follow-ups for the agent on that day (server local).
+    filters = [["follow_up_time", ">=", _slot_start_dt(date, f"{SLOT_START_HOUR:02d}:00", tz_name)]]
+    filters.append(["follow_up_time", "<", _slot_start_dt(date, f"{SLOT_END_HOUR:02d}:00", tz_name) + timedelta(days=0)])
+    if agent:
+        filters.append(["assigned_to", "=", agent])
+    booked_rows = frappe.get_all(
+        "Follow-up Schedule",
+        filters=filters,
+        fields=["name", "follow_up_time", "business_name"],
+        order_by="follow_up_time asc",
+    )
+    booked = []
+    for r in booked_rows:
+        if r.get("follow_up_time"):
+            booked.append({
+                "value": str(r["follow_up_time"]),
+                "name": r["name"],
+                "business_name": r.get("business_name") or "",
+            })
+
+    slots = []
+    t = SLOT_START_HOUR * 60
+    end = SLOT_END_HOUR * 60
+    while t < end:
+        hh = t // 60
+        mm = t % 60
+        label = f"{hh:02d}:{mm:02d}"
+        value = _slot_start_dt(date, label, tz_name)
+        value_str = value.strftime("%Y-%m-%d %H:%M:%S")
+        taken = any(abs((get_datetime(b["value"]) - value).total_seconds()) < SLOT_MINUTES * 60 for b in booked)
+        slots.append({
+            "label": label,
+            "value": value_str,
+            "booked": taken,
+            "booked_by": next((b["business_name"] for b in booked if abs((get_datetime(b["value"]) - value).total_seconds()) < SLOT_MINUTES * 60), ""),
+        })
+        t += SLOT_MINUTES
+
+    return {
+        "date": date,
+        "timezone": tz_name,
+        "slot_minutes": SLOT_MINUTES,
+        "slots": slots,
+        "booked": booked,
+    }
 
 
 @frappe.whitelist()
@@ -82,9 +176,29 @@ def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", n
         doc.assigned_to = assign
         doc.assigned_branch = frappe.db.get_value("Sales Agent", assign, "branch") or ""
         doc.status = "Scheduled"
+        _validate_slot_free(doc.assigned_to, follow_up_time)
     doc.insert(ignore_permissions=True)
     frappe.db.commit()
     return {"name": doc.name, "business_name": doc.business_name, "follow_up_time": str(doc.follow_up_time)}
+
+
+def _validate_slot_free(agent, follow_up_time):
+    """Reject a follow-up if the same agent already booked that 5-minute slot."""
+    if not agent or not follow_up_time:
+        return
+    window = add_to_date(follow_up_time, minutes=SLOT_MINUTES)
+    conflict = frappe.db.get_all(
+        "Follow-up Schedule",
+        filters=[
+            ["assigned_to", "=", agent],
+            ["follow_up_time", ">=", follow_up_time],
+            ["follow_up_time", "<", window],
+        ],
+        fields=["name"],
+        limit=1,
+    )
+    if conflict:
+        frappe.throw(_("This time slot is already booked for another client follow-up."))
 
 
 def _set_opening_hours(doc, rows):

@@ -314,3 +314,56 @@ def _get_user_timezone(user):
     if not agent:
         return None
     return agent.get("portal_timezone") or None
+
+
+# ── PIN code (8-digit) — replaces OTP for session unlock ──────────────
+import re as _re
+
+
+def _current_agent():
+    user = frappe.session.user
+    if not user or user == "Guest":
+        return None
+    return _find_sales_agent(user, frappe.db.get_value("User", user, "email"))
+
+
+@frappe.whitelist()
+def has_pin():
+    agent = _current_agent()
+    if not agent:
+        return {"has_pin": False}
+    return {"has_pin": bool(agent.get("portal_pin"))}
+
+
+@frappe.whitelist()
+def set_pin(pin, confirm_pin):
+    """Set / update the 8-digit portal PIN (no OTP needed once set)."""
+    agent = _current_agent()
+    if not agent:
+        frappe.throw("No Sales Agent profile linked to this account.")
+    pin = str(pin or "").strip()
+    confirm = str(confirm_pin or "").strip()
+    if not _re.fullmatch(r"\d{8}", pin):
+        frappe.throw("PIN must be exactly 8 digits.")
+    if pin != confirm:
+        frappe.throw("PIN and confirmation do not match.")
+    from frappe.utils.password import update_password
+    update_password(agent["name"], pin, doctype="Sales Agent")  # hashed in auth/password store
+    frappe.db.set_value("Sales Agent", agent["name"], "portal_pin_set_on", frappe.utils.now_datetime())
+    frappe.db.commit()
+    return {"has_pin": True}
+
+
+@frappe.whitelist()
+def verify_pin(pin):
+    """Check the given 8-digit PIN against the agent's stored PIN."""
+    agent = _current_agent()
+    if not agent or not agent.get("portal_pin"):
+        frappe.throw("No PIN set. Please set a PIN first.")
+    pin = str(pin or "").strip()
+    from frappe.utils.password import check_password
+    try:
+        check_password(agent["name"], pin, doctype="Sales Agent")
+        return {"ok": True}
+    except Exception:
+        return {"ok": False}
