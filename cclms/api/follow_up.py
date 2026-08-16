@@ -24,7 +24,7 @@ def _coerce_json(value):
 
 
 SLOT_START_HOUR = 8   # 08:00 local
-SLOT_END_HOUR = 20    # 20:00 local (exclusive)
+SLOT_END_HOUR = 17    # 17:00 local (exclusive) — 8am to 5pm only
 SLOT_MINUTES = 5
 
 
