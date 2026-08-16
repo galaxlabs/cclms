@@ -1,10 +1,24 @@
 import frappe
 from frappe import _
 from frappe.utils import add_to_date, get_datetime, now_datetime
+from frappe.utils import cint
+import json
+
+
+def _coerce_json(value):
+    """Coerce a JSON string (from form-encoded calls) into a Python object."""
+    if isinstance(value, str):
+        value = value.strip()
+        if value and value[0] in "[{":
+            try:
+                return json.loads(value)
+            except Exception:
+                return value
+    return value
 
 
 @frappe.whitelist()
-def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", notes=None, assign=None, business_name=None, business_phone=None, business_address=None, city=None, state=None, state_code=None, zip_code=None, company=None, operating_company=None, business_type=None, owner_name=None, email=None, personal_cell_phone=None, country=None, website_url=None, source_url=None, contact=None):
+def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", notes=None, assign=None, business_name=None, business_phone=None, business_address=None, city=None, state=None, state_code=None, zip_code=None, company=None, operating_company=None, business_type=None, owner_name=None, email=None, personal_cell_phone=None, country=None, website_url=None, source_url=None, contact=None, opening_hours=None):
     """Create a follow-up schedule for a lead OR a standalone prospect.
 
     - If `lead_name` is given: copy business/phone/company from the lead.
@@ -61,6 +75,9 @@ def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", n
             assign = _resolve_current_sales_agent()
 
     doc = frappe.get_doc(doc_data)
+    opening_hours = _coerce_json(opening_hours)
+    if opening_hours and isinstance(opening_hours, list):
+        _set_opening_hours(doc, opening_hours)
     if assign:
         doc.assigned_to = assign
         doc.assigned_branch = frappe.db.get_value("Sales Agent", assign, "branch") or ""
@@ -68,6 +85,44 @@ def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", n
     doc.insert(ignore_permissions=True)
     frappe.db.commit()
     return {"name": doc.name, "business_name": doc.business_name, "follow_up_time": str(doc.follow_up_time)}
+
+
+def _set_opening_hours(doc, rows):
+    """Set the opening_hours child table from [{weekday, opening_time, closing_time, is_off}]."""
+    if not rows or not isinstance(rows, list):
+        return
+    doc.set("opening_hours", [])
+    weekday_map = {
+        "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4,
+        "Friday": 5, "Saturday": 6, "Sunday": 7,
+    }
+    ordered = sorted(rows, key=lambda r: weekday_map.get((r or {}).get("weekday", ""), 0))
+    for r in ordered:
+        r = r or {}
+        opening = (r.get("opening_time") or "")[:5]
+        closing = (r.get("closing_time") or "")[:5]
+        off = bool(r.get("is_off") or r.get("off"))
+        doc.append("opening_hours", {
+            "weekday": r.get("weekday") or "",
+            "opening_time": opening,
+            "closing_time": closing,
+            "total_hours": _hours_total(opening, closing, off),
+            "is_off": 1 if off else 0,
+        })
+
+
+def _hours_total(open_time, close_time, off):
+    if off or not open_time or not close_time:
+        return 0
+    try:
+        oh, om = [int(x) for x in open_time.split(":")]
+        ch, cm = [int(x) for x in close_time.split(":")]
+        minutes = ch * 60 + cm - (oh * 60 + om)
+        if minutes < 0:
+            minutes += 24 * 60
+        return round(minutes / 60.0, 2)
+    except Exception:
+        return 0
 
 
 @frappe.whitelist()

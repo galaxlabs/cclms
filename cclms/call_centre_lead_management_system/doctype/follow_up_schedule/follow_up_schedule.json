@@ -19,10 +19,13 @@
   "assigned_branch",
   "dialed_at",
   "completed_at",
-  "section_break_notes",
-  "notes",
-  "dial_result",
-  "business_address",
+   "section_break_notes",
+   "notes",
+   "dial_result",
+   "opening_hours_section",
+   "opening_hours",
+   "section_break_hours_extra",
+   "business_address",
   "city",
   "state",
   "state_code",
@@ -152,6 +155,21 @@
    "fieldname": "notes",
    "fieldtype": "Small Text",
    "label": "Notes"
+  },
+  {
+   "fieldname": "opening_hours_section",
+   "fieldtype": "Section Break",
+   "label": "Business Hours"
+  },
+  {
+   "fieldname": "opening_hours",
+   "fieldtype": "Table",
+   "label": "Opening Hours",
+   "options": "Opening Hours"
+  },
+  {
+   "fieldname": "section_break_hours_extra",
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "dial_result",
