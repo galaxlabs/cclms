@@ -1,0 +1,109 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-16 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "provider",
+  "api_key",
+  "model",
+  "base_url",
+  "section_break_tools",
+  "enable_lead_search",
+  "enable_followup_search",
+  "enable_campaign_search",
+  "enable_document_search"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "default": "openai",
+   "fieldname": "provider",
+   "fieldtype": "Select",
+   "label": "Provider",
+   "options": "openai\nopenrouter\ngemini\nanthropic"
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "API Key"
+  },
+  {
+   "default": "gpt-4o-mini",
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fieldname": "base_url",
+   "fieldtype": "Data",
+   "label": "Base URL",
+   "description": "Optional override, e.g. https://openrouter.ai/api/v1"
+  },
+  {
+   "fieldname": "section_break_tools",
+   "fieldtype": "Section Break",
+   "label": "Bot Tools"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_lead_search",
+   "fieldtype": "Check",
+   "label": "Search ATM Leads"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_followup_search",
+   "fieldtype": "Check",
+   "label": "Search Follow-ups"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_campaign_search",
+   "fieldtype": "Check",
+   "label": "Search Campaigns"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_document_search",
+   "fieldtype": "Check",
+   "label": "Search Documents"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-16 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Call Centre Lead Management System",
+ "name": "AI Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "All"
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
