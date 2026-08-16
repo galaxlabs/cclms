@@ -26,7 +26,7 @@ def list_contacts():
 
 
 @frappe.whitelist()
-def send_message(receiver, message):
+def send_message(receiver, message, attachment_url=None, attachment_name=None):
     if not receiver or not message:
         frappe.throw(_("Receiver and message are required"))
     sender = _resolve_username()
@@ -35,10 +35,12 @@ def send_message(receiver, message):
         "sender": sender,
         "receiver": receiver,
         "message": message,
+        "attachment_url": attachment_url or "",
+        "attachment_name": attachment_name or "",
     })
     doc.insert(ignore_permissions=True)
     frappe.db.commit()
-    return {"name": doc.name, "sender": doc.sender, "receiver": doc.receiver, "message": doc.message, "creation": str(doc.creation)}
+    return {"name": doc.name, "sender": doc.sender, "receiver": doc.receiver, "message": doc.message, "creation": str(doc.creation), "attachment_url": doc.attachment_url, "attachment_name": doc.attachment_name}
 
 
 @frappe.whitelist()
@@ -54,7 +56,7 @@ def get_conversation(other_user, after=None):
     rows = frappe.get_all(
         "Chat Message",
         filters=filters,
-        fields=["name", "sender", "receiver", "message", "is_read", "creation"],
+        fields=["name", "sender", "receiver", "message", "is_read", "creation", "attachment_url", "attachment_name"],
         order_by="creation asc",
         limit_page_length=500,
     )

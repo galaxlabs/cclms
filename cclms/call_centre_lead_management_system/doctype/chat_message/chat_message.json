@@ -9,6 +9,8 @@
   "sender",
   "receiver",
   "message",
+  "attachment_url",
+  "attachment_name",
   "column_break_read",
   "is_read",
   "read_at",
@@ -35,6 +37,16 @@
    "in_list_view": 1,
    "label": "Message",
    "reqd": 1
+  },
+  {
+   "fieldname": "attachment_url",
+   "fieldtype": "Small Text",
+   "label": "Attachment URL"
+  },
+  {
+   "fieldname": "attachment_name",
+   "fieldtype": "Data",
+   "label": "Attachment Name"
   },
   {
    "fieldname": "column_break_read",

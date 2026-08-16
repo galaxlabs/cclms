@@ -333,6 +333,38 @@ def complete_follow_up(name, result=None, notes=None):
 
 
 @frappe.whitelist()
+def mark_not_interested(name, reason=None):
+    """Follow-up outcome 'Not Interested': completes the follow-up and, if it is
+    linked to an ATM Lead, moves that lead to workflow state 'Not Interested'.
+
+    Mirrors the xperts-crm follow-up status flow where a negative outcome is
+    recorded as Not Interested instead of a fresh lead.
+    """
+    if not name or not frappe.db.exists("Follow-up Schedule", name):
+        frappe.throw(_("Follow-up not found"))
+    fu = frappe.get_doc("Follow-up Schedule", name)
+
+    updates = {"status": "Completed", "completed_at": now_datetime(), "dial_result": "Not Interested"}
+    if reason:
+        updates["notes"] = (fu.notes or "") + ("\n" if fu.notes else "") + f"Not Interested: {reason}"
+    frappe.db.set_value("Follow-up Schedule", name, updates, update_modified=True)
+
+    # If linked to an ATM lead, move it to Not Interested (no dedupe conflicts)
+    lead_name = fu.lead
+    if lead_name and frappe.db.exists("ATM Leads", lead_name):
+        try:
+            frappe.db.set_value("ATM Leads", lead_name, {
+                "workflow_state": "Not Interested",
+                "reject_reason": reason or "Not Interested",
+            }, update_modified=True)
+        except Exception:
+            pass  # workflow may restrict direct sets; keep follow-up update
+
+    frappe.db.commit()
+    return {"ok": True, "name": name, "status": "Completed", "lead": lead_name, "outcome": "Not Interested"}
+
+
+@frappe.whitelist()
 def convert_follow_up_to_lead(name, company=None, workflow_state="Pending", address=None, city=None, state=None, state_code=None, zip_code=None, full_address=None):
     """Follow-up-first flow: after a positive call, convert the follow-up into an ATM Lead.
 
