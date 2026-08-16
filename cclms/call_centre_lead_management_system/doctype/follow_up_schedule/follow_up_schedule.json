@@ -69,6 +69,32 @@
    "label": "Owner / Operating Company"
   },
   {
+   "fieldname": "business_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Business Type"
+  },
+  {
+   "fieldname": "owner_name",
+   "fieldtype": "Data",
+   "label": "Owner Name"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fieldname": "personal_cell_phone",
+   "fieldtype": "Data",
+   "label": "Personal Cell Phone"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
    "default": "Normal",
    "fieldname": "priority",
    "fieldtype": "Select",

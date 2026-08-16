@@ -4,7 +4,7 @@ from frappe.utils import add_to_date, get_datetime, now_datetime
 
 
 @frappe.whitelist()
-def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", notes=None, assign=None, business_name=None, business_phone=None, business_address=None, city=None, state=None, state_code=None, zip_code=None):
+def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", notes=None, assign=None, business_name=None, business_phone=None, business_address=None, city=None, state=None, state_code=None, zip_code=None, company=None, operating_company=None, business_type=None, owner_name=None, email=None, personal_cell_phone=None, country=None, website_url=None, source_url=None, contact=None):
     """Create a follow-up schedule for a lead OR a standalone prospect.
 
     - If `lead_name` is given: copy business/phone/company from the lead.
@@ -33,18 +33,29 @@ def schedule_follow_up(lead_name=None, follow_up_time=None, priority="Normal", n
             "state": lead.state or "",
             "state_code": lead.state_code or "",
             "zip_code": lead.zip_code or "",
+            "website_url": lead.website_url or "",
+            "source_url": lead.source_url or "",
         })
     else:
         if not business_name and not notes:
             frappe.throw(_("Provide a business name or an ATM Lead to schedule a follow-up"))
         doc_data.update({
             "business_name": business_name or "",
-            "business_phone": business_phone or "",
+            "business_phone": business_phone or contact or "",
             "business_address": business_address or "",
             "city": city or "",
             "state": state or "",
             "state_code": state_code or "",
             "zip_code": zip_code or "",
+            "company": company or "",
+            "operating_company": operating_company or "",
+            "business_type": business_type or "",
+            "owner_name": owner_name or "",
+            "email": email or "",
+            "personal_cell_phone": personal_cell_phone or "",
+            "country": country or "",
+            "website_url": website_url or "",
+            "source_url": source_url or "",
         })
         if not assign:
             assign = _resolve_current_sales_agent()
