@@ -324,3 +324,37 @@ class SalesAgent(Document):
             remove_user_permission("Company", doc.company, doc.email)
         if doc.branch:
             remove_user_permission("Branch", doc.branch, doc.email)
+
+
+@frappe.whitelist()
+def sync_portal_users():
+    """Bulk-ensure every ACTIVE sales agent has a linked User (with password + Sales
+    Executive role profile) so they can log into XG Hub. Returns created/existing counts.
+
+    Only System Manager / Sales Manager can run this.
+    """
+    allowed = {"System Manager", "Administrator", "Sales Manager", "HR Manager"}
+    if not (set(frappe.get_roles(frappe.session.user)) & allowed):
+        frappe.throw("Only System Manager / HR Manager / Sales Manager can sync portal users.")
+
+    created, reused, missing_email, errors = 0, 0, 0, []
+    for name in frappe.get_all("Sales Agent", filters={"enable": 1}, pluck="name"):
+        try:
+            doc = frappe.get_doc("Sales Agent", name)
+            if not doc.email:
+                missing_email += 1
+                continue
+            existed = frappe.db.exists("User", doc.email)
+            doc.ensure_user()
+            doc.sync_user()          # forces Sales Executive role profile + module profile
+            doc.ensure_employee()
+            doc.apply_active_status()
+            frappe.db.set_value("Sales Agent", name, "user", doc.email, update_modified=False)
+            if existed:
+                reused += 1
+            else:
+                created += 1
+        except Exception as e:
+            errors.append(f"{name}: {e}")
+    frappe.db.commit()
+    return {"created": created, "reused": reused, "missing_email": missing_email, "errors": errors}
