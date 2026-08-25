@@ -40,7 +40,8 @@ WORKFLOW_TO_PORTAL = {
 	"Converted": "Converted",
 }
 PORTAL_TO_WORKFLOW = {portal: workflow for workflow, portal in WORKFLOW_TO_PORTAL.items()}
-PORTAL_DATA_START_DATE = "2025-08-07"
+PORTAL_DATA_START_DATE = "2025-08-01"
+PORTAL_DATA_BRANCH = "Karachi"
 
 
 def _get_user_companies():
@@ -70,6 +71,7 @@ def _get_user_company():
 def _location_filters(companies, status=None):
 	filters = [
 		["company", "in", companies],
+		["branch", "=", PORTAL_DATA_BRANCH],
 		["workflow_state", "in", list(WORKFLOW_TO_PORTAL)],
 		["post_date", ">=", PORTAL_DATA_START_DATE],
 		["modified", ">=", PORTAL_DATA_START_DATE],
@@ -88,7 +90,11 @@ def _within_cutoff(row):
 	from frappe.utils import getdate
 	if not row.get("post_date"):
 		return False
-	return getdate(row.get("post_date")) >= getdate(PORTAL_DATA_START_DATE) and getdate(row.get("modified")) >= getdate(PORTAL_DATA_START_DATE)
+	return (
+		row.get("branch") == PORTAL_DATA_BRANCH
+		and getdate(row.get("post_date")) >= getdate(PORTAL_DATA_START_DATE)
+		and getdate(row.get("modified")) >= getdate(PORTAL_DATA_START_DATE)
+	)
 
 
 def _state_matches(rule, state, state_code):
@@ -128,17 +134,11 @@ def _portal_location(row):
 
 LOCATION_FIELDS = [
 	"name", "business_name", "business_type", "full_address", "city", "state", "state_code",
-	"zip_code", "company", "workflow_state", "post_date", "approve_date", "sign_date", "install_date", "creation", "modified",
+	"zip_code", "company", "branch", "workflow_state", "post_date", "approve_date", "sign_date", "install_date", "creation", "modified",
 	"reject_reason", "reject_reason_other",
 ]
 
 LOCATION_DATE_FIELDS = {"post_date", "approve_date", "sign_date", "install_date", "creation", "modified"}
-STATUS_DATE_FIELDS = {
-	"Pending Review": "modified",
-	"Approved": "approve_date",
-	"Signed": "sign_date",
-	"Installed": "install_date",
-}
 
 LOCATION_DETAIL_FIELDS = [
 	*LOCATION_FIELDS, "latitude", "longitude", "notes",
@@ -234,7 +234,7 @@ def get_dashboard(range_days: str = "30"):
 	companies = _get_user_companies()
 	filters = _location_filters(companies)
 
-	all_leads = frappe.get_all("ATM Leads", fields=["workflow_state", "company", "state", "state_code", "business_type", "city", "zip_code", "post_date"], filters=filters, limit_page_length=100000)
+	all_leads = frappe.get_all("ATM Leads", fields=["workflow_state", "company", "state", "state_code", "business_type", "city", "zip_code", "modified"], filters=filters, limit_page_length=100000)
 	status_counts = {}
 	city_stats = {}
 	zip_stats = {}
@@ -255,10 +255,10 @@ def get_dashboard(range_days: str = "30"):
 			entry["total"] += 1
 			entry["signed"] += int(status == "Signed")
 			entry["installed"] += int(status == "Installed")
-		post = getdate(l.post_date) if l.post_date else getdate(l.creation)
-		if post < from_date:
+		activity_date = getdate(l.modified)
+		if activity_date < from_date:
 			continue
-		day_key = post.strftime("%Y-%m-%d")
+		day_key = activity_date.strftime("%Y-%m-%d")
 		bucket = timeseries.setdefault(day_key, {"date": day_key, "total": 0, "signed": 0, "installed": 0, "approved": 0, "rejected": 0, "pending": 0, "signed_rejected": 0})
 		bucket["total"] += 1
 		if status == "Signed":
@@ -277,7 +277,7 @@ def get_dashboard(range_days: str = "30"):
 	recent = frappe.get_all("ATM Leads",
 		fields=LOCATION_FIELDS,
 		filters=filters,
-		order_by="creation desc",
+		order_by="modified desc",
 		limit=100,
 	)
 
@@ -328,7 +328,7 @@ def list_locations(
 	business_type: str = None,
 ):
 	companies = _get_user_companies()
-	date_field = date_field or STATUS_DATE_FIELDS.get(status, "modified")
+	date_field = date_field or "modified"
 	if date_field not in LOCATION_DATE_FIELDS:
 		frappe.throw("Unsupported date filter.")
 
