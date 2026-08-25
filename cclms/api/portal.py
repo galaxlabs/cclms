@@ -132,7 +132,13 @@ LOCATION_FIELDS = [
 	"reject_reason", "reject_reason_other",
 ]
 
-LOCATION_DATE_FIELDS = {"post_date", "approve_date", "sign_date", "install_date", "creation"}
+LOCATION_DATE_FIELDS = {"post_date", "approve_date", "sign_date", "install_date", "creation", "modified"}
+STATUS_DATE_FIELDS = {
+	"Pending Review": "modified",
+	"Approved": "approve_date",
+	"Signed": "sign_date",
+	"Installed": "install_date",
+}
 
 LOCATION_DETAIL_FIELDS = [
 	*LOCATION_FIELDS, "latitude", "longitude", "notes",
@@ -315,30 +321,34 @@ def list_locations(
 	search: str = None,
 	from_date: str = None,
 	to_date: str = None,
-	date_field: str = "post_date",
+	date_field: str = None,
 	city: str = None,
 	state: str = None,
 	zip_code: str = None,
 	business_type: str = None,
 ):
 	companies = _get_user_companies()
-	date_field = date_field or "post_date"
+	date_field = date_field or STATUS_DATE_FIELDS.get(status, "modified")
 	if date_field not in LOCATION_DATE_FIELDS:
 		frappe.throw("Unsupported date filter.")
 
 	filters = _location_filters(companies, status)
-	if from_date:
-		filters.append([date_field, ">=", f"{from_date} 00:00:00" if date_field == "creation" else from_date])
-	if to_date:
-		filters.append([date_field, "<=", f"{to_date} 23:59:59.999999" if date_field == "creation" else to_date])
-
 	rows = frappe.get_all("ATM Leads",
 		fields=LOCATION_FIELDS,
 		filters=filters,
-		order_by="creation desc",
+		order_by="modified desc",
 		limit_page_length=100000,
 	)
 	rows = [row for row in rows if _can_access_location(row, companies)]
+	from_value = getdate(from_date) if from_date else None
+	to_value = getdate(to_date) if to_date else None
+	if from_value or to_value:
+		rows = [
+			row for row in rows
+			if (not from_value or getdate(row.get(date_field) or row.modified) >= from_value)
+			and (not to_value or getdate(row.get(date_field) or row.modified) <= to_value)
+		]
+	rows.sort(key=lambda row: str(row.get(date_field) or row.modified or row.creation or ""), reverse=True)
 	filter_options = {
 		"cities": sorted({row.city for row in rows if row.city}),
 		"states": sorted({row.state for row in rows if row.state}),
@@ -378,7 +388,7 @@ def list_locations(
 		"page_count": page_count,
 		"filter_options": filter_options,
 		"date_field": date_field,
-		"order_by": "creation desc",
+		"order_by": f"{date_field} (fallback modified) desc",
 	}
 
 

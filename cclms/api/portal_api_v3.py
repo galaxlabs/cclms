@@ -26,7 +26,7 @@ def list_locations(
 	search: str = None,
 	from_date: str = None,
 	to_date: str = None,
-	date_field: str = "post_date",
+	date_field: str = None,
 	city: str = None,
 	state: str = None,
 	zip_code: str = None,
