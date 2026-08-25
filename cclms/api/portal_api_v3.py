@@ -19,8 +19,23 @@ def get_dashboard(range_days: str = "30"):
 
 
 @frappe.whitelist()
-def list_locations(page: int = 1, page_size: int = 25, status: str = None, search: str = None, from_date: str = None, to_date: str = None):
-	return _portal().list_locations(page, page_size, status, search, from_date, to_date)
+def list_locations(
+	page: int = 1,
+	page_size: int = 25,
+	status: str = None,
+	search: str = None,
+	from_date: str = None,
+	to_date: str = None,
+	date_field: str = "post_date",
+	city: str = None,
+	state: str = None,
+	zip_code: str = None,
+	business_type: str = None,
+):
+	return _portal().list_locations(
+		page, page_size, status, search, from_date, to_date,
+		date_field, city, state, zip_code, business_type,
+	)
 
 
 @frappe.whitelist()

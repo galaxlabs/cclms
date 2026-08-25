@@ -128,9 +128,11 @@ def _portal_location(row):
 
 LOCATION_FIELDS = [
 	"name", "business_name", "business_type", "full_address", "city", "state", "state_code",
-	"zip_code", "company", "workflow_state", "post_date", "creation", "modified",
+	"zip_code", "company", "workflow_state", "post_date", "approve_date", "sign_date", "install_date", "creation", "modified",
 	"reject_reason", "reject_reason_other",
 ]
+
+LOCATION_DATE_FIELDS = {"post_date", "approve_date", "sign_date", "install_date", "creation"}
 
 LOCATION_DETAIL_FIELDS = [
 	*LOCATION_FIELDS, "latitude", "longitude", "notes",
@@ -269,7 +271,7 @@ def get_dashboard(range_days: str = "30"):
 	recent = frappe.get_all("ATM Leads",
 		fields=LOCATION_FIELDS,
 		filters=filters,
-		order_by="modified desc",
+		order_by="creation desc",
 		limit=100,
 	)
 
@@ -294,7 +296,7 @@ def sync_locations(since: str = None):
 		filters.append(["modified", ">", since])
 	else:
 		filters = _location_filters(companies)
-	rows = frappe.get_all("ATM Leads", fields=LOCATION_FIELDS, filters=filters, order_by="modified desc", limit_page_length=100000)
+	rows = frappe.get_all("ATM Leads", fields=LOCATION_FIELDS, filters=filters, order_by="creation desc", limit_page_length=100000)
 	allowed = []
 	removed = []
 	for row in rows:
@@ -306,35 +308,77 @@ def sync_locations(since: str = None):
 
 
 @frappe.whitelist()
-def list_locations(page: int = 1, page_size: int = 25, status: str = None, search: str = None, from_date: str = None, to_date: str = None):
+def list_locations(
+	page: int = 1,
+	page_size: int = 25,
+	status: str = None,
+	search: str = None,
+	from_date: str = None,
+	to_date: str = None,
+	date_field: str = "post_date",
+	city: str = None,
+	state: str = None,
+	zip_code: str = None,
+	business_type: str = None,
+):
 	companies = _get_user_companies()
+	date_field = date_field or "post_date"
+	if date_field not in LOCATION_DATE_FIELDS:
+		frappe.throw("Unsupported date filter.")
+
 	filters = _location_filters(companies, status)
 	if from_date:
-		filters.append(["post_date", ">=", from_date])
+		filters.append([date_field, ">=", f"{from_date} 00:00:00" if date_field == "creation" else from_date])
 	if to_date:
-		filters.append(["post_date", "<=", to_date])
+		filters.append([date_field, "<=", f"{to_date} 23:59:59.999999" if date_field == "creation" else to_date])
 
 	rows = frappe.get_all("ATM Leads",
 		fields=LOCATION_FIELDS,
 		filters=filters,
-		order_by="modified desc",
+		order_by="creation desc",
 		limit_page_length=100000,
 	)
 	rows = [row for row in rows if _can_access_location(row, companies)]
+	filter_options = {
+		"cities": sorted({row.city for row in rows if row.city}),
+		"states": sorted({row.state for row in rows if row.state}),
+		"zip_codes": sorted({row.zip_code for row in rows if row.zip_code}),
+		"business_types": sorted({row.business_type for row in rows if row.business_type}),
+	}
+	if city:
+		rows = [row for row in rows if row.city == city]
+	if state:
+		rows = [row for row in rows if row.state == state]
+	if zip_code:
+		rows = [row for row in rows if row.zip_code == zip_code]
+	if business_type:
+		rows = [row for row in rows if row.business_type == business_type]
 	if search:
 		query = search.strip().casefold()
 		rows = [
 			row for row in rows
-			if query in " ".join(str(row.get(field) or "") for field in ("business_name", "full_address", "city", "state", "zip_code")).casefold()
+			if all(
+				term in " ".join(
+					str(row.get(field) or "")
+					for field in ("business_name", "business_type", "full_address", "city", "state", "state_code", "zip_code")
+				).casefold()
+				for term in query.split()
+			)
 		]
-	page_size = min(max(int(page_size), 10), 100)
+	page_size = min(max(int(page_size), 10), 1000)
 	page = max(int(page), 1)
+	page_count = max(1, (len(rows) + page_size - 1) // page_size)
+	page = min(page, page_count)
 	start = (page - 1) * page_size
 	return {
 		"rows": [_portal_location(row) for row in rows[start:start + page_size]],
 		"total": len(rows),
 		"page": page,
 		"page_size": page_size,
+		"page_count": page_count,
+		"filter_options": filter_options,
+		"date_field": date_field,
+		"order_by": "creation desc",
 	}
 
 
