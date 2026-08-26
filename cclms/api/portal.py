@@ -41,7 +41,7 @@ WORKFLOW_TO_PORTAL = {
 }
 PORTAL_TO_WORKFLOW = {portal: workflow for workflow, portal in WORKFLOW_TO_PORTAL.items()}
 PORTAL_DATA_START_DATE = "2025-08-01"
-PORTAL_DATA_BRANCH = "Karachi"
+PORTAL_DATA_BRANCHES = {"Karachi", "Chandi Garh"}
 
 
 def _get_user_companies():
@@ -71,7 +71,6 @@ def _get_user_company():
 def _location_filters(companies, status=None):
 	filters = [
 		["company", "in", companies],
-		["branch", "=", PORTAL_DATA_BRANCH],
 		["workflow_state", "in", list(WORKFLOW_TO_PORTAL)],
 		["post_date", ">=", PORTAL_DATA_START_DATE],
 		["modified", ">=", PORTAL_DATA_START_DATE],
@@ -84,6 +83,11 @@ def _location_filters(companies, status=None):
 	return filters
 
 
+def _branch_in_scope(branch):
+	branch = str(branch or "").strip()
+	return not branch or branch in PORTAL_DATA_BRANCHES
+
+
 def _within_cutoff(row):
 	# Cut date is based on post_date; modified only applies to records that
 	# already have post_date >= cut (bulk reconciliation touched modified on all).
@@ -91,7 +95,7 @@ def _within_cutoff(row):
 	if not row.get("post_date"):
 		return False
 	return (
-		row.get("branch") == PORTAL_DATA_BRANCH
+		_branch_in_scope(row.get("branch"))
 		and getdate(row.get("post_date")) >= getdate(PORTAL_DATA_START_DATE)
 		and getdate(row.get("modified")) >= getdate(PORTAL_DATA_START_DATE)
 	)
@@ -122,6 +126,7 @@ def _company_allows_business_type(company, business_type):
 def _can_access_location(doc, companies):
 	return (
 		doc.company in companies
+		and _branch_in_scope(doc.branch)
 		and _company_allows_state(doc.company, doc.state, doc.state_code)
 		and _company_allows_business_type(doc.company, doc.business_type)
 	)
@@ -137,8 +142,6 @@ LOCATION_FIELDS = [
 	"zip_code", "company", "branch", "workflow_state", "post_date", "approve_date", "sign_date", "install_date", "creation", "modified",
 	"reject_reason", "reject_reason_other",
 ]
-
-LOCATION_DATE_FIELDS = {"post_date", "approve_date", "sign_date", "install_date", "creation", "modified"}
 
 LOCATION_DETAIL_FIELDS = [
 	*LOCATION_FIELDS, "latitude", "longitude", "notes",
@@ -234,7 +237,7 @@ def get_dashboard(range_days: str = "30"):
 	companies = _get_user_companies()
 	filters = _location_filters(companies)
 
-	all_leads = frappe.get_all("ATM Leads", fields=["workflow_state", "company", "state", "state_code", "business_type", "city", "zip_code", "modified"], filters=filters, limit_page_length=100000)
+	all_leads = frappe.get_all("ATM Leads", fields=["workflow_state", "company", "branch", "state", "state_code", "business_type", "city", "zip_code", "modified"], filters=filters, limit_page_length=100000)
 	status_counts = {}
 	city_stats = {}
 	zip_stats = {}
@@ -278,7 +281,7 @@ def get_dashboard(range_days: str = "30"):
 		fields=LOCATION_FIELDS,
 		filters=filters,
 		order_by="modified desc",
-		limit=100,
+		limit_page_length=100000,
 	)
 
 	return {
@@ -302,7 +305,7 @@ def sync_locations(since: str = None):
 		filters.append(["modified", ">", since])
 	else:
 		filters = _location_filters(companies)
-	rows = frappe.get_all("ATM Leads", fields=LOCATION_FIELDS, filters=filters, order_by="creation desc", limit_page_length=100000)
+	rows = frappe.get_all("ATM Leads", fields=LOCATION_FIELDS, filters=filters, order_by="modified desc", limit_page_length=100000)
 	allowed = []
 	removed = []
 	for row in rows:
@@ -328,9 +331,7 @@ def list_locations(
 	business_type: str = None,
 ):
 	companies = _get_user_companies()
-	date_field = date_field or "modified"
-	if date_field not in LOCATION_DATE_FIELDS:
-		frappe.throw("Unsupported date filter.")
+	date_field = "modified"
 
 	filters = _location_filters(companies, status)
 	rows = frappe.get_all("ATM Leads",
@@ -345,10 +346,10 @@ def list_locations(
 	if from_value or to_value:
 		rows = [
 			row for row in rows
-			if (not from_value or getdate(row.get(date_field) or row.modified) >= from_value)
-			and (not to_value or getdate(row.get(date_field) or row.modified) <= to_value)
+			if (not from_value or getdate(row.modified) >= from_value)
+			and (not to_value or getdate(row.modified) <= to_value)
 		]
-	rows.sort(key=lambda row: str(row.get(date_field) or row.modified or row.creation or ""), reverse=True)
+	rows.sort(key=lambda row: str(row.modified or ""), reverse=True)
 	filter_options = {
 		"cities": sorted({row.city for row in rows if row.city}),
 		"states": sorted({row.state for row in rows if row.state}),
@@ -388,7 +389,7 @@ def list_locations(
 		"page_count": page_count,
 		"filter_options": filter_options,
 		"date_field": date_field,
-		"order_by": f"{date_field} (fallback modified) desc",
+		"order_by": "modified desc",
 	}
 
 
